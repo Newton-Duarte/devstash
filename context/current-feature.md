@@ -23,7 +23,5 @@ Completed
 
 ## History
 
-<!-- Keep this updated. Earliest to latest -->
-
 - **Initial Setup** - Next.js 16, Tailwind CSS v4, TypeScript configured (Completed)
 - **Dashboard UI Phase 1** - Dashboard shell, route, dark mode, ShadCN setup, and placeholders completed (Completed)
