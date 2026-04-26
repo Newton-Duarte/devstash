@@ -1,21 +1,32 @@
 "use client";
 
-import { Menu, Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { Menu, PanelLeft, Plus, Search, SquarePlus } from "lucide-react";
+import { useMemo, useState } from "react";
 
+import { DashboardCollectionCard } from "@/components/dashboard/dashboard-collection-card";
+import { DashboardPinnedItem } from "@/components/dashboard/dashboard-pinned-item";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardSidebarDrawer } from "@/components/dashboard/dashboard-sidebar-drawer";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { mockCollections, mockItems } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 export function DashboardShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
+  const pinnedItems = useMemo(
+    () =>
+      mockItems
+        .filter((item) => item.isPinned)
+        .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
+    []
+  );
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-[#050507] text-foreground">
       <DashboardSidebarDrawer
         open={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}
@@ -23,21 +34,31 @@ export function DashboardShell() {
         <DashboardSidebar mobile />
       </DashboardSidebarDrawer>
 
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="flex min-h-screen border-l border-r border-border/80">
         <aside
           className={cn(
-            "hidden rounded-[2rem] border border-border bg-card/75 p-4 shadow-sm backdrop-blur lg:flex lg:flex-col",
-            sidebarCollapsed ? "lg:w-[92px]" : "lg:w-[320px]"
+            "hidden border-r border-border/80 bg-[#030304] lg:flex lg:flex-col",
+            sidebarCollapsed ? "lg:w-[82px]" : "lg:w-[366px]"
           )}
         >
-          <div className="mb-5 flex items-center justify-between gap-3 px-2">
-            <div className={cn("min-w-0", sidebarCollapsed && "sr-only")}>
-              <p className="text-xs font-medium tracking-[0.3em] text-muted-foreground uppercase">
+          <div className="flex h-[84px] items-center justify-between border-b border-border/80 px-4">
+            <div
+              className={cn(
+                "flex items-center gap-4",
+                sidebarCollapsed && "justify-center"
+              )}
+            >
+              <div className="flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.04)]">
+                <span className="text-sm font-semibold">▤</span>
+              </div>
+              <span
+                className={cn(
+                  "text-[1.05rem] font-semibold text-white",
+                  sidebarCollapsed && "sr-only"
+                )}
+              >
                 DevStash
-              </p>
-              <h1 className="text-sm font-semibold text-foreground">
-                Workspace
-              </h1>
+              </span>
             </div>
 
             <DashboardSidebarToggle
@@ -46,12 +67,14 @@ export function DashboardShell() {
             />
           </div>
 
-          <DashboardSidebar collapsed={sidebarCollapsed} />
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-8">
+            <DashboardSidebar collapsed={sidebarCollapsed} />
+          </div>
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="mb-6 flex flex-col gap-4 rounded-3xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
+          <header className="flex h-[84px] items-center border-b border-border/80 bg-[#07080a]">
+            <div className="flex h-full w-[84px] items-center justify-center border-r border-border/80">
               <Button
                 aria-label="Open sidebar"
                 className="lg:hidden"
@@ -63,49 +86,98 @@ export function DashboardShell() {
                 <Menu className="size-4" />
               </Button>
 
-              <div className="relative w-full max-w-xl flex-1 sm:min-w-[320px]">
-                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <div className="hidden lg:flex">
+                <Button
+                  aria-label="Collapse sidebar"
+                  onClick={() => setSidebarCollapsed((current) => !current)}
+                  size="icon"
+                  type="button"
+                  variant="outline"
+                >
+                  <PanelLeft className="size-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex min-w-0 flex-1 items-center gap-4 px-5">
+              <div className="relative w-full max-w-[520px]">
+                <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   aria-label="Search items"
-                  className="pl-10"
-                  placeholder="Search snippets, prompts, notes, and commands"
+                  className="h-12 rounded-2xl border-border/80 bg-[#111216] pl-11 pr-16 text-[1.05rem] text-slate-200 placeholder:text-slate-500"
+                  placeholder="Search items..."
                 />
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-lg border border-border/80 bg-[#1a1b20] px-2 py-1 text-xs font-medium text-slate-400">
+                  ⌘ K
+                </span>
+              </div>
+
+              <div className="ml-auto hidden items-center gap-3 md:flex">
+                <Button
+                  className="rounded-2xl border-border/80 bg-transparent text-slate-100 hover:bg-white/[0.04]"
+                  type="button"
+                  variant="outline"
+                >
+                  <SquarePlus className="size-4" />
+                  New Collection
+                </Button>
+
+                <Button className="rounded-2xl bg-white px-5 text-slate-900 hover:bg-slate-200">
+                  <Plus className="size-4" />
+                  New Item
+                </Button>
               </div>
             </div>
-
-            <Button className="w-full sm:w-auto">
-              <Plus className="size-4" />
-              New Item
-            </Button>
           </header>
 
-          <main className="flex-1 rounded-[2rem] border border-border bg-card/65 p-6 shadow-sm">
-            <div className="flex h-full min-h-[520px] flex-col justify-between gap-8 rounded-[1.5rem] border border-dashed border-border/80 bg-background/35 p-6">
-              <div>
-                <p className="mb-2 text-xs font-medium tracking-[0.24em] text-muted-foreground uppercase">
-                  Main Panel
-                </p>
-                <h2 className="text-2xl font-semibold text-foreground">Main</h2>
+          <main className="min-w-0 flex-1 overflow-y-auto bg-[#050507] px-8 py-10 lg:px-9">
+            <section className="mb-12">
+              <h1 className="text-[3rem] font-semibold tracking-[-0.04em] text-white">
+                Dashboard
+              </h1>
+              <p className="mt-2 text-[1.05rem] text-slate-500">
+                Your developer knowledge hub
+              </p>
+            </section>
+
+            <section className="mb-12">
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <h2 className="text-[2rem] font-semibold tracking-[-0.03em] text-white">
+                  Collections
+                </h2>
+                <button
+                  className="text-[1.05rem] text-slate-400 transition hover:text-white"
+                  type="button"
+                >
+                  View all
+                </button>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                <div className="rounded-3xl border border-border bg-card/80 p-4">
-                  <p className="text-sm font-medium text-foreground">
-                    Favorites and recents now live in the sidebar.
-                  </p>
-                </div>
-                <div className="rounded-3xl border border-border bg-card/80 p-4">
-                  <p className="text-sm font-medium text-foreground">
-                    Phase 3 can replace this area with real dashboard content.
-                  </p>
-                </div>
-                <div className="rounded-3xl border border-border bg-card/80 p-4 md:col-span-2 xl:col-span-1">
-                  <p className="text-sm font-medium text-foreground">
-                    Desktop supports collapse; mobile uses a drawer.
-                  </p>
-                </div>
+              <div className="grid gap-5 xl:grid-cols-3">
+                {mockCollections.map((collection, index) => (
+                  <DashboardCollectionCard
+                    collection={collection}
+                    index={index}
+                    key={collection.id}
+                  />
+                ))}
               </div>
-            </div>
+            </section>
+
+            <section>
+              <div className="mb-6 flex items-center gap-3">
+                <span className="text-muted-foreground">📌</span>
+                <h2 className="text-[1.8rem] font-semibold tracking-[-0.03em] text-white">
+                  Pinned
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                {pinnedItems.map((item) => (
+                  <DashboardPinnedItem item={item} key={item.id} />
+                ))}
+              </div>
+            </section>
           </main>
         </div>
       </div>

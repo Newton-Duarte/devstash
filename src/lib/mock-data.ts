@@ -25,6 +25,22 @@ export interface MockCollection {
   updatedAt: Date;
 }
 
+export interface MockItem {
+  id: string;
+  title: string;
+  contentType: string;
+  content: string | null;
+  url?: string;
+  description: string;
+  isFavorite: boolean;
+  isPinned: boolean;
+  language: string | null;
+  itemTypeId: string;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export const mockUser: MockUser = {
   id: 'user_1',
   email: 'demo@devstash.io',
@@ -143,7 +159,7 @@ export const mockCollections: MockCollection[] = [
   },
 ];
 
-export const mockItems = [
+export const mockItems: MockItem[] = [
   {
     id: 'item_1',
     title: 'useAuth Hook',

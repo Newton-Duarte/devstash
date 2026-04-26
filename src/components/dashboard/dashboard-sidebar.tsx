@@ -1,12 +1,16 @@
 import Link from "next/link";
 import {
+  ChevronDown,
   Code2,
   File,
+  Folder,
   FolderKanban,
   ImageIcon,
   Link2,
   MessageSquareQuote,
   NotebookPen,
+  Settings,
+  Star,
   Terminal,
 } from "lucide-react";
 
@@ -32,31 +36,69 @@ const iconMap = {
 const favorites = mockCollections.filter((collection) => collection.isFavorite);
 const recentCollections = [...mockCollections]
   .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-  .slice(0, 4);
+  .slice(0, 3);
 
 function pluralizeType(type: string) {
   return type.endsWith("s") ? type : `${type}s`;
 }
 
-function SidebarCollectionLink({
-  collection,
+function SidebarLabel({
+  children,
   condensed,
 }: {
-  collection: MockCollection;
+  children: React.ReactNode;
   condensed: boolean;
 }) {
   return (
+    <div
+      className={cn(
+        "flex items-center gap-2 px-4 text-[0.95rem] font-medium text-slate-300",
+        condensed && "justify-center px-0"
+      )}
+    >
+      <span className={cn(condensed && "sr-only")}>{children}</span>
+      <ChevronDown
+        className={cn("size-4 text-muted-foreground", condensed && "hidden")}
+      />
+    </div>
+  );
+}
+
+function SidebarCollectionLink({
+  collection,
+  condensed,
+  favorite = false,
+}: {
+  collection: MockCollection;
+  condensed: boolean;
+  favorite?: boolean;
+}) {
+  return (
     <Link
-      className="group flex items-center justify-between rounded-2xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-accent hover:text-accent-foreground"
+      className={cn(
+        "group flex items-center gap-3 rounded-2xl px-4 py-2 text-sm text-slate-200 transition hover:bg-white/[0.04]",
+        condensed && "justify-center px-0"
+      )}
       href={`/collections/${collection.id}`}
       prefetch={false}
     >
-      <span className={cn("truncate", condensed && "sr-only")}>
+      <Folder className="size-4 shrink-0 text-slate-400" />
+      <span className={cn("min-w-0 flex-1 truncate", condensed && "sr-only")}>
         {collection.name}
       </span>
-      <span className="text-xs text-muted-foreground/80">
-        {collection.itemCount}
-      </span>
+      {favorite ? (
+        <Star
+          className={cn(
+            "size-4 fill-[#facc15] text-[#facc15]",
+            condensed && "hidden"
+          )}
+        />
+      ) : null}
+      {!favorite ? (
+        <span className={cn("text-sm text-muted-foreground", condensed && "hidden")}>
+          {collection.itemCount}
+        </span>
+      ) : null}
     </Link>
   );
 }
@@ -73,16 +115,10 @@ export function DashboardSidebar({
   const condensed = collapsed && !mobile;
 
   return (
-    <div className="flex h-full flex-col gap-6">
-      <div className="space-y-1">
-        <p
-          className={cn(
-            "px-3 text-xs font-medium tracking-[0.24em] text-muted-foreground uppercase",
-            condensed && "sr-only"
-          )}
-        >
-          Types
-        </p>
+    <div className="flex h-full flex-col gap-8 text-sm">
+      <div className="space-y-4">
+        <SidebarLabel condensed={condensed}>Types</SidebarLabel>
+
         <nav className="space-y-1">
           {mockItemTypes.map((itemType) => {
             const Icon =
@@ -95,20 +131,18 @@ export function DashboardSidebar({
 
             return (
               <Link
-                className="group flex items-center gap-3 rounded-2xl px-3 py-2 text-sm text-foreground transition hover:bg-accent"
+                className={cn(
+                  "group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-[0.95rem] text-slate-100 transition hover:bg-white/[0.04]",
+                  condensed && "justify-center px-0"
+                )}
                 href={href}
                 key={itemType.id}
                 prefetch={false}
               >
-                <span
-                  className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border"
-                  style={{
-                    backgroundColor: `${itemType.color}20`,
-                    color: itemType.color,
-                  }}
-                >
-                  <Icon className="size-4" />
-                </span>
+                <Icon
+                  className="size-4 shrink-0"
+                  style={{ color: itemType.color }}
+                />
 
                 <span
                   className={cn(
@@ -120,7 +154,7 @@ export function DashboardSidebar({
                 </span>
                 <span
                   className={cn(
-                    "text-xs text-muted-foreground",
+                    "text-base text-muted-foreground",
                     condensed && "sr-only"
                   )}
                 >
@@ -132,49 +166,61 @@ export function DashboardSidebar({
         </nav>
       </div>
 
-      <div className="space-y-1">
-        <p
-          className={cn(
-            "px-3 text-xs font-medium tracking-[0.24em] text-muted-foreground uppercase",
-            condensed && "sr-only"
-          )}
-        >
-          Favorites
-        </p>
-        <div className="space-y-1">
-          {favorites.map((collection) => (
-            <SidebarCollectionLink
-              collection={collection}
-              condensed={condensed}
-              key={collection.id}
-            />
-          ))}
+      <div className="space-y-4 border-t border-border pt-6">
+        <SidebarLabel condensed={condensed}>Collections</SidebarLabel>
+
+        <div className="space-y-5">
+          <div>
+            <p
+              className={cn(
+                "px-4 text-xs tracking-[0.18em] text-muted-foreground uppercase",
+                condensed && "sr-only"
+              )}
+            >
+              Favorites
+            </p>
+            <div className="mt-3 space-y-1">
+              {favorites.map((collection) => (
+                <SidebarCollectionLink
+                  collection={collection}
+                  condensed={condensed}
+                  favorite
+                  key={collection.id}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p
+              className={cn(
+                "px-4 text-xs tracking-[0.18em] text-muted-foreground uppercase",
+                condensed && "sr-only"
+              )}
+            >
+              All collections
+            </p>
+            <div className="mt-3 space-y-1">
+              {recentCollections.map((collection) => (
+                <SidebarCollectionLink
+                  collection={collection}
+                  condensed={condensed}
+                  key={collection.id}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-1">
-        <p
+      <div className="mt-auto border-t border-border pt-4">
+        <div
           className={cn(
-            "px-3 text-xs font-medium tracking-[0.24em] text-muted-foreground uppercase",
-            condensed && "sr-only"
+            "flex items-center gap-3 px-4 py-3",
+            condensed && "justify-center px-0"
           )}
         >
-          Recent
-        </p>
-        <div className="space-y-1">
-          {recentCollections.map((collection) => (
-            <SidebarCollectionLink
-              collection={collection}
-              condensed={condensed}
-              key={collection.id}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-auto rounded-3xl border border-border bg-card/70 p-3">
-        <div className="flex items-center gap-3">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-sm font-semibold text-primary">
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#e5e7eb] text-sm font-semibold text-slate-900">
             {mockUser.name
               .split(" ")
               .map((part) => part[0])
@@ -182,14 +228,25 @@ export function DashboardSidebar({
               .slice(0, 2)}
           </div>
 
-          <div className={cn("min-w-0", condensed && "sr-only")}>
-            <p className="truncate text-sm font-semibold text-foreground">
+          <div className={cn("min-w-0 flex-1", condensed && "sr-only")}>
+            <p className="truncate text-[1rem] font-medium text-white">
               {mockUser.name}
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              {mockUser.email}
+              john@example.com
             </p>
           </div>
+
+          <button
+            aria-label="Settings"
+            className={cn(
+              "text-muted-foreground transition hover:text-white",
+              condensed && "hidden"
+            )}
+            type="button"
+          >
+            <Settings className="size-4" />
+          </button>
         </div>
       </div>
     </div>
