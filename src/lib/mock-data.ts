@@ -1,4 +1,31 @@
-export const mockUser = {
+export interface MockUser {
+  id: string;
+  email: string;
+  name: string;
+  isPro: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface MockItemType {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  isSystem: boolean;
+}
+
+export interface MockCollection {
+  id: string;
+  name: string;
+  description: string;
+  isFavorite: boolean;
+  itemCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const mockUser: MockUser = {
   id: 'user_1',
   email: 'demo@devstash.io',
   name: 'John Doe',
@@ -7,7 +34,7 @@ export const mockUser = {
   updatedAt: new Date('2024-01-15'),
 };
 
-export const mockItemTypes = [
+export const mockItemTypes: MockItemType[] = [
   {
     id: 'type_1',
     name: 'snippet',
@@ -59,7 +86,7 @@ export const mockItemTypes = [
   },
 ];
 
-export const mockCollections = [
+export const mockCollections: MockCollection[] = [
   {
     id: 'coll_1',
     name: 'React Patterns',

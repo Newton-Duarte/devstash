@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard UI Phase 1 - establish the initial `/dashboard` route, base layout, and display-only shell for the dashboard experience.
+Dashboard UI Phase 2 - replace the placeholder dashboard sidebar with mock-data-backed navigation, collections, and responsive drawer behavior.
 
 ## Status
 
@@ -8,20 +8,24 @@ Completed
 
 ## Goals
 
-- Initialize ShadCN UI and install the needed components.
-- Add the `/dashboard` route.
-- Build the main dashboard layout and any required global styles.
-- Make dark mode the default experience.
-- Add a top bar with search and a display-only new item button.
-- Add placeholder sections for the sidebar and main content using `h2` headings: `Sidebar` and `Main`.
+- Add a collapsible sidebar on desktop.
+- Add item type links that use plural routes like `/items/snippets`.
+- Show favorite collections.
+- Show most recent collections.
+- Add a user avatar area at the bottom of the sidebar.
+- Add a drawer icon to open and close the sidebar.
+- Always use a drawer pattern on mobile view.
 
 ## Notes
 
-- This is phase 1 of 3 for the dashboard UI.
+- This is phase 2 of 3 for the dashboard UI.
+- Use `@src/lib/mock-data.ts` directly for item types, collections, counts, and user info.
 - Visual reference: `@context/screenshots/dashboard-ui-main.png`.
-- Follow-on specs live in `@context/features/dashboard-phase-2-spec.md` and `@context/features/dashboard-phase-3-spec.md`.
+- Phase 1 spec: `@context/features/dashboard-phase-1-spec.md`.
+- Follow-on spec: `@context/features/dashboard-phase-3-spec.md`.
 
 ## History
 
 - **Initial Setup** - Next.js 16, Tailwind CSS v4, TypeScript configured (Completed)
 - **Dashboard UI Phase 1** - Dashboard shell, route, dark mode, ShadCN setup, and placeholders completed (Completed)
+- **Dashboard UI Phase 2** - Responsive sidebar, mobile drawer, mock-data navigation, collections, and user area completed (Completed)
