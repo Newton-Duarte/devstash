@@ -1,32 +1,57 @@
 "use client";
 
 import { Menu, PanelLeft, Plus, Search, SquarePlus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { DashboardCollectionCard } from "@/components/dashboard/dashboard-collection-card";
 import { DashboardPinnedItem } from "@/components/dashboard/dashboard-pinned-item";
+import { DashboardRecentItem } from "@/components/dashboard/dashboard-recent-item";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardSidebarDrawer } from "@/components/dashboard/dashboard-sidebar-drawer";
+import { DashboardStatCard } from "@/components/dashboard/dashboard-stat-card";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { mockCollections, mockItems } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
+const pinnedItems = [...mockItems]
+  .filter((item) => item.isPinned)
+  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+
+const recentItems = [...mockItems]
+  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+  .slice(0, 10);
+
+const stats = [
+  {
+    label: "Items",
+    value: mockItems.length,
+    detail: "Total saved resources",
+  },
+  {
+    label: "Collections",
+    value: mockCollections.length,
+    detail: "Organized knowledge groups",
+  },
+  {
+    label: "Favorite Items",
+    value: mockItems.filter((item) => item.isFavorite).length,
+    detail: "Quick-access starred entries",
+  },
+  {
+    label: "Favorite Collections",
+    value: mockCollections.filter((collection) => collection.isFavorite).length,
+    detail: "Pinned collection groups",
+  },
+];
+
 export function DashboardShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  const pinnedItems = useMemo(
-    () =>
-      mockItems
-        .filter((item) => item.isPinned)
-        .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
-    []
-  );
-
   return (
-    <div className="min-h-screen bg-[#050507] text-foreground">
+    <div className="h-screen overflow-hidden bg-[#050507] text-foreground">
       <DashboardSidebarDrawer
         open={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}
@@ -34,10 +59,10 @@ export function DashboardShell() {
         <DashboardSidebar mobile />
       </DashboardSidebarDrawer>
 
-      <div className="flex min-h-screen border-l border-r border-border/80">
+      <div className="flex h-full border-l border-r border-border/80">
         <aside
           className={cn(
-            "hidden border-r border-border/80 bg-[#030304] lg:flex lg:flex-col",
+            "hidden h-full shrink-0 border-r border-border/80 bg-[#030304] lg:flex lg:flex-col",
             sidebarCollapsed ? "lg:w-[82px]" : "lg:w-[366px]"
           )}
         >
@@ -72,8 +97,8 @@ export function DashboardShell() {
           </div>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-[84px] items-center border-b border-border/80 bg-[#07080a]">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <header className="flex h-[84px] shrink-0 items-center border-b border-border/80 bg-[#07080a]">
             <div className="flex h-full w-[84px] items-center justify-center border-r border-border/80">
               <Button
                 aria-label="Open sidebar"
@@ -141,9 +166,22 @@ export function DashboardShell() {
             </section>
 
             <section className="mb-12">
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {stats.map((stat) => (
+                  <DashboardStatCard
+                    detail={stat.detail}
+                    key={stat.label}
+                    label={stat.label}
+                    value={stat.value}
+                  />
+                ))}
+              </div>
+            </section>
+
+            <section className="mb-12">
               <div className="mb-6 flex items-center justify-between gap-4">
                 <h2 className="text-[2rem] font-semibold tracking-[-0.03em] text-white">
-                  Collections
+                  Recent Collections
                 </h2>
                 <button
                   className="text-[1.05rem] text-slate-400 transition hover:text-white"
@@ -168,13 +206,28 @@ export function DashboardShell() {
               <div className="mb-6 flex items-center gap-3">
                 <span className="text-muted-foreground">📌</span>
                 <h2 className="text-[1.8rem] font-semibold tracking-[-0.03em] text-white">
-                  Pinned
+                  Pinned Items
                 </h2>
               </div>
 
               <div className="space-y-4">
                 {pinnedItems.map((item) => (
                   <DashboardPinnedItem item={item} key={item.id} />
+                ))}
+              </div>
+            </section>
+
+            <section className="mt-12">
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <h2 className="text-[1.8rem] font-semibold tracking-[-0.03em] text-white">
+                  Recent Items
+                </h2>
+                <p className="text-sm text-slate-500">Latest 10 updates</p>
+              </div>
+
+              <div className="space-y-4">
+                {recentItems.map((item) => (
+                  <DashboardRecentItem item={item} key={item.id} />
                 ))}
               </div>
             </section>
