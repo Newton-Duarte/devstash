@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard UI Phase 3 - complete the dashboard main area with stats, recent collections, pinned items, and recent items using mock data.
+Database Foundation - set up Prisma 7 with Neon PostgreSQL, create the initial schema and migration, and add a shared Prisma client.
 
 ## Status
 
@@ -8,20 +8,21 @@ Completed
 
 ## Goals
 
-- Add 4 stats cards at the top of the dashboard for item, collection, favorite item, and favorite collection counts.
-- Show all recent collections in the main content area.
-- Show pinned items in the main content area.
-- Show 10 most recent items in the main content area.
-- Keep the existing sidebar, top bar, and responsive drawer behavior intact.
+- Add Prisma 7 to the project using current Prisma 7 configuration patterns.
+- Configure Neon PostgreSQL as the datasource for migrations and runtime access.
+- Create the initial schema for users, item types, items, collections, tags, item tags, and NextAuth tables.
+- Add appropriate indexes and delete behavior for the first schema.
+- Add a shared Prisma client helper for Next.js server-side usage.
+- Keep this feature limited to database foundation only, without auth wiring or seed data.
 
 ## Notes
 
-- This is phase 3 of 3 for the dashboard UI.
-- Use `@src/lib/mock-data.ts` directly for collections and items.
-- Visual reference: `@context/screenshots/dashboard-ui-main.png`.
-- Phase 1 spec: `@context/features/dashboard-phase-1-spec.md`.
-- Phase 2 spec: `@context/features/dashboard-phase-2-spec.md`.
-- Phase 3 spec: `@context/features/dashboard-phase-3-spec.md`.
+- Always create migrations with `prisma migrate dev`; do not use `prisma db push`.
+- Use the development Neon branch in `DATABASE_URL`.
+- Built-in item types will be modeled as global system rows.
+- Include `passwordHash` on `User` now for later credentials auth.
+- Feature spec: `@context/features/database-spec.md`.
+- Design spec: `@docs/superpowers/specs/2026-05-04-database-foundation-design.md`.
 
 ## History
 
@@ -29,3 +30,4 @@ Completed
 - **Dashboard UI Phase 1** - Dashboard shell, route, dark mode, ShadCN setup, and placeholders completed (Completed)
 - **Dashboard UI Phase 2** - Responsive sidebar, mobile drawer, mock-data navigation, collections, and user area completed (Completed)
 - **Dashboard UI Phase 3** - Dashboard stats, recent collections, pinned items, and recent items completed (Completed)
+- **Database Foundation** - Prisma 7, Neon PostgreSQL config, initial schema, shared Prisma client, and first migration completed (Completed)
