@@ -13,30 +13,24 @@ import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type DashboardCollectionsData } from "@/lib/db/collections";
-import { mockItems } from "@/lib/mock-data";
+import { type DashboardItemsData } from "@/lib/db/items";
 import { cn } from "@/lib/utils";
-
-const pinnedItems = [...mockItems]
-  .filter((item) => item.isPinned)
-  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-
-const recentItems = [...mockItems]
-  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-  .slice(0, 10);
 
 interface DashboardShellProps {
   dashboardCollectionsData: DashboardCollectionsData;
+  dashboardItemsData: DashboardItemsData;
 }
 
 export function DashboardShell({
   dashboardCollectionsData,
+  dashboardItemsData,
 }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const stats = [
     {
       label: "Items",
-      value: mockItems.length,
+      value: dashboardItemsData.stats.totalItems,
       detail: "Total saved resources",
     },
     {
@@ -46,7 +40,7 @@ export function DashboardShell({
     },
     {
       label: "Favorite Items",
-      value: mockItems.filter((item) => item.isFavorite).length,
+      value: dashboardItemsData.stats.favoriteItems,
       detail: "Quick-access starred entries",
     },
     {
@@ -207,22 +201,24 @@ export function DashboardShell({
               </div>
             </section>
 
-            <section>
-              <div className="mb-6 flex items-center gap-3">
-                <span className="text-muted-foreground">📌</span>
-                <h2 className="text-[1.8rem] font-semibold tracking-[-0.03em] text-white">
-                  Pinned Items
-                </h2>
-              </div>
+            {dashboardItemsData.pinnedItems.length > 0 ? (
+              <section>
+                <div className="mb-6 flex items-center gap-3">
+                  <span className="text-muted-foreground">📌</span>
+                  <h2 className="text-[1.8rem] font-semibold tracking-[-0.03em] text-white">
+                    Pinned Items
+                  </h2>
+                </div>
 
-              <div className="space-y-4">
-                {pinnedItems.map((item) => (
-                  <DashboardPinnedItem item={item} key={item.id} />
-                ))}
-              </div>
-            </section>
+                <div className="space-y-4">
+                  {dashboardItemsData.pinnedItems.map((item) => (
+                    <DashboardPinnedItem item={item} key={item.id} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
-            <section className="mt-12">
+            <section className={dashboardItemsData.pinnedItems.length > 0 ? "mt-12" : ""}>
               <div className="mb-6 flex items-center justify-between gap-4">
                 <h2 className="text-[1.8rem] font-semibold tracking-[-0.03em] text-white">
                   Recent Items
@@ -231,7 +227,7 @@ export function DashboardShell({
               </div>
 
               <div className="space-y-4">
-                {recentItems.map((item) => (
+                {dashboardItemsData.recentItems.map((item) => (
                   <DashboardRecentItem item={item} key={item.id} />
                 ))}
               </div>
