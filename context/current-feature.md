@@ -1,6 +1,6 @@
 # Current Feature
 
-Database Foundation - set up Prisma 7 with Neon PostgreSQL, create the initial schema and migration, and add a shared Prisma client.
+Seed Data - add a Prisma seed script that populates the development database with a demo user, system item types, collections, and sample items.
 
 ## Status
 
@@ -8,21 +8,21 @@ Completed
 
 ## Goals
 
-- Add Prisma 7 to the project using current Prisma 7 configuration patterns.
-- Configure Neon PostgreSQL as the datasource for migrations and runtime access.
-- Create the initial schema for users, item types, items, collections, tags, item tags, and NextAuth tables.
-- Add appropriate indexes and delete behavior for the first schema.
-- Add a shared Prisma client helper for Next.js server-side usage.
-- Keep this feature limited to database foundation only, without auth wiring or seed data.
+- Add `prisma/seed.ts` to populate the development database with sample data.
+- Create the demo user `demo@devstash.io` with a bcrypt-hashed password.
+- Seed the seven built-in system item types with Lucide icon names and colors.
+- Seed the requested collections, items, and real reference links for development and demos.
+- Add the package script needed to run the Prisma seed flow locally.
+- Keep this feature limited to seed data only, assuming a fresh development database.
 
 ## Notes
 
-- Always create migrations with `prisma migrate dev`; do not use `prisma db push`.
-- Use the development Neon branch in `DATABASE_URL`.
-- Built-in item types will be modeled as global system rows.
-- Include `passwordHash` on `User` now for later credentials auth.
-- Feature spec: `@context/features/database-spec.md`.
-- Design spec: `@docs/superpowers/specs/2026-05-04-database-foundation-design.md`.
+- Assume a fresh development database; the seed script does not need idempotent upsert behavior.
+- Hash the demo password with `bcryptjs` using 12 rounds.
+- System item types remain global rows with `isSystem: true` and `userId: null`.
+- Use compact but realistic sample content so future UI, auth, and search work has useful data to exercise.
+- Feature spec: `@context/features/seed-spec.md`.
+- Design spec: `@docs/superpowers/specs/2026-05-04-seed-data-design.md`.
 
 ## History
 
@@ -31,3 +31,4 @@ Completed
 - **Dashboard UI Phase 2** - Responsive sidebar, mobile drawer, mock-data navigation, collections, and user area completed (Completed)
 - **Dashboard UI Phase 3** - Dashboard stats, recent collections, pinned items, and recent items completed (Completed)
 - **Database Foundation** - Prisma 7, Neon PostgreSQL config, initial schema, shared Prisma client, and first migration completed (Completed)
+- **Seed Data** - Prisma seed script, demo user, system item types, collections, and sample items completed (Completed)
