@@ -1,72 +1,51 @@
-import { Ellipsis, Link2, Sparkles, Star } from "lucide-react";
+import {
+  Code2,
+  Ellipsis,
+  File,
+  ImageIcon,
+  Link2,
+  MessageSquareQuote,
+  NotebookPen,
+  Star,
+  Terminal,
+} from "lucide-react";
 
-import { type MockCollection } from "@/lib/mock-data";
+import {
+  type DashboardCollection,
+  type DashboardCollectionType,
+} from "@/lib/db/collections";
 
-const collectionAccents = [
-  "before:bg-[#2f81f7]",
-  "before:bg-[#2f81f7]",
-  "before:bg-[#2f81f7]",
-  "before:bg-[#facc15]",
-  "before:bg-[#f97316]",
-  "before:bg-[#8b5cf6]",
-];
+const iconMap = {
+  Code: Code2,
+  Sparkles: MessageSquareQuote,
+  Terminal,
+  StickyNote: NotebookPen,
+  File,
+  Image: ImageIcon,
+  Link: Link2,
+} as const;
 
-const collectionIcons = [
-  ["code", "note", "link"],
-  ["code", "note"],
-  ["file", "note"],
-  ["note", "code", "link", "prompt"],
-  ["command", "note"],
-  ["prompt", "code", "note"],
-] as const;
+function MiniIcon({ type }: { type: DashboardCollectionType }) {
+  const Icon = type.icon ? iconMap[type.icon as keyof typeof iconMap] : null;
 
-function MiniIcon({ kind }: { kind: (typeof collectionIcons)[number][number] }) {
-  if (kind === "link") {
-    return <Link2 className="size-4 text-[#10b981]" />;
+  if (!Icon) {
+    return null;
   }
 
-  if (kind === "prompt") {
-    return <Sparkles className="size-4 text-[#8b5cf6]" />;
-  }
-
-  return (
-    <span
-      className={
-        kind === "command"
-          ? "text-sm text-[#f97316]"
-          : kind === "file"
-            ? "text-sm text-slate-400"
-            : kind === "note"
-              ? "text-sm text-[#facc15]"
-              : "text-sm text-[#2f81f7]"
-      }
-    >
-      {kind === "command"
-        ? ">_"
-        : kind === "file"
-          ? "[]"
-          : kind === "note"
-            ? "[]"
-            : "<>"}
-    </span>
-  );
+  return <Icon className="size-4" style={{ color: type.color ?? "#94a3b8" }} />;
 }
 
 interface DashboardCollectionCardProps {
-  collection: MockCollection;
-  index: number;
+  collection: DashboardCollection;
 }
 
-export function DashboardCollectionCard({
-  collection,
-  index,
-}: DashboardCollectionCardProps) {
-  const accentClass = collectionAccents[index] ?? collectionAccents[0];
-  const icons = collectionIcons[index] ?? collectionIcons[0];
-
+export function DashboardCollectionCard({ collection }: DashboardCollectionCardProps) {
   return (
     <article
-      className={`relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-6 before:absolute before:inset-y-0 before:left-0 before:w-[3px] ${accentClass}`}
+      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-6 before:absolute before:inset-y-0 before:left-0 before:w-[3px]"
+      style={{
+        boxShadow: `inset 3px 0 0 ${collection.accentColor}`,
+      }}
     >
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
@@ -96,9 +75,9 @@ export function DashboardCollectionCard({
         {collection.description}
       </p>
 
-      <div className="flex items-center gap-3">
-        {icons.map((kind, iconIndex) => (
-          <MiniIcon key={`${collection.id}-${iconIndex}`} kind={kind} />
+      <div className="flex min-h-4 items-center gap-3">
+        {collection.types.map((type) => (
+          <MiniIcon key={`${collection.id}-${type.name}`} type={type} />
         ))}
       </div>
     </article>

@@ -12,7 +12,8 @@ import { DashboardStatCard } from "@/components/dashboard/dashboard-stat-card";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { mockCollections, mockItems } from "@/lib/mock-data";
+import { type DashboardCollectionsData } from "@/lib/db/collections";
+import { mockItems } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 const pinnedItems = [...mockItems]
@@ -23,32 +24,37 @@ const recentItems = [...mockItems]
   .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
   .slice(0, 10);
 
-const stats = [
-  {
-    label: "Items",
-    value: mockItems.length,
-    detail: "Total saved resources",
-  },
-  {
-    label: "Collections",
-    value: mockCollections.length,
-    detail: "Organized knowledge groups",
-  },
-  {
-    label: "Favorite Items",
-    value: mockItems.filter((item) => item.isFavorite).length,
-    detail: "Quick-access starred entries",
-  },
-  {
-    label: "Favorite Collections",
-    value: mockCollections.filter((collection) => collection.isFavorite).length,
-    detail: "Pinned collection groups",
-  },
-];
+interface DashboardShellProps {
+  dashboardCollectionsData: DashboardCollectionsData;
+}
 
-export function DashboardShell() {
+export function DashboardShell({
+  dashboardCollectionsData,
+}: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const stats = [
+    {
+      label: "Items",
+      value: mockItems.length,
+      detail: "Total saved resources",
+    },
+    {
+      label: "Collections",
+      value: dashboardCollectionsData.stats.totalCollections,
+      detail: "Organized knowledge groups",
+    },
+    {
+      label: "Favorite Items",
+      value: mockItems.filter((item) => item.isFavorite).length,
+      detail: "Quick-access starred entries",
+    },
+    {
+      label: "Favorite Collections",
+      value: dashboardCollectionsData.stats.favoriteCollections,
+      detail: "Pinned collection groups",
+    },
+  ];
 
   return (
     <div className="h-screen overflow-hidden bg-[#050507] text-foreground">
@@ -192,10 +198,9 @@ export function DashboardShell() {
               </div>
 
               <div className="grid gap-5 xl:grid-cols-3">
-                {mockCollections.map((collection, index) => (
+                {dashboardCollectionsData.collections.map((collection) => (
                   <DashboardCollectionCard
                     collection={collection}
-                    index={index}
                     key={collection.id}
                   />
                 ))}

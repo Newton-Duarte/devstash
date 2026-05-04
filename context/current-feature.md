@@ -1,6 +1,6 @@
 # Current Feature
 
-Seed Data - add a Prisma seed script that populates the development database with a demo user, system item types, collections, and sample items.
+Dashboard Collections - replace the dashboard's mock recent collections with database-backed Prisma data from Neon.
 
 ## Status
 
@@ -8,21 +8,21 @@ Completed
 
 ## Goals
 
-- Add `prisma/seed.ts` to populate the development database with sample data.
-- Create the demo user `demo@devstash.io` with a bcrypt-hashed password.
-- Seed the seven built-in system item types with Lucide icon names and colors.
-- Seed the requested collections, items, and real reference links for development and demos.
-- Add the package script needed to run the Prisma seed flow locally.
-- Keep this feature limited to seed data only, assuming a fresh development database.
+- Create `src/lib/db/collections.ts` with dashboard collection fetching functions.
+- Replace the recent collections cards in the dashboard main area with Prisma-backed data.
+- Derive each collection card border color from the most-used item type in that collection.
+- Show the set of item-type icons actually present in each collection.
+- Update collection-related dashboard stats to use real database counts.
+- Keep this feature limited to the recent collections section and related stats only.
 
 ## Notes
 
-- Assume a fresh development database; the seed script does not need idempotent upsert behavior.
-- Hash the demo password with `bcryptjs` using 12 rounds.
-- System item types remain global rows with `isSystem: true` and `userId: null`.
-- Use compact but realistic sample content so future UI, auth, and search work has useful data to exercise.
-- Feature spec: `@context/features/seed-spec.md`.
-- Design spec: `@docs/superpowers/specs/2026-05-04-seed-data-design.md`.
+- Fetch collections directly in the server-rendered dashboard path; no client fetch layer for this feature.
+- Use the seeded demo user as the temporary dashboard data owner until auth is wired.
+- Empty collections should use a neutral accent fallback and no fabricated type icons.
+- Leave pinned items, recent items, and sidebar mock data unchanged for now.
+- Feature spec: `@context/features/dashboard-collections-spec.md`.
+- Design spec: `@docs/superpowers/specs/2026-05-04-dashboard-collections-design.md`.
 
 ## History
 
@@ -32,3 +32,4 @@ Completed
 - **Dashboard UI Phase 3** - Dashboard stats, recent collections, pinned items, and recent items completed (Completed)
 - **Database Foundation** - Prisma 7, Neon PostgreSQL config, initial schema, shared Prisma client, and first migration completed (Completed)
 - **Seed Data** - Prisma seed script, demo user, system item types, collections, and sample items completed (Completed)
+- **Dashboard Collections** - Dashboard recent collections now load from Prisma with derived type colors, icons, and collection stats (Completed)
