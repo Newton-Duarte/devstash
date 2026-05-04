@@ -1,42 +1,20 @@
 import Link from "next/link";
 import {
   ChevronDown,
-  Code2,
-  File,
   Folder,
-  FolderKanban,
-  ImageIcon,
-  Link2,
-  MessageSquareQuote,
-  NotebookPen,
   Settings,
   Star,
-  Terminal,
 } from "lucide-react";
 
+import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
 import {
-  type MockCollection,
-  mockCollections,
-  mockItemTypeCounts,
-  mockItemTypes,
+  type DashboardSidebarCollection,
+  type DashboardSidebarData,
+} from "@/lib/db/sidebar";
+import {
   mockUser,
 } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
-
-const iconMap = {
-  Code: Code2,
-  Sparkles: MessageSquareQuote,
-  Terminal,
-  StickyNote: NotebookPen,
-  File,
-  Image: ImageIcon,
-  Link: Link2,
-} as const;
-
-const favorites = mockCollections.filter((collection) => collection.isFavorite);
-const recentCollections = [...mockCollections]
-  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-  .slice(0, 3);
 
 function pluralizeType(type: string) {
   return type.endsWith("s") ? type : `${type}s`;
@@ -69,7 +47,7 @@ function SidebarCollectionLink({
   condensed,
   favorite = false,
 }: {
-  collection: MockCollection;
+  collection: DashboardSidebarCollection;
   condensed: boolean;
   favorite?: boolean;
 }) {
@@ -79,10 +57,18 @@ function SidebarCollectionLink({
         "group flex items-center gap-3 rounded-2xl px-4 py-2 text-sm text-slate-200 transition hover:bg-white/[0.04]",
         condensed && "justify-center px-0"
       )}
-      href={`/collections/${collection.id}`}
+      href={collection.href}
       prefetch={false}
     >
-      <Folder className="size-4 shrink-0 text-slate-400" />
+      {favorite ? (
+        <Folder className="size-4 shrink-0 text-slate-400" />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="size-2.5 shrink-0 rounded-full"
+          style={{ backgroundColor: collection.accentColor }}
+        />
+      )}
       <span className={cn("min-w-0 flex-1 truncate", condensed && "sr-only")}>
         {collection.name}
       </span>
@@ -104,11 +90,13 @@ function SidebarCollectionLink({
 }
 
 interface DashboardSidebarProps {
+  data: DashboardSidebarData;
   collapsed?: boolean;
   mobile?: boolean;
 }
 
 export function DashboardSidebar({
+  data,
   collapsed = false,
   mobile = false,
 }: DashboardSidebarProps) {
@@ -120,29 +108,18 @@ export function DashboardSidebar({
         <SidebarLabel condensed={condensed}>Types</SidebarLabel>
 
         <nav className="space-y-1">
-          {mockItemTypes.map((itemType) => {
-            const Icon =
-              iconMap[itemType.icon as keyof typeof iconMap] ?? FolderKanban;
-            const href = `/items/${pluralizeType(itemType.name)}`;
-            const count =
-              mockItemTypeCounts[
-                itemType.name as keyof typeof mockItemTypeCounts
-              ] ?? 0;
-
+          {data.itemTypes.map((itemType) => {
             return (
               <Link
                 className={cn(
                   "group flex items-center gap-3 rounded-2xl px-4 py-2.5 text-[0.95rem] text-slate-100 transition hover:bg-white/[0.04]",
                   condensed && "justify-center px-0"
                 )}
-                href={href}
+                href={itemType.href}
                 key={itemType.id}
                 prefetch={false}
               >
-                <Icon
-                  className="size-4 shrink-0"
-                  style={{ color: itemType.color }}
-                />
+                <DashboardItemTypeIcon className="size-4 shrink-0" type={itemType} />
 
                 <span
                   className={cn(
@@ -158,7 +135,7 @@ export function DashboardSidebar({
                     condensed && "sr-only"
                   )}
                 >
-                  {count}
+                  {itemType.count}
                 </span>
               </Link>
             );
@@ -180,7 +157,7 @@ export function DashboardSidebar({
               Favorites
             </p>
             <div className="mt-3 space-y-1">
-              {favorites.map((collection) => (
+              {data.favoriteCollections.map((collection) => (
                 <SidebarCollectionLink
                   collection={collection}
                   condensed={condensed}
@@ -201,7 +178,7 @@ export function DashboardSidebar({
               All collections
             </p>
             <div className="mt-3 space-y-1">
-              {recentCollections.map((collection) => (
+              {data.recentCollections.map((collection) => (
                 <SidebarCollectionLink
                   collection={collection}
                   condensed={condensed}
@@ -209,6 +186,16 @@ export function DashboardSidebar({
                 />
               ))}
             </div>
+            <Link
+              className={cn(
+                "mt-4 inline-flex px-4 text-sm text-slate-400 transition hover:text-white",
+                condensed && "sr-only"
+              )}
+              href={data.viewAllCollectionsHref}
+              prefetch={false}
+            >
+              View all collections
+            </Link>
           </div>
         </div>
       </div>
@@ -233,7 +220,7 @@ export function DashboardSidebar({
               {mockUser.name}
             </p>
             <p className="truncate text-xs text-muted-foreground">
-              john@example.com
+              {mockUser.email}
             </p>
           </div>
 

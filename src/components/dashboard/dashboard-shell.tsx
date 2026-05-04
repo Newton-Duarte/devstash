@@ -14,16 +14,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type DashboardCollectionsData } from "@/lib/db/collections";
 import { type DashboardItemsData } from "@/lib/db/items";
+import { type DashboardSidebarData } from "@/lib/db/sidebar";
 import { cn } from "@/lib/utils";
 
 interface DashboardShellProps {
   dashboardCollectionsData: DashboardCollectionsData;
   dashboardItemsData: DashboardItemsData;
+  dashboardSidebarData: DashboardSidebarData;
 }
 
 export function DashboardShell({
   dashboardCollectionsData,
   dashboardItemsData,
+  dashboardSidebarData,
 }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -56,7 +59,7 @@ export function DashboardShell({
         open={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}
       >
-        <DashboardSidebar mobile />
+        <DashboardSidebar data={dashboardSidebarData} mobile />
       </DashboardSidebarDrawer>
 
       <div className="flex h-full border-l border-r border-border/80">
@@ -93,7 +96,7 @@ export function DashboardShell({
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-4 py-8">
-            <DashboardSidebar collapsed={sidebarCollapsed} />
+            <DashboardSidebar collapsed={sidebarCollapsed} data={dashboardSidebarData} />
           </div>
         </aside>
 

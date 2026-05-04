@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard Items - replace the dashboard's mock pinned and recent items with database-backed Prisma data from Neon.
+Stats And Sidebar - replace the dashboard sidebar's mock types and collection lists with database-backed Prisma data while keeping the existing stats and layout intact.
 
 ## Status
 
@@ -8,20 +8,22 @@ Completed
 
 ## Goals
 
-- Create `src/lib/db/items.ts` with dashboard item fetching functions.
-- Replace the pinned and recent item cards in the dashboard main area with Prisma-backed data.
-- Derive each item card icon and border accent from the item type.
-- Keep the item type tag, existing metadata, and current layout styling intact.
-- Update item-related dashboard stats to use real database counts.
-- Hide the pinned items section when there are no pinned items.
+- Create `src/lib/db/sidebar.ts` with dashboard sidebar fetching functions.
+- Replace sidebar system item types and counts with Prisma-backed data.
+- Replace sidebar favorite and recent collection lists with Prisma-backed data.
+- Keep item type links aligned with current UI-style plural routes like `/items/snippets`.
+- Add a `View all collections` link under the sidebar collections list linking to `/collections`.
+- Keep star icons for favorite collections.
+- Show a colored circle for non-favorite collection rows based on the most-used item type in that collection.
+- Preserve the existing DB-backed dashboard stats and current dashboard layout.
 
 ## Notes
 
-- Fetch items directly in the server-rendered dashboard path; no client fetch layer for this feature.
+- Fetch sidebar data directly in the server-rendered dashboard path; no client fetch layer for this feature.
 - Use the seeded demo user as the temporary dashboard data owner until auth is wired.
-- Use a neutral accent fallback when an item type has no color or icon metadata.
-- Leave sidebar mock data unchanged for now.
-- Feature spec: `@context/features/dashboard-items-spec.md`.
+- Keep `src/lib/db/collections.ts` and `src/lib/db/items.ts` as the current stats sources.
+- Use a neutral fallback when an item type or dominant collection type lacks color or icon metadata.
+- Feature spec: `@context/features/stats-sidebar-spec.md`.
 
 ## History
 
@@ -33,3 +35,4 @@ Completed
 - **Seed Data** - Prisma seed script, demo user, system item types, collections, and sample items completed (Completed)
 - **Dashboard Collections** - Dashboard recent collections now load from Prisma with derived type colors, icons, and collection stats (Completed)
 - **Dashboard Items** - Dashboard pinned and recent items now load from Prisma with item-type accents, icons, and item stats (Completed)
+- **Stats And Sidebar** - Dashboard sidebar item types and collection lists now load from Prisma with plural item routes, recent collection color indicators, and view-all collections link (Completed)

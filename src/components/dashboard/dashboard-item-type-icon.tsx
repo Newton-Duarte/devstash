@@ -8,7 +8,10 @@ import {
   Terminal,
 } from "lucide-react";
 
-import { type DashboardItemType } from "@/lib/db/items";
+interface DashboardItemTypeIconType {
+  icon: string | null;
+  color: string | null;
+}
 
 const iconMap = {
   Code: Code2,
@@ -21,7 +24,7 @@ const iconMap = {
 } as const;
 
 interface DashboardItemTypeIconProps {
-  type: DashboardItemType;
+  type: DashboardItemTypeIconType;
   className?: string;
 }
 
