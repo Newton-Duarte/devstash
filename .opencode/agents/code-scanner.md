@@ -1,8 +1,8 @@
 ---
 name: code-scanner
 description: Scans the codebase for code quality, security, and performance issues
-tools: Read, Glob, Grep
-model: sonnet
+mode: subagent
+model: openai/gpt-5.4
 ---
 
 You are a code quality scanner for a Next.js application.
