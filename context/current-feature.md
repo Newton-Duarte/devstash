@@ -1,29 +1,23 @@
 # Current Feature
 
-Stats And Sidebar - replace the dashboard sidebar's mock types and collection lists with database-backed Prisma data while keeping the existing stats and layout intact.
+Add Pro Badge To Sidebar - add a subtle PRO badge to the Files and Images item types in the dashboard sidebar.
 
 ## Status
 
-Completed
+In Progress
 
 ## Goals
 
-- Create `src/lib/db/sidebar.ts` with dashboard sidebar fetching functions.
-- Replace sidebar system item types and counts with Prisma-backed data.
-- Replace sidebar favorite and recent collection lists with Prisma-backed data.
-- Keep item type links aligned with current UI-style plural routes like `/items/snippets`.
-- Add a `View all collections` link under the sidebar collections list linking to `/collections`.
-- Keep star icons for favorite collections.
-- Show a colored circle for non-favorite collection rows based on the most-used item type in that collection.
-- Preserve the existing DB-backed dashboard stats and current dashboard layout.
+- Add a ShadCN `Badge` to the `Files` sidebar item.
+- Add a ShadCN `Badge` to the `Images` sidebar item.
+- Render the badge text as `PRO` in uppercase.
+- Keep the badge styling clean and subtle within the existing sidebar layout.
 
 ## Notes
 
-- Fetch sidebar data directly in the server-rendered dashboard path; no client fetch layer for this feature.
-- Use the seeded demo user as the temporary dashboard data owner until auth is wired.
-- Keep `src/lib/db/collections.ts` and `src/lib/db/items.ts` as the current stats sources.
-- Use a neutral fallback when an item type or dominant collection type lacks color or icon metadata.
-- Feature spec: `@context/features/stats-sidebar-spec.md`.
+- Limit changes to the dashboard sidebar item-type list.
+- Preserve the current routes, counts, icons, and overall sidebar structure.
+- Feature spec: `@context/features/add-pro-badge-sidebar.md`.
 
 ## History
 

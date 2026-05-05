@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
+import { Badge } from "@/components/ui/badge";
 import {
   type DashboardSidebarCollection,
   type DashboardSidebarData,
@@ -18,6 +19,10 @@ import { cn } from "@/lib/utils";
 
 function pluralizeType(type: string) {
   return type.endsWith("s") ? type : `${type}s`;
+}
+
+function isProType(type: string) {
+  return type === "file" || type === "image";
 }
 
 function SidebarLabel({
@@ -129,6 +134,17 @@ export function DashboardSidebar({
                 >
                   {pluralizeType(itemType.name)}
                 </span>
+                {isProType(itemType.name) ? (
+                  <Badge
+                    className={cn(
+                      "border-white/10 bg-white/[0.06] px-1.5 py-0 text-[0.6rem] font-semibold text-slate-300",
+                      condensed && "hidden"
+                    )}
+                    variant="secondary"
+                  >
+                    PRO
+                  </Badge>
+                ) : null}
                 <span
                   className={cn(
                     "text-base text-muted-foreground",
