@@ -1,4 +1,5 @@
 ---
+name: feature
 description: Manage current feature workflow - start, review, explain or complete
 argument-hint: load|start|review|explain|complete
 ---
