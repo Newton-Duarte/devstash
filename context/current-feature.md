@@ -1,23 +1,17 @@
 # Current Feature
 
-Add Pro Badge To Sidebar - add a subtle PRO badge to the Files and Images item types in the dashboard sidebar.
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add a ShadCN `Badge` to the `Files` sidebar item.
-- Add a ShadCN `Badge` to the `Images` sidebar item.
-- Render the badge text as `PRO` in uppercase.
-- Keep the badge styling clean and subtle within the existing sidebar layout.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Limit changes to the dashboard sidebar item-type list.
-- Preserve the current routes, counts, icons, and overall sidebar structure.
-- Feature spec: `@context/features/add-pro-badge-sidebar.md`.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -30,3 +24,4 @@ In Progress
 - **Dashboard Collections** - Dashboard recent collections now load from Prisma with derived type colors, icons, and collection stats (Completed)
 - **Dashboard Items** - Dashboard pinned and recent items now load from Prisma with item-type accents, icons, and item stats (Completed)
 - **Stats And Sidebar** - Dashboard sidebar item types and collection lists now load from Prisma with plural item routes, recent collection color indicators, and view-all collections link (Completed)
+- **Add Pro Badge To Sidebar** - Added subtle uppercase PRO badges to the Files and Images sidebar item types using a reusable ShadCN-style badge component (Completed)
