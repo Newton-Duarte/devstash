@@ -5,6 +5,9 @@ import GitHub from "next-auth/providers/github";
 import { credentialsFields } from "@/lib/auth/credentials";
 
 export default {
+  pages: {
+    signIn: "/sign-in",
+  },
   providers: [
     GitHub,
     Credentials({

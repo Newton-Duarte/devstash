@@ -3,7 +3,6 @@ import "server-only";
 import { type Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-const DEMO_USER_EMAIL = "demo@devstash.io";
 const NEUTRAL_COLLECTION_ACCENT = "#334155";
 const RECENT_COLLECTION_LIMIT = 3;
 const TYPE_ROUTE_SEGMENTS: Record<string, string> = {
@@ -36,6 +35,11 @@ export interface DashboardSidebarCollection {
 }
 
 export interface DashboardSidebarData {
+  user: {
+    name: string | null;
+    email: string;
+    image: string | null;
+  } | null;
   itemTypes: DashboardSidebarItemType[];
   favoriteCollections: DashboardSidebarCollection[];
   recentCollections: DashboardSidebarCollection[];
@@ -111,18 +115,22 @@ function mapSidebarCollection(
   };
 }
 
-export async function getDashboardSidebarData(): Promise<DashboardSidebarData> {
+export async function getDashboardSidebarData(userId: string): Promise<DashboardSidebarData> {
   const user = await prisma.user.findUnique({
     where: {
-      email: DEMO_USER_EMAIL,
+      id: userId,
     },
     select: {
       id: true,
+      name: true,
+      email: true,
+      image: true,
     },
   });
 
   if (!user) {
     return {
+      user: null,
       itemTypes: [],
       favoriteCollections: [],
       recentCollections: [],
@@ -211,6 +219,11 @@ export async function getDashboardSidebarData(): Promise<DashboardSidebarData> {
   );
 
   return {
+    user: {
+      name: user.name,
+      email: user.email,
+      image: user.image,
+    },
     itemTypes: itemTypes
       .map((itemType) => ({
         id: itemType.id,
