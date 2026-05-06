@@ -29,6 +29,7 @@ const INITIAL_RESEND_ACTION_STATE: ResendVerificationActionState = {
 interface SignInFormProps {
   callbackUrl: string;
   authError: string | null;
+  emailVerificationEnabled: boolean;
   verificationEmail: string | null;
   verificationState: string | null;
 }
@@ -79,9 +80,21 @@ function ResendVerificationButton() {
 }
 
 function getVerificationMessage(
+  emailVerificationEnabled: boolean,
   verificationState: string | null,
   verificationEmail: string | null
 ) {
+  if (!emailVerificationEnabled && verificationState !== "registered") {
+    return null;
+  }
+
+  if (verificationState === "registered") {
+    return {
+      tone: "success" as const,
+      text: "Account created. You can sign in now.",
+    };
+  }
+
   if (verificationState === "sent" && verificationEmail) {
     return {
       tone: "success" as const,
@@ -116,6 +129,7 @@ function getVerificationMessage(
 export function SignInForm({
   callbackUrl,
   authError,
+  emailVerificationEnabled,
   verificationEmail,
   verificationState,
 }: SignInFormProps) {
@@ -127,15 +141,20 @@ export function SignInForm({
     resendVerificationEmailAction,
     INITIAL_RESEND_ACTION_STATE
   );
-  const verificationMessage = getVerificationMessage(verificationState, verificationEmail);
+  const verificationMessage = getVerificationMessage(
+    emailVerificationEnabled,
+    verificationState,
+    verificationEmail
+  );
   const error = state.error ?? authError;
   const resendEmail = state.verificationEmail ?? verificationEmail;
   const shouldShowResend =
-    state.requiresVerification ||
-    verificationState === "sent" ||
-    verificationState === "expired" ||
-    verificationState === "invalid" ||
-    (authError === "Verify your email before signing in." && Boolean(verificationEmail));
+    emailVerificationEnabled &&
+    (state.requiresVerification ||
+      verificationState === "sent" ||
+      verificationState === "expired" ||
+      verificationState === "invalid" ||
+      (authError === "Verify your email before signing in." && Boolean(verificationEmail)));
 
   return (
     <>

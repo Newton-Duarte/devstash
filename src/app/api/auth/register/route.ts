@@ -8,8 +8,20 @@ import {
   EmailDeliveryError,
   sendVerificationEmail,
 } from "@/lib/auth/email-verification";
+import { isEmailVerificationEnabled } from "@/lib/auth/email-verification-config";
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/auth/credentials";
+
+function getOriginFromRequest(request: NextRequest) {
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+
+  if (forwardedHost) {
+    return `${forwardedProto ?? "https"}://${forwardedHost}`;
+  }
+
+  return request.nextUrl.origin;
+}
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -32,6 +44,7 @@ export async function POST(request: NextRequest) {
   }
 
   const email = parsedBody.data.email.toLowerCase();
+  const emailVerificationEnabled = isEmailVerificationEnabled();
   const existingUser = await prisma.user.findUnique({
     where: {
       email,
@@ -53,6 +66,7 @@ export async function POST(request: NextRequest) {
       data: {
         name: parsedBody.data.name,
         email,
+        emailVerified: emailVerificationEnabled ? undefined : new Date(),
         passwordHash,
       },
       select: {
@@ -63,16 +77,18 @@ export async function POST(request: NextRequest) {
 
     createdUserEmail = createdUser.email;
 
-    const { token, tokenHash } = await createEmailVerificationToken(createdUser.email);
+    if (emailVerificationEnabled) {
+      const { token, tokenHash } = await createEmailVerificationToken(createdUser.email);
 
-    await sendVerificationEmail({
-      email: createdUser.email,
-      name: createdUser.name,
-      token,
-      origin: request.nextUrl.origin,
-    });
+      await deleteOtherEmailVerificationTokens(createdUser.email, tokenHash);
 
-    await deleteOtherEmailVerificationTokens(createdUser.email, tokenHash);
+      await sendVerificationEmail({
+        email: createdUser.email,
+        name: createdUser.name,
+        token,
+        origin: getOriginFromRequest(request),
+      });
+    }
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -116,7 +132,13 @@ export async function POST(request: NextRequest) {
   }
 
   return Response.json(
-    { success: true, message: "Registration successful. Verify your email to continue." },
+    {
+      success: true,
+      requiresEmailVerification: emailVerificationEnabled,
+      message: emailVerificationEnabled
+        ? "Registration successful. Verify your email to continue."
+        : "Registration successful. You can sign in now.",
+    },
     { status: 201 },
   );
 }

@@ -1,16 +1,23 @@
 # Current Feature
 
+Add Configurable Email Verification Toggle
+
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add a simple application-level flag to enable or disable email verification.
+- Allow registration without email verification when the flag is disabled.
+- Preserve the current verification flow when the flag is enabled.
+- Keep the toggle easy to configure for local and deployed environments.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Current registration uses Resend-backed email verification.
+- The current Resend setup does not have a linked domain, so only the Resend email can complete registration.
+- An environment variable is an acceptable implementation option, but the final approach can be adjusted if a cleaner app-level configuration pattern fits better.
 
 ## History
 
