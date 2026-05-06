@@ -1,17 +1,30 @@
 # Current Feature
 
+Auth Setup - NextAuth + GitHub Provider
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Install `next-auth@beta` and `@auth/prisma-adapter`
+- Set up the split auth config pattern for edge compatibility
+- Add the GitHub OAuth provider
+- Protect `/dashboard/*` routes using Next.js 16 proxy
+- Redirect unauthenticated users to the default NextAuth sign-in page
+- Verify `/dashboard` redirects to sign-in and returns to `/dashboard` after GitHub auth
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Source spec: `context/features/auth-phase-1-spec.md`
+- Files expected: `src/auth.config.ts`, `src/auth.ts`, `src/app/api/auth/[...nextauth]/route.ts`, `src/proxy.ts`, and `src/types/next-auth.d.ts`
+- Use Context7 to verify the latest NextAuth v5 config and conventions before implementation
+- Use `next-auth@beta`, not `@latest`
+- Keep the proxy file at `src/proxy.ts` and use `export const proxy = auth(...)`
+- Use JWT session strategy with the split config pattern
+- Do not configure a custom `pages.signIn`; use the default NextAuth sign-in page
+- Required environment variables: `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`
 
 ## History
 
