@@ -1,24 +1,16 @@
-# Auth UI - Sign In, Register & Sign Out
+# Current Feature
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Replace the default Auth.js pages with custom `/sign-in` and `/register` pages.
-- Add sign-in UI with email/password inputs, GitHub sign-in, validation, error display, and a link to register.
-- Add register UI with name, email, password, and confirm password fields that submit to `/api/auth/register` and redirect to `/sign-in` on success.
-- Update the bottom of the dashboard sidebar to show the signed-in user's avatar, name, and sign-out access.
-- Support avatar images from GitHub with initials fallback for users without an image.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Sidebar user avatar should use the user's `image` when available.
-- When no `image` exists, render initials derived from the user's name.
-- Create a reusable avatar component that handles both image and initials states.
-- Avatar interaction needs to support both navigation to `/profile` and access to a sign-out action.
-- Verify the full flows for custom sign-in, GitHub sign-in, credentials sign-in, register success redirect, avatar display, and sign-out redirect.
+<!-- Add feature notes here -->
 
 ## History
 
