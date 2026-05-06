@@ -1,23 +1,16 @@
-# Current Feature: Setup Email Verification On Register
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Send a verification email after a user registers with email and password.
-- Require users to verify their email by clicking a link before the account is treated as verified.
-- Use Resend for transactional email delivery.
-- Keep the existing GitHub OAuth and credentials auth flows working.
-- Store and validate verification state securely in the existing auth and database setup.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Users need to click a verification link sent to their email after registering.
-- The app is using Resend for email delivery.
-- `RESEND_API_KEY` already exists in the local `.env` file.
-- Follow the existing NextAuth/Auth.js, Prisma, and Server Action patterns already established in the project.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -34,3 +27,4 @@ In Progress
 - **Auth Setup - NextAuth + GitHub Provider** - Added Auth.js v5 split config, Prisma-backed sessions, GitHub sign-in, and `/dashboard` proxy protection (Completed)
 - **Auth Credentials - Email/Password Provider** - Added email/password registration, bcrypt-validated credentials sign-in, and Auth.js Credentials support while preserving GitHub OAuth (Completed)
 - **Auth UI - Sign In, Register & Sign Out** - Replaced the default Auth.js pages with custom sign-in and register flows, added a reusable authenticated avatar menu, and wired dashboard/profile auth UI to the real session user (Completed)
+- **Setup Email Verification On Register** - Added Resend-backed email verification, link-based verification and resend flows, and blocked credentials sign-in until email verification is complete while preserving GitHub OAuth (Completed)
