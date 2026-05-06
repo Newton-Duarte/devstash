@@ -1,30 +1,16 @@
 # Current Feature
 
-Auth Setup - NextAuth + GitHub Provider
-
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Install `next-auth@beta` and `@auth/prisma-adapter`
-- Set up the split auth config pattern for edge compatibility
-- Add the GitHub OAuth provider
-- Protect `/dashboard/*` routes using Next.js 16 proxy
-- Redirect unauthenticated users to the default NextAuth sign-in page
-- Verify `/dashboard` redirects to sign-in and returns to `/dashboard` after GitHub auth
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Source spec: `context/features/auth-phase-1-spec.md`
-- Files expected: `src/auth.config.ts`, `src/auth.ts`, `src/app/api/auth/[...nextauth]/route.ts`, `src/proxy.ts`, and `src/types/next-auth.d.ts`
-- Use Context7 to verify the latest NextAuth v5 config and conventions before implementation
-- Use `next-auth@beta`, not `@latest`
-- Keep the proxy file at `src/proxy.ts` and use `export const proxy = auth(...)`
-- Use JWT session strategy with the split config pattern
-- Do not configure a custom `pages.signIn`; use the default NextAuth sign-in page
-- Required environment variables: `AUTH_SECRET`, `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`
+<!-- Add feature notes here -->
 
 ## History
 
@@ -38,3 +24,4 @@ In Progress
 - **Dashboard Items** - Dashboard pinned and recent items now load from Prisma with item-type accents, icons, and item stats (Completed)
 - **Stats And Sidebar** - Dashboard sidebar item types and collection lists now load from Prisma with plural item routes, recent collection color indicators, and view-all collections link (Completed)
 - **Add Pro Badge To Sidebar** - Added subtle uppercase PRO badges to the Files and Images sidebar item types using a reusable ShadCN-style badge component (Completed)
+- **Auth Setup - NextAuth + GitHub Provider** - Added Auth.js v5 split config, Prisma-backed sessions, GitHub sign-in, and `/dashboard` proxy protection (Completed)
