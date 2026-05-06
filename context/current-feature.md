@@ -1,23 +1,16 @@
 # Current Feature
 
-Add Configurable Email Verification Toggle
-
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add a simple application-level flag to enable or disable email verification.
-- Allow registration without email verification when the flag is disabled.
-- Preserve the current verification flow when the flag is enabled.
-- Keep the toggle easy to configure for local and deployed environments.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Current registration uses Resend-backed email verification.
-- The current Resend setup does not have a linked domain, so only the Resend email can complete registration.
-- An environment variable is an acceptable implementation option, but the final approach can be adjusted if a cleaner app-level configuration pattern fits better.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -35,3 +28,4 @@ In Progress
 - **Auth Credentials - Email/Password Provider** - Added email/password registration, bcrypt-validated credentials sign-in, and Auth.js Credentials support while preserving GitHub OAuth (Completed)
 - **Auth UI - Sign In, Register & Sign Out** - Replaced the default Auth.js pages with custom sign-in and register flows, added a reusable authenticated avatar menu, and wired dashboard/profile auth UI to the real session user (Completed)
 - **Setup Email Verification On Register** - Added Resend-backed email verification, link-based verification and resend flows, and blocked credentials sign-in until email verification is complete while preserving GitHub OAuth (Completed)
+- **Add Configurable Email Verification Toggle** - Added an environment-driven email verification toggle so credentials registration/sign-in can bypass verification when disabled while preserving the Resend verification flow when enabled (Completed)
