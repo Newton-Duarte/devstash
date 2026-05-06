@@ -1,10 +1,17 @@
 import { hash } from "bcryptjs";
+import type { NextRequest } from "next/server";
 
 import { Prisma } from "@/generated/prisma/client";
+import {
+  createEmailVerificationToken,
+  deleteOtherEmailVerificationTokens,
+  EmailDeliveryError,
+  sendVerificationEmail,
+} from "@/lib/auth/email-verification";
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/auth/credentials";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   let body: unknown;
 
   try {
@@ -39,15 +46,33 @@ export async function POST(request: Request) {
   }
 
   const passwordHash = await hash(parsedBody.data.password, 12);
+  let createdUserEmail: string | null = null;
 
   try {
-    await prisma.user.create({
+    const createdUser = await prisma.user.create({
       data: {
         name: parsedBody.data.name,
         email,
         passwordHash,
       },
+      select: {
+        email: true,
+        name: true,
+      },
     });
+
+    createdUserEmail = createdUser.email;
+
+    const { token, tokenHash } = await createEmailVerificationToken(createdUser.email);
+
+    await sendVerificationEmail({
+      email: createdUser.email,
+      name: createdUser.name,
+      token,
+      origin: request.nextUrl.origin,
+    });
+
+    await deleteOtherEmailVerificationTokens(createdUser.email, tokenHash);
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -59,11 +84,39 @@ export async function POST(request: Request) {
       );
     }
 
-    throw error;
+    if (createdUserEmail) {
+      await prisma.$transaction([
+        prisma.user.deleteMany({
+          where: {
+            email: createdUserEmail,
+            emailVerified: null,
+          },
+        }),
+        prisma.verificationToken.deleteMany({
+          where: {
+            identifier: createdUserEmail,
+          },
+        }),
+      ]);
+    }
+
+    const errorMessage =
+      error instanceof EmailDeliveryError
+        ? "Unable to send verification email right now. Please try again later."
+        : "Unable to create your account right now.";
+
+    if (error instanceof EmailDeliveryError) {
+      console.error("Failed to send verification email during registration", {
+        email,
+        details: error.details,
+      });
+    }
+
+    return Response.json({ error: errorMessage }, { status: 500 });
   }
 
   return Response.json(
-    { success: true, message: "Registration successful." },
+    { success: true, message: "Registration successful. Verify your email to continue." },
     { status: 201 },
   );
 }

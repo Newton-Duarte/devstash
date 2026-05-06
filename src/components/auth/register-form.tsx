@@ -61,7 +61,7 @@ export function RegisterForm({ callbackUrl }: RegisterFormProps) {
       }
 
       const params = new URLSearchParams({
-        registered: "1",
+        verification: "sent",
         email: parsedValues.data.email,
       });
 

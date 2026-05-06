@@ -6,9 +6,17 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
     "This email is already linked to a different sign-in method.",
 };
 
-export function getAuthErrorMessage(error: string | null) {
+const CREDENTIALS_ERROR_CODES: Record<string, string> = {
+  email_not_verified: "Verify your email before signing in.",
+};
+
+export function getAuthErrorMessage(error: string | null, code: string | null = null) {
   if (!error) {
     return null;
+  }
+
+  if (error === "CredentialsSignin" && code) {
+    return CREDENTIALS_ERROR_CODES[code] ?? AUTH_ERROR_MESSAGES[error];
   }
 
   return AUTH_ERROR_MESSAGES[error] ?? "Unable to sign in right now.";
