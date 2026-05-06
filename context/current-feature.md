@@ -1,19 +1,38 @@
 # Current Feature
 
+Auth Credentials - Email/Password Provider
+
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add Credentials provider for email/password authentication with registration.
+- Use `bcryptjs` for password hashing.
+- Add a `password` field to the `User` model via migration if needed.
+- Update `auth.config.ts` with a Credentials provider placeholder.
+- Update `auth.ts` to override Credentials with bcrypt-based validation.
+- Create `POST /api/auth/register` for registration.
+- Validate `name`, `email`, `password`, and `confirmPassword` in registration.
+- Prevent duplicate user registration and return success/error responses.
+- Preserve existing GitHub OAuth sign-in flow.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Registration route: `POST /api/auth/register`.
+- Registration accepts `name`, `email`, `password`, and `confirmPassword`.
+- `auth.config.ts` should keep the split-config placeholder `authorize: () => null`.
+- `auth.ts` should provide the real Credentials authorization logic using bcrypt validation.
+- Verification flow:
+- Test registration with `curl`.
+- Test sign-in at `/api/auth/signin` using email/password.
+- Verify redirect to `/dashboard` after sign-in.
+- Verify GitHub OAuth still works.
 
 ## History
 
+- **Auth Credentials - Email/Password Provider** - Added email/password registration, bcrypt-validated credentials sign-in, and Auth.js Credentials support while preserving GitHub OAuth (Completed)
 - **Initial Setup** - Next.js 16, Tailwind CSS v4, TypeScript configured (Completed)
 - **Dashboard UI Phase 1** - Dashboard shell, route, dark mode, ShadCN setup, and placeholders completed (Completed)
 - **Dashboard UI Phase 2** - Responsive sidebar, mobile drawer, mock-data navigation, collections, and user area completed (Completed)
