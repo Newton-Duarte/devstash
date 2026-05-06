@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SignInForm } from "@/components/auth/sign-in-form";
 import { getAuthErrorMessage } from "@/lib/auth/error-messages";
+import { isEmailVerificationEnabled } from "@/lib/auth/email-verification-config";
 
 interface SignInPageProps {
   searchParams: Promise<{
@@ -17,6 +18,7 @@ interface SignInPageProps {
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const session = await auth();
+  const emailVerificationEnabled = isEmailVerificationEnabled();
 
   if (session?.user?.id) {
     redirect("/dashboard");
@@ -37,7 +39,8 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       <SignInForm
         authError={getAuthErrorMessage(params.error ?? null, params.code ?? null)}
         callbackUrl={params.callbackUrl ?? "/dashboard"}
-        verificationEmail={verificationEmail}
+        emailVerificationEnabled={emailVerificationEnabled}
+        verificationEmail={emailVerificationEnabled ? verificationEmail : null}
         verificationState={params.verification ?? null}
       />
     </AuthShell>

@@ -53,17 +53,24 @@ export function RegisterForm({ callbackUrl }: RegisterFormProps) {
         },
         body: JSON.stringify(parsedValues.data),
       });
-      const result = (await response.json()) as { error?: string };
+      const result = (await response.json()) as {
+        error?: string;
+        requiresEmailVerification?: boolean;
+      };
 
       if (!response.ok) {
         setError(result.error ?? "Unable to create your account.");
         return;
       }
 
-      const params = new URLSearchParams({
-        verification: "sent",
-        email: parsedValues.data.email,
-      });
+      const params = new URLSearchParams();
+
+      if (result.requiresEmailVerification) {
+        params.set("verification", "sent");
+        params.set("email", parsedValues.data.email);
+      } else {
+        params.set("verification", "registered");
+      }
 
       if (callbackUrl) {
         params.set("callbackUrl", callbackUrl);
