@@ -23,3 +23,10 @@ Read the following to get the full context of the project:
 - **Build**: `pnpm build`
 - **Production server**: `pnpm start`
 - **Lint**: `pnpm lint`
+
+## Neon Database
+
+- Project: `devstash-dev` (ID: `br-wandering-field-amty9mko`)
+- **Always use the development branch** (`ep-summer-cloud-am7yb93j`) for all database operations
+- Production branch (`br-rough-star-amyshuh7`) is OFF LIMITS unless explicitly requested
+- When running queries, migrations, or any database operations, always pass the development branch ID
