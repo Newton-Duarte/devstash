@@ -52,7 +52,7 @@ Items can belong to one of the following built‑in types:
 - Command
 - File
 - Image
-- URL
+- Link
 
 Custom types allowed for Pro users.
 
@@ -109,7 +109,7 @@ Full‑text search across:
 model User {
   id                   String   @id @default(cuid())
   email                String   @unique
-  password             String?
+  passwordHash         String?
   isPro                Boolean  @default(false)
   stripeCustomerId     String?
   stripeSubscriptionId String?
