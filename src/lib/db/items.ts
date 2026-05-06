@@ -3,7 +3,6 @@ import "server-only";
 import { type Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-const DEMO_USER_EMAIL = "demo@devstash.io";
 const PINNED_ITEMS_LIMIT = 6;
 const RECENT_ITEMS_LIMIT = 10;
 
@@ -82,31 +81,11 @@ function mapDashboardItem(item: ItemWithRelations): DashboardItem {
   };
 }
 
-export async function getDashboardItemsData(): Promise<DashboardItemsData> {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: DEMO_USER_EMAIL,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!user) {
-    return {
-      pinnedItems: [],
-      recentItems: [],
-      stats: {
-        totalItems: 0,
-        favoriteItems: 0,
-      },
-    };
-  }
-
+export async function getDashboardItemsData(userId: string): Promise<DashboardItemsData> {
   const [pinnedItems, recentItems, totalItems, favoriteItems] = await Promise.all([
     prisma.item.findMany({
       where: {
-        userId: user.id,
+        userId,
         isPinned: true,
       },
       orderBy: {
@@ -134,7 +113,7 @@ export async function getDashboardItemsData(): Promise<DashboardItemsData> {
     }),
     prisma.item.findMany({
       where: {
-        userId: user.id,
+        userId,
       },
       orderBy: {
         updatedAt: "desc",
@@ -161,12 +140,12 @@ export async function getDashboardItemsData(): Promise<DashboardItemsData> {
     }),
     prisma.item.count({
       where: {
-        userId: user.id,
+        userId,
       },
     }),
     prisma.item.count({
       where: {
-        userId: user.id,
+        userId,
         isFavorite: true,
       },
     }),

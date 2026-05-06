@@ -3,7 +3,6 @@ import "server-only";
 import { type Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 
-const DEMO_USER_EMAIL = "demo@devstash.io";
 const NEUTRAL_COLLECTION_ACCENT = "#334155";
 const RECENT_COLLECTION_LIMIT = 6;
 
@@ -114,30 +113,13 @@ function mapDashboardCollection(collection: CollectionWithItems): DashboardColle
   };
 }
 
-export async function getDashboardCollectionsData(): Promise<DashboardCollectionsData> {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: DEMO_USER_EMAIL,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!user) {
-    return {
-      collections: [],
-      stats: {
-        totalCollections: 0,
-        favoriteCollections: 0,
-      },
-    };
-  }
-
+export async function getDashboardCollectionsData(
+  userId: string
+): Promise<DashboardCollectionsData> {
   const [collections, totalCollections, favoriteCollections] = await Promise.all([
     prisma.collection.findMany({
       where: {
-        userId: user.id,
+        userId,
       },
       orderBy: {
         updatedAt: "desc",
@@ -164,12 +146,12 @@ export async function getDashboardCollectionsData(): Promise<DashboardCollection
     }),
     prisma.collection.count({
       where: {
-        userId: user.id,
+        userId,
       },
     }),
     prisma.collection.count({
       where: {
-        userId: user.id,
+        userId,
         isFavorite: true,
       },
     }),

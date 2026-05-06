@@ -1,20 +1,20 @@
 import Link from "next/link";
 import {
   ChevronDown,
+  ChevronUp,
   Folder,
-  Settings,
+  LogOut,
   Star,
 } from "lucide-react";
 
+import { signOutAction } from "@/actions/auth";
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   type DashboardSidebarCollection,
   type DashboardSidebarData,
 } from "@/lib/db/sidebar";
-import {
-  mockUser,
-} from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 function pluralizeType(type: string) {
@@ -92,6 +92,14 @@ function SidebarCollectionLink({
       ) : null}
     </Link>
   );
+}
+
+function getUserDisplayName(user: DashboardSidebarData["user"]) {
+  if (!user) {
+    return "Account";
+  }
+
+  return user.name?.trim() || user.email;
 }
 
 interface DashboardSidebarProps {
@@ -217,40 +225,61 @@ export function DashboardSidebar({
       </div>
 
       <div className="mt-auto border-t border-border pt-4">
-        <div
-          className={cn(
-            "flex items-center gap-3 px-4 py-3",
-            condensed && "justify-center px-0"
-          )}
-        >
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#e5e7eb] text-sm font-semibold text-slate-900">
-            {mockUser.name
-              .split(" ")
-              .map((part) => part[0])
-              .join("")
-              .slice(0, 2)}
-          </div>
+        {data.user ? (
+          <details className="relative">
+            <summary
+              aria-label="Open account menu"
+              className={cn(
+                "flex list-none items-center gap-3 rounded-2xl px-4 py-3 transition hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                condensed && "justify-center px-0"
+              )}
+            >
+              <UserAvatar
+                email={data.user.email}
+                image={data.user.image}
+                name={data.user.name}
+                size="md"
+              />
 
-          <div className={cn("min-w-0 flex-1", condensed && "sr-only")}>
-            <p className="truncate text-[1rem] font-medium text-white">
-              {mockUser.name}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {mockUser.email}
-            </p>
-          </div>
+              <div className={cn("min-w-0 flex-1", condensed && "sr-only")}>
+                <p className="truncate text-[1rem] font-medium text-white">
+                  {getUserDisplayName(data.user)}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {data.user.email}
+                </p>
+              </div>
 
-          <button
-            aria-label="Settings"
-            className={cn(
-              "text-muted-foreground transition hover:text-white",
-              condensed && "hidden"
-            )}
-            type="button"
-          >
-            <Settings className="size-4" />
-          </button>
-        </div>
+              <span
+                className={cn(
+                  "text-muted-foreground transition hover:text-white",
+                  condensed && "hidden"
+                )}
+              >
+                <ChevronUp className="size-4" />
+              </span>
+            </summary>
+
+            <div className="absolute bottom-full right-0 z-10 mb-3 w-44 rounded-2xl border border-border/80 bg-[#111216] p-2 shadow-2xl shadow-black/30">
+                <Link
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.05]"
+                  href="/profile"
+                  prefetch={false}
+                >
+                  Profile
+                </Link>
+                <form action={signOutAction}>
+                  <button
+                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/[0.05]"
+                    type="submit"
+                  >
+                    <LogOut className="size-4" />
+                    Sign out
+                  </button>
+                </form>
+            </div>
+          </details>
+        ) : null}
       </div>
     </div>
   );
