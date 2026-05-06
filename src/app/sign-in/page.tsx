@@ -8,9 +8,10 @@ import { getAuthErrorMessage } from "@/lib/auth/error-messages";
 interface SignInPageProps {
   searchParams: Promise<{
     callbackUrl?: string;
+    code?: string;
     email?: string;
     error?: string;
-    registered?: string;
+    verification?: string;
   }>;
 }
 
@@ -22,7 +23,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
   }
 
   const params = await searchParams;
-  const registeredEmail = params.registered === "1" ? params.email ?? null : null;
+  const verificationEmail = params.email ?? null;
 
   return (
     <AuthShell
@@ -34,9 +35,10 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
       title="Welcome back"
     >
       <SignInForm
-        authError={getAuthErrorMessage(params.error ?? null)}
+        authError={getAuthErrorMessage(params.error ?? null, params.code ?? null)}
         callbackUrl={params.callbackUrl ?? "/dashboard"}
-        registeredEmail={registeredEmail}
+        verificationEmail={verificationEmail}
+        verificationState={params.verification ?? null}
       />
     </AuthShell>
   );
