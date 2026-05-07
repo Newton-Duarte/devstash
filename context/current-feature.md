@@ -1,24 +1,16 @@
 # Current Feature
 
-Create Forgot Password Flow
-
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add a forgot password link from the sign-in flow.
-- Allow users to request a password reset email.
-- Allow users to set a new password with a reset token.
-- Reuse the existing `VerificationToken` model for password reset tokens.
-- Keep the flow consistent with the existing auth UI and token-based email patterns.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Use the existing `VerificationToken` model instead of adding a new token table.
-- The feature should cover both the request-reset and complete-reset steps.
-- The experience should fit into the current credentials auth and Resend-based email setup.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -37,3 +29,4 @@ In Progress
 - **Auth UI - Sign In, Register & Sign Out** - Replaced the default Auth.js pages with custom sign-in and register flows, added a reusable authenticated avatar menu, and wired dashboard/profile auth UI to the real session user (Completed)
 - **Setup Email Verification On Register** - Added Resend-backed email verification, link-based verification and resend flows, and blocked credentials sign-in until email verification is complete while preserving GitHub OAuth (Completed)
 - **Add Configurable Email Verification Toggle** - Added an environment-driven email verification toggle so credentials registration/sign-in can bypass verification when disabled while preserving the Resend verification flow when enabled (Completed)
+- **Create Forgot Password Flow** - Added forgot-password and reset-password flows backed by `VerificationToken`, reset email delivery, password reset completion, and auth hardening for trusted email origins and session invalidation after reset (Completed)
