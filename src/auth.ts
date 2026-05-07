@@ -10,9 +10,14 @@ import authConfig from "@/auth.config";
 import { credentialsFields, credentialsSignInSchema } from "@/lib/auth/credentials";
 import { isEmailVerificationEnabled } from "@/lib/auth/email-verification-config";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 class EmailNotVerifiedError extends CredentialsSignin {
   code = "email_not_verified";
+}
+
+class RateLimitedError extends CredentialsSignin {
+  code = "rate_limited";
 }
 
 function invalidateToken(token: JWT) {
@@ -81,7 +86,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     GitHub,
     Credentials({
       credentials: credentialsFields,
-      authorize: async (credentials) => {
+      authorize: async (credentials, request) => {
         const parsedCredentials = credentialsSignInSchema.safeParse(credentials);
 
         if (!parsedCredentials.success) {
@@ -89,6 +94,14 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
 
         const email = parsedCredentials.data.email.toLowerCase();
+        const rateLimit = await checkRateLimit("credentialsSignIn", request.headers, {
+          identifier: email,
+        });
+
+        if (!rateLimit.success) {
+          throw new RateLimitedError();
+        }
+
         const user = await prisma.user.findUnique({
           where: {
             email,

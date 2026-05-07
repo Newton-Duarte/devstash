@@ -11,8 +11,23 @@ import {
 import { isEmailVerificationEnabled } from "@/lib/auth/email-verification-config";
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/auth/credentials";
+import { checkRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const rateLimit = await checkRateLimit("register", request.headers);
+
+  if (!rateLimit.success) {
+    return Response.json(
+      { error: getRateLimitErrorMessage(rateLimit.retryAfter) },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimit.retryAfter),
+        },
+      }
+    );
+  }
+
   let body: unknown;
 
   try {

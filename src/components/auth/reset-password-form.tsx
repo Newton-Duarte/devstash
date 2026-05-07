@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import { toast } from "sonner";
 
 import { resetPasswordAction, type ResetPasswordActionState } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,12 @@ export function ResetPasswordForm({ callbackUrl, token, tokenState }: ResetPassw
     INITIAL_RESET_PASSWORD_ACTION_STATE
   );
   const tokenMessage = getTokenMessage(tokenState);
+
+  useEffect(() => {
+    if (state.error) {
+      toast.error(state.error);
+    }
+  }, [state.error]);
 
   return (
     <div className="space-y-4">

@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import { toast } from "sonner";
 
 import {
   requestPasswordResetAction,
@@ -38,6 +39,12 @@ export function ForgotPasswordForm({ callbackUrl }: ForgotPasswordFormProps) {
     requestPasswordResetAction,
     INITIAL_FORGOT_PASSWORD_ACTION_STATE
   );
+
+  useEffect(() => {
+    if (state.error) {
+      toast.error(state.error);
+    }
+  }, [state.error]);
 
   return (
     <form action={formAction} className="space-y-4">
