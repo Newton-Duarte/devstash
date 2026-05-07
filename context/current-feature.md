@@ -1,16 +1,27 @@
 # Current Feature
 
+Profile Page
+
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Create the profile page at `/profile` route.
+- Display user info: email, name, avatar (GitHub or initials), and account creation date.
+- Show usage stats: total items, total collections, and a breakdown by item type.
+- Add account actions: change password for email/password users only, and delete account with confirmation.
+- Follow existing codebase patterns for data fetching and components.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Source spec: `context/features/profile-spec.md`
+- Avatar logic should use the GitHub avatar from OAuth when available, otherwise generate initials from name or email.
+- The change password action should only appear for users who signed up with email/password.
+- Delete account needs a confirmation dialog to prevent accidental deletion.
+- Item type breakdown should include snippets, prompts, notes, commands, links, files, and images.
+- The route must be protected and require authentication.
 
 ## History
 

@@ -1,11 +1,11 @@
 "use server";
 
-import { hash } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 import { AuthError } from "next-auth";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { signIn, signOut } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import {
   createEmailVerificationToken,
   deleteOtherEmailVerificationTokens,
@@ -13,6 +13,7 @@ import {
   sendVerificationEmail,
 } from "@/lib/auth/email-verification";
 import {
+  changePasswordSchema,
   credentialsSignInSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
@@ -42,6 +43,14 @@ export interface ForgotPasswordActionState {
 }
 
 export interface ResetPasswordActionState {
+  error: string | null;
+}
+
+export interface ChangePasswordActionState {
+  error: string | null;
+}
+
+export interface DeleteAccountActionState {
   error: string | null;
 }
 
@@ -318,6 +327,118 @@ export async function resetPasswordAction(
   }
 
   redirect(`/sign-in?${params.toString()}`);
+}
+
+export async function changePasswordAction(
+  _previousState: ChangePasswordActionState | undefined,
+  formData: FormData
+) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/sign-in");
+  }
+
+  const parsedValues = changePasswordSchema.safeParse({
+    currentPassword: formData.get("currentPassword"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
+
+  if (!parsedValues.success) {
+    return {
+      error: parsedValues.error.issues[0]?.message ?? "Enter a valid password.",
+    } satisfies ChangePasswordActionState;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      id: true,
+      passwordHash: true,
+    },
+  });
+
+  if (!user?.passwordHash) {
+    return {
+      error: "Password changes are only available for email/password accounts.",
+    } satisfies ChangePasswordActionState;
+  }
+
+  const isValidPassword = await compare(parsedValues.data.currentPassword, user.passwordHash);
+
+  if (!isValidPassword) {
+    return {
+      error: "Your current password is incorrect.",
+    } satisfies ChangePasswordActionState;
+  }
+
+  const passwordHash = await hash(parsedValues.data.password, 12);
+
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      passwordHash,
+    },
+  });
+
+  await signOut({
+    redirectTo: "/sign-in?reset=success",
+  });
+}
+
+export async function deleteAccountAction(
+  _previousState: DeleteAccountActionState | undefined,
+  formData: FormData
+) {
+  const session = await auth();
+
+  if (!session?.user?.id || !session.user.email) {
+    redirect("/sign-in");
+  }
+
+  const confirmation = formData.get("confirmation");
+
+  if (confirmation !== "DELETE") {
+    return {
+      error: 'Type "DELETE" to confirm account deletion.',
+    } satisfies DeleteAccountActionState;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      id: true,
+      email: true,
+    },
+  });
+
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  await prisma.$transaction([
+    prisma.verificationToken.deleteMany({
+      where: {
+        identifier: user.email,
+      },
+    }),
+    prisma.user.delete({
+      where: {
+        id: user.id,
+      },
+    }),
+  ]);
+
+  await signOut({
+    redirectTo: "/sign-in",
+  });
 }
 
 export async function signInWithGitHubAction(formData: FormData) {
