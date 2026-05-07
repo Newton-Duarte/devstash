@@ -12,6 +12,7 @@ interface SignInPageProps {
     code?: string;
     email?: string;
     error?: string;
+    reset?: string;
     verification?: string;
   }>;
 }
@@ -40,6 +41,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
         authError={getAuthErrorMessage(params.error ?? null, params.code ?? null)}
         callbackUrl={params.callbackUrl ?? "/dashboard"}
         emailVerificationEnabled={emailVerificationEnabled}
+        resetState={params.reset ?? null}
         verificationEmail={emailVerificationEnabled ? verificationEmail : null}
         verificationState={params.verification ?? null}
       />

@@ -1,3 +1,4 @@
+import type { JWT } from "next-auth/jwt";
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
@@ -14,6 +15,16 @@ class EmailNotVerifiedError extends CredentialsSignin {
   code = "email_not_verified";
 }
 
+function invalidateToken(token: JWT) {
+  delete token.sub;
+  delete token.email;
+  delete token.name;
+  delete token.picture;
+  delete token.sessionVersion;
+
+  return token;
+}
+
 export const { auth, handlers, signIn, signOut } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(prisma),
@@ -21,6 +32,43 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
+    async jwt({ token, user }) {
+      const userId = typeof user?.id === "string" ? user.id : token.sub;
+
+      if (typeof userId !== "string") {
+        return token;
+      }
+
+      const currentUser = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          updatedAt: true,
+        },
+      });
+
+      if (!currentUser) {
+        return invalidateToken(token);
+      }
+
+      const currentSessionVersion = currentUser.updatedAt.toISOString();
+
+      if (typeof token.sessionVersion !== "string") {
+        token.sub = userId;
+        token.sessionVersion = currentSessionVersion;
+
+        return token;
+      }
+
+      if (token.sessionVersion !== currentSessionVersion) {
+        return invalidateToken(token);
+      }
+
+      token.sub = userId;
+
+      return token;
+    },
     session({ session, token }) {
       if (session.user && token.sub) {
         session.user.id = token.sub;
@@ -69,6 +117,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           image: user.image,
+          updatedAt: user.updatedAt,
         };
       },
     }),

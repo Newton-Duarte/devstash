@@ -12,17 +12,6 @@ import { isEmailVerificationEnabled } from "@/lib/auth/email-verification-config
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/auth/credentials";
 
-function getOriginFromRequest(request: NextRequest) {
-  const forwardedHost = request.headers.get("x-forwarded-host");
-  const forwardedProto = request.headers.get("x-forwarded-proto");
-
-  if (forwardedHost) {
-    return `${forwardedProto ?? "https"}://${forwardedHost}`;
-  }
-
-  return request.nextUrl.origin;
-}
-
 export async function POST(request: NextRequest) {
   let body: unknown;
 
@@ -86,7 +75,6 @@ export async function POST(request: NextRequest) {
         email: createdUser.email,
         name: createdUser.name,
         token,
-        origin: getOriginFromRequest(request),
       });
     }
   } catch (error) {
