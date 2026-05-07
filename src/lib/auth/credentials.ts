@@ -26,3 +26,18 @@ export const registerSchema = credentialsSignInSchema
     message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email(),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().trim().min(1),
+    password: z.string().min(8).max(72),
+    confirmPassword: z.string().min(8).max(72),
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    message: "Passwords do not match.",
+    path: ["confirmPassword"],
+  });

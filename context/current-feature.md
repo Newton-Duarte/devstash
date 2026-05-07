@@ -1,16 +1,24 @@
 # Current Feature
 
+Create Forgot Password Flow
+
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add a forgot password link from the sign-in flow.
+- Allow users to request a password reset email.
+- Allow users to set a new password with a reset token.
+- Reuse the existing `VerificationToken` model for password reset tokens.
+- Keep the flow consistent with the existing auth UI and token-based email patterns.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Use the existing `VerificationToken` model instead of adding a new token table.
+- The feature should cover both the request-reset and complete-reset steps.
+- The experience should fit into the current credentials auth and Resend-based email setup.
 
 ## History
 

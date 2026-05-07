@@ -1,7 +1,8 @@
 "use server";
 
+import { hash } from "bcryptjs";
 import { AuthError } from "next-auth";
-import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { signIn, signOut } from "@/auth";
@@ -11,7 +12,17 @@ import {
   EmailDeliveryError,
   sendVerificationEmail,
 } from "@/lib/auth/email-verification";
-import { credentialsSignInSchema } from "@/lib/auth/credentials";
+import {
+  credentialsSignInSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from "@/lib/auth/credentials";
+import {
+  createPasswordResetRequest,
+  getPasswordResetTokenStatus,
+  resetPasswordWithToken,
+  sendPasswordResetEmail,
+} from "@/lib/auth/password-reset";
 import { prisma } from "@/lib/prisma";
 
 export interface CredentialsActionState {
@@ -25,26 +36,25 @@ export interface ResendVerificationActionState {
   message: string | null;
 }
 
-function getRedirectTarget(value: FormDataEntryValue | null) {
-  return typeof value === "string" && value.startsWith("/") ? value : "/dashboard";
+export interface ForgotPasswordActionState {
+  error: string | null;
+  message: string | null;
 }
 
-function getOriginFromHeaders(headerStore: Pick<Headers, "get">) {
-  const origin = headerStore.get("origin");
+export interface ResetPasswordActionState {
+  error: string | null;
+}
 
-  if (origin) {
-    return origin;
-  }
+function getRedirectTarget(value: FormDataEntryValue | null) {
+  return isSafeRelativePath(value) ? value : "/dashboard";
+}
 
-  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
+function getOptionalCallbackUrl(value: FormDataEntryValue | null) {
+  return isSafeRelativePath(value) ? value : null;
+}
 
-  if (!host) {
-    throw new Error("Unable to determine request origin.");
-  }
-
-  const protocol = headerStore.get("x-forwarded-proto") ?? "http";
-
-  return `${protocol}://${host}`;
+function isSafeRelativePath(value: FormDataEntryValue | null): value is string {
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//");
 }
 
 export async function signInWithCredentialsAction(
@@ -138,13 +148,11 @@ export async function resendVerificationEmailAction(
 
   try {
     const { token, tokenHash } = await createEmailVerificationToken(user.email);
-    const origin = getOriginFromHeaders(await headers());
 
     await sendVerificationEmail({
       email: user.email,
       name: user.name,
       token,
-      origin,
     });
 
     await deleteOtherEmailVerificationTokens(user.email, tokenHash);
@@ -171,6 +179,145 @@ export async function resendVerificationEmailAction(
     error: null,
     message: successMessage,
   } satisfies ResendVerificationActionState;
+}
+
+export async function requestPasswordResetAction(
+  _previousState: ForgotPasswordActionState,
+  formData: FormData
+) {
+  const parsedValues = forgotPasswordSchema.safeParse({
+    email: formData.get("email"),
+  });
+
+  if (!parsedValues.success) {
+    return {
+      error: parsedValues.error.issues[0]?.message ?? "Enter a valid email address.",
+      message: null,
+    } satisfies ForgotPasswordActionState;
+  }
+
+  const email = parsedValues.data.email.toLowerCase();
+  const callbackUrl = getOptionalCallbackUrl(formData.get("callbackUrl"));
+  const successMessage = "If the email is valid, it will receive a password reset email.";
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      email: true,
+      name: true,
+      passwordHash: true,
+    },
+  });
+
+  if (!user?.passwordHash) {
+    return {
+      error: null,
+      message: successMessage,
+    } satisfies ForgotPasswordActionState;
+  }
+
+  let resetRequest: Awaited<ReturnType<typeof createPasswordResetRequest>> = null;
+
+  try {
+    resetRequest = await createPasswordResetRequest(user.email);
+
+    if (!resetRequest) {
+      return {
+        error: null,
+        message: successMessage,
+      } satisfies ForgotPasswordActionState;
+    }
+
+    await sendPasswordResetEmail({
+      callbackUrl,
+      email: user.email,
+      name: user.name,
+      token: resetRequest.token,
+    });
+  } catch (error) {
+    if (resetRequest?.tokenHash) {
+      await prisma.verificationToken.deleteMany({
+        where: {
+          token: resetRequest.tokenHash,
+        },
+      });
+    }
+
+    if (error instanceof EmailDeliveryError) {
+      console.error("Failed to send password reset email", {
+        email: user.email,
+        details: error.details,
+      });
+    }
+
+    return {
+      error: "Unable to send reset email right now.",
+      message: null,
+    } satisfies ForgotPasswordActionState;
+  }
+
+  return {
+    error: null,
+    message: successMessage,
+  } satisfies ForgotPasswordActionState;
+}
+
+export async function resetPasswordAction(
+  _previousState: ResetPasswordActionState,
+  formData: FormData
+) {
+  const parsedValues = resetPasswordSchema.safeParse({
+    token: formData.get("token"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
+
+  if (!parsedValues.success) {
+    return {
+      error: parsedValues.error.issues[0]?.message ?? "Enter a valid password.",
+    } satisfies ResetPasswordActionState;
+  }
+
+  const tokenStatus = await getPasswordResetTokenStatus(parsedValues.data.token);
+
+  if (tokenStatus.status === "expired") {
+    return {
+      error: "That reset link has expired. Request a new one to continue.",
+    } satisfies ResetPasswordActionState;
+  }
+
+  if (tokenStatus.status === "invalid") {
+    return {
+      error: "That reset link is invalid or has already been used.",
+    } satisfies ResetPasswordActionState;
+  }
+
+  const passwordHash = await hash(parsedValues.data.password, 12);
+  const result = await resetPasswordWithToken(parsedValues.data.token, passwordHash);
+
+  if (result.status === "expired") {
+    return {
+      error: "That reset link has expired. Request a new one to continue.",
+    } satisfies ResetPasswordActionState;
+  }
+
+  if (result.status === "invalid") {
+    return {
+      error: "That reset link is invalid or has already been used.",
+    } satisfies ResetPasswordActionState;
+  }
+
+  const params = new URLSearchParams({
+    reset: "success",
+  });
+  const callbackUrl = getOptionalCallbackUrl(formData.get("callbackUrl"));
+
+  if (callbackUrl) {
+    params.set("callbackUrl", callbackUrl);
+  }
+
+  redirect(`/sign-in?${params.toString()}`);
 }
 
 export async function signInWithGitHubAction(formData: FormData) {

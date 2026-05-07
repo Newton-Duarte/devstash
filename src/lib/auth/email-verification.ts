@@ -2,8 +2,7 @@ import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
 
-import { headers } from "next/headers";
-
+import { getAppOrigin } from "@/lib/auth/app-origin";
 import { prisma } from "@/lib/prisma";
 
 const EMAIL_VERIFICATION_TTL_MS = 1000 * 60 * 60 * 24;
@@ -31,23 +30,13 @@ function getVerificationExpiryDate() {
   return new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS);
 }
 
-async function getRequestOrigin() {
-  const headerStore = await headers();
-  const origin = headerStore.get("origin");
-
-  if (origin) {
-    return origin;
-  }
-
-  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
-
-  if (!host) {
-    throw new Error("Unable to determine request origin.");
-  }
-
-  const protocol = headerStore.get("x-forwarded-proto") ?? "http";
-
-  return `${protocol}://${host}`;
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 export async function createEmailVerificationToken(identifier: string) {
@@ -176,12 +165,10 @@ export async function sendVerificationEmail({
   email,
   name,
   token,
-  origin,
 }: {
   email: string;
   name: string | null;
   token: string;
-  origin?: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
 
@@ -189,12 +176,13 @@ export async function sendVerificationEmail({
     throw new Error("RESEND_API_KEY is not configured.");
   }
 
-  const requestOrigin = origin ?? (await getRequestOrigin());
+  const requestOrigin = getAppOrigin();
   const verificationUrl = new URL("/verify-email", requestOrigin);
 
   verificationUrl.searchParams.set("token", token);
 
   const recipientName = name?.trim() || "there";
+  const safeRecipientName = escapeHtml(recipientName);
   const from = process.env.RESEND_FROM_EMAIL ?? DEFAULT_FROM_EMAIL;
   const subject = "Verify your DevStash email";
   const text = [
@@ -206,7 +194,7 @@ export async function sendVerificationEmail({
     "This link expires in 24 hours.",
   ].join("\n");
   const html = `
-    <p>Hi ${recipientName},</p>
+    <p>Hi ${safeRecipientName},</p>
     <p>Verify your DevStash account by clicking the link below:</p>
     <p><a href="${verificationUrl.toString()}">Verify your email</a></p>
     <p>This link expires in 24 hours.</p>

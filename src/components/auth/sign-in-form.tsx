@@ -30,6 +30,7 @@ interface SignInFormProps {
   callbackUrl: string;
   authError: string | null;
   emailVerificationEnabled: boolean;
+  resetState: string | null;
   verificationEmail: string | null;
   verificationState: string | null;
 }
@@ -81,9 +82,17 @@ function ResendVerificationButton() {
 
 function getVerificationMessage(
   emailVerificationEnabled: boolean,
+  resetState: string | null,
   verificationState: string | null,
   verificationEmail: string | null
 ) {
+  if (resetState === "success") {
+    return {
+      tone: "success" as const,
+      text: "Password updated. Sign in with your new password.",
+    };
+  }
+
   if (!emailVerificationEnabled && verificationState !== "registered") {
     return null;
   }
@@ -130,6 +139,7 @@ export function SignInForm({
   callbackUrl,
   authError,
   emailVerificationEnabled,
+  resetState,
   verificationEmail,
   verificationState,
 }: SignInFormProps) {
@@ -143,6 +153,7 @@ export function SignInForm({
   );
   const verificationMessage = getVerificationMessage(
     emailVerificationEnabled,
+    resetState,
     verificationState,
     verificationEmail
   );
@@ -212,12 +223,24 @@ export function SignInForm({
             <label className="text-sm font-medium text-slate-200" htmlFor="password">
               Password
             </label>
-            <Link
-              className="text-xs text-slate-400 transition hover:text-white"
-              href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-            >
-              Need an account?
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                className="text-xs text-slate-400 transition hover:text-white"
+                href={
+                  callbackUrl
+                    ? `/forgot-password?callbackUrl=${encodeURIComponent(callbackUrl)}`
+                    : "/forgot-password"
+                }
+              >
+                Forgot password?
+              </Link>
+              <Link
+                className="text-xs text-slate-400 transition hover:text-white"
+                href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+              >
+                Need an account?
+              </Link>
+            </div>
           </div>
           <Input
             autoComplete="current-password"
