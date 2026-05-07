@@ -1,27 +1,16 @@
 # Current Feature
 
-Profile Page
-
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Create the profile page at `/profile` route.
-- Display user info: email, name, avatar (GitHub or initials), and account creation date.
-- Show usage stats: total items, total collections, and a breakdown by item type.
-- Add account actions: change password for email/password users only, and delete account with confirmation.
-- Follow existing codebase patterns for data fetching and components.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Source spec: `context/features/profile-spec.md`
-- Avatar logic should use the GitHub avatar from OAuth when available, otherwise generate initials from name or email.
-- The change password action should only appear for users who signed up with email/password.
-- Delete account needs a confirmation dialog to prevent accidental deletion.
-- Item type breakdown should include snippets, prompts, notes, commands, links, files, and images.
-- The route must be protected and require authentication.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -41,3 +30,4 @@ In Progress
 - **Setup Email Verification On Register** - Added Resend-backed email verification, link-based verification and resend flows, and blocked credentials sign-in until email verification is complete while preserving GitHub OAuth (Completed)
 - **Add Configurable Email Verification Toggle** - Added an environment-driven email verification toggle so credentials registration/sign-in can bypass verification when disabled while preserving the Resend verification flow when enabled (Completed)
 - **Create Forgot Password Flow** - Added forgot-password and reset-password flows backed by `VerificationToken`, reset email delivery, password reset completion, and auth hardening for trusted email origins and session invalidation after reset (Completed)
+- **Profile Page** - Added a protected profile route with account details, usage stats, inline password changes for credentials users, and permanent account deletion with confirmation (Completed)
