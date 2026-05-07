@@ -2,6 +2,7 @@
 
 import { compare, hash } from "bcryptjs";
 import { AuthError } from "next-auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -25,6 +26,7 @@ import {
   sendPasswordResetEmail,
 } from "@/lib/auth/password-reset";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitErrorMessage } from "@/lib/rate-limit";
 
 export interface CredentialsActionState {
   error: string | null;
@@ -101,6 +103,12 @@ export async function signInWithCredentialsAction(
         } satisfies CredentialsActionState;
       }
 
+      if (error.type === "CredentialsSignin" && "code" in error && error.code === "rate_limited") {
+        return {
+          error: getRateLimitErrorMessage(15 * 60),
+        } satisfies CredentialsActionState;
+      }
+
       return {
         error:
           error.type === "CredentialsSignin"
@@ -123,6 +131,7 @@ export async function resendVerificationEmailAction(
   _previousState: ResendVerificationActionState,
   formData: FormData
 ) {
+  const requestHeaders = await headers();
   const parsedValues = resendVerificationSchema.safeParse({
     email: formData.get("email"),
   });
@@ -135,6 +144,17 @@ export async function resendVerificationEmailAction(
   }
 
   const email = parsedValues.data.email.toLowerCase();
+  const rateLimit = await checkRateLimit("resendVerification", requestHeaders, {
+    identifier: email,
+  });
+
+  if (!rateLimit.success) {
+    return {
+      error: getRateLimitErrorMessage(rateLimit.retryAfter),
+      message: null,
+    } satisfies ResendVerificationActionState;
+  }
+
   const user = await prisma.user.findUnique({
     where: {
       email,
@@ -194,6 +214,7 @@ export async function requestPasswordResetAction(
   _previousState: ForgotPasswordActionState,
   formData: FormData
 ) {
+  const requestHeaders = await headers();
   const parsedValues = forgotPasswordSchema.safeParse({
     email: formData.get("email"),
   });
@@ -206,6 +227,15 @@ export async function requestPasswordResetAction(
   }
 
   const email = parsedValues.data.email.toLowerCase();
+  const rateLimit = await checkRateLimit("forgotPassword", requestHeaders);
+
+  if (!rateLimit.success) {
+    return {
+      error: getRateLimitErrorMessage(rateLimit.retryAfter),
+      message: null,
+    } satisfies ForgotPasswordActionState;
+  }
+
   const callbackUrl = getOptionalCallbackUrl(formData.get("callbackUrl"));
   const successMessage = "If the email is valid, it will receive a password reset email.";
   const user = await prisma.user.findUnique({
@@ -276,6 +306,7 @@ export async function resetPasswordAction(
   _previousState: ResetPasswordActionState,
   formData: FormData
 ) {
+  const requestHeaders = await headers();
   const parsedValues = resetPasswordSchema.safeParse({
     token: formData.get("token"),
     password: formData.get("password"),
@@ -285,6 +316,14 @@ export async function resetPasswordAction(
   if (!parsedValues.success) {
     return {
       error: parsedValues.error.issues[0]?.message ?? "Enter a valid password.",
+    } satisfies ResetPasswordActionState;
+  }
+
+  const rateLimit = await checkRateLimit("resetPassword", requestHeaders);
+
+  if (!rateLimit.success) {
+    return {
+      error: getRateLimitErrorMessage(rateLimit.retryAfter),
     } satisfies ResetPasswordActionState;
   }
 

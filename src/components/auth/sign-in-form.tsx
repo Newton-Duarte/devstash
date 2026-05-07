@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { GitBranch } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   resendVerificationEmailAction,
@@ -166,6 +167,18 @@ export function SignInForm({
       verificationState === "expired" ||
       verificationState === "invalid" ||
       (authError === "Verify your email before signing in." && Boolean(verificationEmail)));
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (resendState.error) {
+      toast.error(resendState.error);
+    }
+  }, [resendState.error]);
 
   return (
     <>

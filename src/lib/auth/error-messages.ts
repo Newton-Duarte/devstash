@@ -8,6 +8,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
 
 const CREDENTIALS_ERROR_CODES: Record<string, string> = {
   email_not_verified: "Verify your email before signing in.",
+  rate_limited: "Too many attempts. Please try again in 15 minutes.",
 };
 
 export function getAuthErrorMessage(error: string | null, code: string | null = null) {
