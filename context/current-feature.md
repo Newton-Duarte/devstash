@@ -1,33 +1,16 @@
-# Current Feature: Rate Limiting for Auth
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Add rate limiting to auth-related API routes to reduce brute force and abuse risk.
-- Use Upstash Redis with `@upstash/ratelimit` through a reusable `src/lib/rate-limit.ts` utility.
-- Apply the specified per-endpoint limits for login, register, forgot-password, reset-password, and resend-verification flows.
-- Return proper `429 Too Many Requests` responses with `Retry-After` headers and user-friendly error messages.
-- Surface rate-limit failures to users through frontend toast messaging.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Protect these endpoints with the requested limits:
-  - `/api/auth/callback/credentials`: 5 attempts per 15 minutes, keyed by IP + email.
-  - `/api/auth/register`: 3 attempts per 1 hour, keyed by IP.
-  - `/api/auth/forgot-password`: 3 attempts per 1 hour, keyed by IP.
-  - `/api/auth/reset-password`: 5 attempts per 15 minutes, keyed by IP.
-  - `/api/auth/resend-verification`: 3 attempts per 15 minutes, keyed by IP + email.
-- Use a sliding window algorithm.
-- Extract IP from `x-forwarded-for` when available.
-- Rate limiting should fail open if Upstash is unavailable.
-- Expected environment variables:
-  - `UPSTASH_REDIS_REST_URL`
-  - `UPSTASH_REDIS_REST_TOKEN`
-- Login protection may require special handling because credentials auth flows through NextAuth.
-- A shared middleware-style abstraction can be considered later, but this feature should focus on the current endpoints.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -48,3 +31,4 @@ In Progress
 - **Add Configurable Email Verification Toggle** - Added an environment-driven email verification toggle so credentials registration/sign-in can bypass verification when disabled while preserving the Resend verification flow when enabled (Completed)
 - **Create Forgot Password Flow** - Added forgot-password and reset-password flows backed by `VerificationToken`, reset email delivery, password reset completion, and auth hardening for trusted email origins and session invalidation after reset (Completed)
 - **Profile Page** - Added a protected profile route with account details, usage stats, inline password changes for credentials users, and permanent account deletion with confirmation (Completed)
+- **Rate Limiting For Auth** - Added Upstash-backed rate limiting for credentials sign-in, registration, password reset flows, and verification email resends with user-facing feedback and fail-open behavior when Redis is unavailable (Completed)
