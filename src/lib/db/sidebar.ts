@@ -2,19 +2,10 @@ import "server-only";
 
 import { type Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import { ITEM_TYPE_DISPLAY_ORDER, getItemTypeRouteSegment } from "@/lib/item-type-routes";
 
 const NEUTRAL_COLLECTION_ACCENT = "#334155";
 const RECENT_COLLECTION_LIMIT = 3;
-const TYPE_ROUTE_SEGMENTS: Record<string, string> = {
-  snippet: "snippets",
-  prompt: "prompts",
-  command: "commands",
-  note: "notes",
-  file: "files",
-  image: "images",
-  link: "links",
-};
-const TYPE_DISPLAY_ORDER = Object.keys(TYPE_ROUTE_SEGMENTS);
 
 export interface DashboardSidebarItemType {
   id: string;
@@ -231,11 +222,11 @@ export async function getDashboardSidebarData(userId: string): Promise<Dashboard
         icon: itemType.icon,
         color: itemType.color,
         count: typeCountsById.get(itemType.id) ?? 0,
-        href: `/items/${TYPE_ROUTE_SEGMENTS[itemType.name] ?? `${itemType.name}s`}`,
+        href: `/items/${getItemTypeRouteSegment(itemType.name)}`,
       }))
       .sort((left, right) => {
-        const leftIndex = TYPE_DISPLAY_ORDER.indexOf(left.name);
-        const rightIndex = TYPE_DISPLAY_ORDER.indexOf(right.name);
+        const leftIndex = ITEM_TYPE_DISPLAY_ORDER.indexOf(left.name);
+        const rightIndex = ITEM_TYPE_DISPLAY_ORDER.indexOf(right.name);
 
         if (leftIndex === -1 || rightIndex === -1) {
           return left.name.localeCompare(right.name);

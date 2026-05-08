@@ -2,22 +2,19 @@
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Make dashboard pinned item cards use the same left accent treatment as collection cards.
-- Make dashboard recent item cards use the same left accent treatment as collection cards.
-- Preserve the current item card content layout and continue using item type colors for the accent.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Spec: `docs/superpowers/specs/2026-05-08-dashboard-item-card-accent-design.md`
-- Scope is limited to the outer card shell styling in `dashboard-pinned-item.tsx` and `dashboard-recent-item.tsx`.
-- No shared wrapper refactor is part of this fix.
+<!-- Add feature notes here -->
 
 ## History
 
+- **Items List View** - Added the protected `/items/[type]` dynamic route with type-filtered item loading, a two-column item card grid, and shared item-type route mapping for sidebar and item pages (Completed)
 - **Dashboard Item Card Accent Match** - Updated dashboard pinned and recent item cards to use the same left accent shell treatment as collection cards while preserving item-type accent colors and existing content layouts (Completed)
 - **Initial Setup** - Next.js 16, Tailwind CSS v4, TypeScript configured (Completed)
 - **Dashboard UI Phase 1** - Dashboard shell, route, dark mode, ShadCN setup, and placeholders completed (Completed)
