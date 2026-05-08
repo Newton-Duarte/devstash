@@ -10,7 +10,7 @@ interface DashboardRecentItemProps {
 export function DashboardRecentItem({ item }: DashboardRecentItemProps) {
   return (
     <article
-      className="rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-5"
+      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-5 before:absolute before:inset-y-0 before:left-0 before:w-[3px]"
       style={{ boxShadow: `inset 3px 0 0 ${item.type.color ?? "#334155"}` }}
     >
       <div className="flex items-start justify-between gap-5">

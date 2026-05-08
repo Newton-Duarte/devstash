@@ -1,0 +1,46 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e6]:
+      - generic [ref=e8]:
+        - paragraph [ref=e9]: Sign In
+        - heading "Your developer knowledge hub, without the tab sprawl." [level=1] [ref=e10]
+        - paragraph [ref=e11]: Save snippets, prompts, notes, commands, and links in one calm workspace built for daily reuse.
+        - generic [ref=e12]:
+          - generic [ref=e13]: Private by default
+          - generic [ref=e14]: GitHub + credentials auth
+          - generic [ref=e15]: Fast dashboard access
+      - generic [ref=e17]:
+        - link "▤ DevStash" [ref=e18] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e19]: ▤
+          - text: DevStash
+        - generic [ref=e20]:
+          - paragraph [ref=e21]: Sign In
+          - heading "Welcome back" [level=2] [ref=e22]
+          - paragraph [ref=e23]: Use your email and password or continue with GitHub to access your dashboard.
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - generic [ref=e26]:
+              - text: Email
+              - textbox "Email" [ref=e27]:
+                - /placeholder: name@example.com
+            - generic [ref=e28]:
+              - generic [ref=e29]:
+                - generic [ref=e30]: Password
+                - generic [ref=e31]:
+                  - link "Forgot password?" [ref=e32] [cursor=pointer]:
+                    - /url: /forgot-password?callbackUrl=%2Fdashboard
+                  - link "Need an account?" [ref=e33] [cursor=pointer]:
+                    - /url: /register?callbackUrl=%2Fdashboard
+              - textbox "Password" [ref=e34]:
+                - /placeholder: Enter your password
+            - button "Sign in" [ref=e35]
+          - generic [ref=e38]: or
+          - button "Sign in with GitHub" [ref=e41]:
+            - img [ref=e42]
+            - text: Sign in with GitHub
+        - paragraph [ref=e46]:
+          - text: New to DevStash?
+          - link "Create an account" [ref=e47] [cursor=pointer]:
+            - /url: /register
+  - region "Notifications alt+T"
