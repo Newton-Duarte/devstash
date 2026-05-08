@@ -2,18 +2,23 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add a minimal Vitest setup for server-side utilities and lightweight server action logic.
+- Add initial unit tests for existing utilities that do not require heavy mocking.
+- Update workflow and developer docs to reflect the new unit testing expectations.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Keep the test environment Node-only.
+- Do not add component testing.
+- Avoid Prisma, Auth.js runtime, and external-service-heavy mocks in this first pass.
 
 ## History
 
+- **Vitest Setup For Server Utilities** - Added a minimal Node-based Vitest setup, initial unit tests for server-side utility modules, and updated workflow/docs to require utility and lightweight server-action testing without adding component tests (Completed)
 - **Items List View** - Added the protected `/items/[type]` dynamic route with type-filtered item loading, a two-column item card grid, and shared item-type route mapping for sidebar and item pages (Completed)
 - **Dashboard Item Card Accent Match** - Updated dashboard pinned and recent item cards to use the same left accent shell treatment as collection cards while preserving item-type accent colors and existing content layouts (Completed)
 - **Initial Setup** - Next.js 16, Tailwind CSS v4, TypeScript configured (Completed)
