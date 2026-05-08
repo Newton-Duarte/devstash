@@ -5,6 +5,7 @@ import {
   Folder,
   LogOut,
   Star,
+  UserIcon,
 } from "lucide-react";
 
 import { signOutAction } from "@/actions/auth";
@@ -266,6 +267,7 @@ export function DashboardSidebar({
                   href="/profile"
                   prefetch={false}
                 >
+                  <UserIcon className="size-4" />
                   Profile
                 </Link>
                 <form action={signOutAction}>
