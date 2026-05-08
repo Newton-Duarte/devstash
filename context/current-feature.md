@@ -2,18 +2,23 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Change the `/items/[type]` listing grid to show 3 columns on large screens.
+- Keep the existing responsive behavior on smaller breakpoints.
+- Limit the change to the listing view unless verification shows card layout issues.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Current implementation uses a two-column grid from the `md` breakpoint upward.
+- Approved design keeps `md` at two columns and switches to three columns at `lg` and above.
+- This is intended to be a minimal UI-only adjustment that preserves the existing item card design.
 
 ## History
 
+- **Items List Three Column Layout** - Updated the protected `/items/[type]` listing grid to keep two columns at `md` and expand to three columns at `lg` and above while preserving the existing responsive item card layout (Completed)
 - **Items List View** - Added the protected `/items/[type]` dynamic route with type-filtered item loading, a two-column item card grid, and shared item-type route mapping for sidebar and item pages (Completed)
 - **Dashboard Item Card Accent Match** - Updated dashboard pinned and recent item cards to use the same left accent shell treatment as collection cards while preserving item-type accent colors and existing content layouts (Completed)
 - **Initial Setup** - Next.js 16, Tailwind CSS v4, TypeScript configured (Completed)
