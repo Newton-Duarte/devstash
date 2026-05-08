@@ -2,23 +2,18 @@
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Add a minimal Vitest setup for server-side utilities and lightweight server action logic.
-- Add initial unit tests for existing utilities that do not require heavy mocking.
-- Update workflow and developer docs to reflect the new unit testing expectations.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Keep the test environment Node-only.
-- Do not add component testing.
-- Avoid Prisma, Auth.js runtime, and external-service-heavy mocks in this first pass.
+<!-- Add feature notes here -->
 
 ## History
 
-- **Vitest Setup For Server Utilities** - Added a minimal Node-based Vitest setup, initial unit tests for server-side utility modules, and updated workflow/docs to require utility and lightweight server-action testing without adding component tests (Completed)
 - **Items List View** - Added the protected `/items/[type]` dynamic route with type-filtered item loading, a two-column item card grid, and shared item-type route mapping for sidebar and item pages (Completed)
 - **Dashboard Item Card Accent Match** - Updated dashboard pinned and recent item cards to use the same left accent shell treatment as collection cards while preserving item-type accent colors and existing content layouts (Completed)
 - **Initial Setup** - Next.js 16, Tailwind CSS v4, TypeScript configured (Completed)
@@ -39,3 +34,4 @@ Complete
 - **Create Forgot Password Flow** - Added forgot-password and reset-password flows backed by `VerificationToken`, reset email delivery, password reset completion, and auth hardening for trusted email origins and session invalidation after reset (Completed)
 - **Profile Page** - Added a protected profile route with account details, usage stats, inline password changes for credentials users, and permanent account deletion with confirmation (Completed)
 - **Rate Limiting For Auth** - Added Upstash-backed rate limiting for credentials sign-in, registration, password reset flows, and verification email resends with user-facing feedback and fail-open behavior when Redis is unavailable (Completed)
+- **Vitest Setup For Server Utilities** - Added a minimal Node-based Vitest setup, initial unit tests for server-side utility modules, and updated workflow/docs to require utility and lightweight server-action testing without adding component tests (Completed)
