@@ -15,7 +15,7 @@ This is the common workflow that we will use for every single feature/fix:
 1. **Document** - Document the feature in @context/current-feature.md.
 2. **Branch** - Create new branch for feature, fix, etc
 3. **Implement** - Implement the feature/fix that I create in @context/current-feature.md
-4. **Test** - Verify it works in the browser. Implement unit testing later. Run `pnpm build` and fix any errors
+4. **Test** - Verify it works in the browser when applicable. Add or update Vitest unit tests for server actions and utilities when the logic is reasonably unit-testable without heavy mocking. Run `pnpm test`, `pnpm lint`, and `pnpm build` and fix any errors
 5. **Iterate** - Iterate and change things if needed
 6. **Commit** - Only after build passes and everything works
 7. **Merge** - Merge to main
@@ -24,6 +24,8 @@ This is the common workflow that we will use for every single feature/fix:
 10. Mark as completed in @context/current-feature.md and add to history
 
 Do NOT commit without permission and until the build passes. If build fails, fix the issues first.
+
+If a change touches server-side logic that is not meaningfully unit-testable without heavy Prisma, Auth.js, or external-service mocking, note that briefly instead of forcing low-value tests.
 
 ## Branching
 

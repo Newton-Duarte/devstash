@@ -8,5 +8,5 @@
    - Focus on server actions and utilities (not components)
    - Test happy path and error cases
    - Do not write tests just to write them. Use your best judgement
-5. Run `npm test` to verify all tests pass
+5. Run `pnpm test` to verify all tests pass
 6. Report test coverage for the new feature code
