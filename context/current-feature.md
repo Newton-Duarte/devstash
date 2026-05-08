@@ -2,19 +2,15 @@
 
 ## Status
 
-Complete
+Not Started
 
 ## Goals
 
-- Change the `/items/[type]` listing grid to show 3 columns on large screens.
-- Keep the existing responsive behavior on smaller breakpoints.
-- Limit the change to the listing view unless verification shows card layout issues.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Current implementation uses a two-column grid from the `md` breakpoint upward.
-- Approved design keeps `md` at two columns and switches to three columns at `lg` and above.
-- This is intended to be a minimal UI-only adjustment that preserves the existing item card design.
+<!-- Add feature notes here -->
 
 ## History
 
