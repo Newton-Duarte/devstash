@@ -10,6 +10,8 @@ import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardSidebarDrawer } from "@/components/dashboard/dashboard-sidebar-drawer";
 import { DashboardStatCard } from "@/components/dashboard/dashboard-stat-card";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
+import { ItemDetailDrawer } from "@/components/items/item-detail-drawer";
+import { useItemDrawer } from "@/components/items/use-item-drawer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type DashboardCollectionsData } from "@/lib/db/collections";
@@ -30,6 +32,7 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const itemDrawer = useItemDrawer();
   const stats = [
     {
       label: "Items",
@@ -61,6 +64,14 @@ export function DashboardShell({
       >
         <DashboardSidebar data={dashboardSidebarData} mobile />
       </DashboardSidebarDrawer>
+      <ItemDetailDrawer
+        error={itemDrawer.error}
+        item={itemDrawer.item}
+        loading={itemDrawer.loading}
+        onOpenChange={itemDrawer.onOpenChange}
+        onRetry={itemDrawer.retry}
+        open={itemDrawer.open}
+      />
 
       <div className="flex h-full border-l border-r border-border/80">
         <aside
@@ -215,7 +226,11 @@ export function DashboardShell({
 
                 <div className="space-y-4">
                   {dashboardItemsData.pinnedItems.map((item) => (
-                    <DashboardPinnedItem item={item} key={item.id} />
+                    <DashboardPinnedItem
+                      item={item}
+                      key={item.id}
+                      onOpen={itemDrawer.openItem}
+                    />
                   ))}
                 </div>
               </section>
@@ -231,7 +246,11 @@ export function DashboardShell({
 
               <div className="space-y-4">
                 {dashboardItemsData.recentItems.map((item) => (
-                  <DashboardRecentItem item={item} key={item.id} />
+                  <DashboardRecentItem
+                    item={item}
+                    key={item.id}
+                    onOpen={itemDrawer.openItem}
+                  />
                 ))}
               </div>
             </section>

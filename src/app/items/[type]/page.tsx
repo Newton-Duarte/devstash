@@ -4,7 +4,7 @@ import { connection } from "next/server";
 import { ArrowLeft } from "lucide-react";
 
 import { auth } from "@/auth";
-import { ItemCard } from "@/components/items/item-card";
+import { ItemsListDrawerGrid } from "@/components/items/items-list-drawer-grid";
 import { getItemsListPageData } from "@/lib/db/item-list";
 
 interface ItemsListPageProps {
@@ -67,11 +67,7 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
 
         <section className="mt-6">
           {pageData.items.length > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {pageData.items.map((item) => (
-                <ItemCard item={item} key={item.id} />
-              ))}
-            </div>
+            <ItemsListDrawerGrid items={pageData.items} />
           ) : (
             <div className="rounded-[2rem] border border-dashed border-white/10 bg-[#0d0e12] px-8 py-14 text-center shadow-2xl shadow-black/10">
               <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase">

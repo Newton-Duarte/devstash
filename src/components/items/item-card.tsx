@@ -1,17 +1,37 @@
 import { ExternalLink, Pin, Star } from "lucide-react";
+import { type KeyboardEvent } from "react";
 
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
 import { type ItemListItem } from "@/lib/db/item-list";
 
 interface ItemCardProps {
   item: ItemListItem;
+  onOpen?: (itemId: string) => void;
 }
 
-export function ItemCard({ item }: ItemCardProps) {
+export function ItemCard({ item, onOpen }: ItemCardProps) {
+  const openLabel = `Open details for ${item.title}`;
+
+  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (!onOpen) {
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onOpen(item.id);
+    }
+  };
+
   return (
     <article
-      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-5"
+      aria-label={onOpen ? openLabel : undefined}
+      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-5 transition hover:border-white/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      onClick={onOpen ? () => onOpen(item.id) : undefined}
+      onKeyDown={onKeyDown}
+      role={onOpen ? "button" : undefined}
       style={{ boxShadow: `inset 3px 0 0 ${item.type.color ?? "#334155"}` }}
+      tabIndex={onOpen ? 0 : undefined}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">

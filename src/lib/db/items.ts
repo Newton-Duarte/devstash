@@ -35,6 +35,28 @@ export interface DashboardItemsData {
   stats: DashboardItemStats;
 }
 
+export interface ItemDetail {
+  id: string;
+  title: string;
+  description: string;
+  contentType: string;
+  content: string | null;
+  fileUrl: string | null;
+  fileName: string | null;
+  fileSize: number | null;
+  url: string | null;
+  language: string | null;
+  isFavorite: boolean;
+  isPinned: boolean;
+  createdAtLabel: string;
+  updatedAtLabel: string;
+  tags: string[];
+  type: DashboardItemType;
+  collection: {
+    name: string;
+  } | null;
+}
+
 type ItemWithRelations = Prisma.ItemGetPayload<{
   include: {
     tags: {
@@ -60,6 +82,14 @@ function formatItemDate(updatedAt: Date) {
   return updatedAt.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
+  });
+}
+
+function formatItemDateTime(date: Date) {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 }
 
@@ -158,5 +188,69 @@ export async function getDashboardItemsData(userId: string): Promise<DashboardIt
       totalItems,
       favoriteItems,
     },
+  };
+}
+
+export async function getItemDetail(userId: string, itemId: string): Promise<ItemDetail | null> {
+  const item = await prisma.item.findFirst({
+    where: {
+      id: itemId,
+      userId,
+    },
+    include: {
+      collection: {
+        select: {
+          name: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      type: {
+        select: {
+          name: true,
+          icon: true,
+          color: true,
+        },
+      },
+    },
+  });
+
+  if (!item) {
+    return null;
+  }
+
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description ?? "No description yet",
+    contentType: item.contentType,
+    content: item.content,
+    fileUrl: item.fileUrl,
+    fileName: item.fileName,
+    fileSize: item.fileSize,
+    url: item.url,
+    language: item.language,
+    isFavorite: item.isFavorite,
+    isPinned: item.isPinned,
+    createdAtLabel: formatItemDateTime(item.createdAt),
+    updatedAtLabel: formatItemDateTime(item.updatedAt),
+    tags: item.tags.map(({ tag }) => tag.name),
+    type: {
+      name: item.type.name,
+      icon: item.type.icon,
+      color: item.type.color,
+    },
+    collection: item.collection
+      ? {
+          name: item.collection.name,
+        }
+      : null,
   };
 }

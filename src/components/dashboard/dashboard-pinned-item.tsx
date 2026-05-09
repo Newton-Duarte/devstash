@@ -1,17 +1,35 @@
 import { Pin, Star } from "lucide-react";
+import { type KeyboardEvent } from "react";
 
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
 import { type DashboardItem } from "@/lib/db/items";
 
 interface DashboardPinnedItemProps {
   item: DashboardItem;
+  onOpen?: (itemId: string) => void;
 }
 
-export function DashboardPinnedItem({ item }: DashboardPinnedItemProps) {
+export function DashboardPinnedItem({ item, onOpen }: DashboardPinnedItemProps) {
+  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (!onOpen) {
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onOpen(item.id);
+    }
+  };
+
   return (
     <article
-      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-6 before:absolute before:inset-y-0 before:left-0 before:w-[3px]"
+      aria-label={onOpen ? `Open details for ${item.title}` : undefined}
+      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-6 transition before:absolute before:inset-y-0 before:left-0 before:w-[3px] hover:border-white/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      onClick={onOpen ? () => onOpen(item.id) : undefined}
+      onKeyDown={onKeyDown}
+      role={onOpen ? "button" : undefined}
       style={{ boxShadow: `inset 3px 0 0 ${item.type.color ?? "#334155"}` }}
+      tabIndex={onOpen ? 0 : undefined}
     >
       <div className="flex items-start justify-between gap-6">
         <div className="min-w-0 flex-1">
