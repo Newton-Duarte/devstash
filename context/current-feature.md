@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: Item Drawer
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add a right-side shadcn Sheet drawer as the item detail view when an item card is clicked.
+- Support opening the drawer from both the dashboard and items list pages without navigation.
+- Fetch full item details on click through `/api/items/[id]` with an auth-checked API route and query function in `lib/db/items.ts`.
+- Show a skeleton/loading state while full item details are loading.
+- Include an action bar with Favorite, Pin, Copy, Edit, and right-aligned Delete actions.
+- Display drawer details for now, leaving item-specific extras like the code editor for later.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Card summary data remains server-rendered as before; the client wrapper manages drawer state and click-to-fetch detail loading.
+- Favorite should use a star icon and render yellow when active; Edit uses a pencil icon; Delete uses a trash icon.
+- Visual reference: `context/screenshots/dashboard-ui-drawer.png`.
 
 ## History
 
