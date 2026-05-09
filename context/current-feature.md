@@ -1,4 +1,4 @@
-# Current Feature: Item Drawer Edit Mode
+# Current Feature
 
 ## Status
 
@@ -6,21 +6,11 @@ Complete
 
 ## Goals
 
-- Toggle the existing item drawer from view mode into inline edit mode with Save and Cancel controls.
-- Support editable title, description, tags, and relevant type-specific fields while keeping item type, collections, and dates display-only.
-- Persist updates through an authenticated `updateItem(itemId, data)` server action with Zod validation and ownership checks.
-- Update item records and tags in the database, returning the updated `ItemDetail` for the drawer.
-- Show save success/error toasts and refresh the route after save so card lists reflect changes.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Spec: `context/features/item-drawer-edit-spec.md`
-- Edit mode stays inside the same open drawer; no separate page or modal.
-- Use controlled inputs without a form library.
-- Disable Save on the client when title is empty, but keep server-side Zod validation as the source of truth.
-- Tags are entered as comma-separated text and saved as trimmed non-empty tag names.
-- URL is only shown for links; content is only shown for snippets, prompts, commands, and notes; language is only shown for snippets and commands.
-- On update, disconnect existing tags and connect-or-create the submitted tags.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -47,3 +37,4 @@ Complete
 - **Rate Limiting For Auth** - Added Upstash-backed rate limiting for credentials sign-in, registration, password reset flows, and verification email resends with user-facing feedback and fail-open behavior when Redis is unavailable (Completed)
 - **Vitest Setup For Server Utilities** - Added a minimal Node-based Vitest setup, initial unit tests for server-side utility modules, and updated workflow/docs to require utility and lightweight server-action testing without adding component tests (Completed)
 - **Item Drawer** - Added a reusable right-side item detail drawer with authenticated click-to-fetch item details from dashboard and item list cards, loading/error states, accessible card activation, and display-only action controls (Completed)
+- **Item Drawer Edit Mode** - Added inline editing to the item detail drawer with Save/Cancel controls, authenticated Zod-validated updates, type-specific fields, tag replacement, route refresh, toasts, and validation tests (Completed)
