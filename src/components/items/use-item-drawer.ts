@@ -89,6 +89,10 @@ export function useItemDrawer() {
     }
   }, [fetchItem, selectedItemId]);
 
+  const replaceItem = useCallback((nextItem: ItemDetail) => {
+    setItem(nextItem);
+  }, []);
+
   return {
     error,
     item,
@@ -96,6 +100,7 @@ export function useItemDrawer() {
     onOpenChange,
     open,
     openItem,
+    replaceItem,
     retry,
   };
 }

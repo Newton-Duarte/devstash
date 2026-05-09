@@ -38,7 +38,7 @@ export interface DashboardItemsData {
 export interface ItemDetail {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   contentType: string;
   content: string | null;
   fileUrl: string | null;
@@ -55,6 +55,15 @@ export interface ItemDetail {
   collection: {
     name: string;
   } | null;
+}
+
+export interface UpdateItemData {
+  title: string;
+  description?: string | null;
+  content?: string | null;
+  url?: string | null;
+  language?: string | null;
+  tags: string[];
 }
 
 type ItemWithRelations = Prisma.ItemGetPayload<{
@@ -76,6 +85,34 @@ type ItemWithRelations = Prisma.ItemGetPayload<{
       };
     };
   };
+}>;
+
+const itemDetailInclude = {
+  collection: {
+    select: {
+      name: true,
+    },
+  },
+  tags: {
+    select: {
+      tag: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  },
+  type: {
+    select: {
+      name: true,
+      icon: true,
+      color: true,
+    },
+  },
+} satisfies Prisma.ItemInclude;
+
+type ItemDetailWithRelations = Prisma.ItemGetPayload<{
+  include: typeof itemDetailInclude;
 }>;
 
 function formatItemDate(updatedAt: Date) {
@@ -108,6 +145,36 @@ function mapDashboardItem(item: ItemWithRelations): DashboardItem {
       icon: item.type.icon,
       color: item.type.color,
     },
+  };
+}
+
+function mapItemDetail(item: ItemDetailWithRelations): ItemDetail {
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    contentType: item.contentType,
+    content: item.content,
+    fileUrl: item.fileUrl,
+    fileName: item.fileName,
+    fileSize: item.fileSize,
+    url: item.url,
+    language: item.language,
+    isFavorite: item.isFavorite,
+    isPinned: item.isPinned,
+    createdAtLabel: formatItemDateTime(item.createdAt),
+    updatedAtLabel: formatItemDateTime(item.updatedAt),
+    tags: item.tags.map(({ tag }) => tag.name),
+    type: {
+      name: item.type.name,
+      icon: item.type.icon,
+      color: item.type.color,
+    },
+    collection: item.collection
+      ? {
+          name: item.collection.name,
+        }
+      : null,
   };
 }
 
@@ -197,28 +264,28 @@ export async function getItemDetail(userId: string, itemId: string): Promise<Ite
       id: itemId,
       userId,
     },
-    include: {
-      collection: {
-        select: {
-          name: true,
-        },
-      },
-      tags: {
-        select: {
-          tag: {
-            select: {
-              name: true,
-            },
-          },
-        },
-      },
-      type: {
-        select: {
-          name: true,
-          icon: true,
-          color: true,
-        },
-      },
+    include: itemDetailInclude,
+  });
+
+  if (!item) {
+    return null;
+  }
+
+  return mapItemDetail(item);
+}
+
+export async function updateItem(
+  userId: string,
+  itemId: string,
+  data: UpdateItemData
+): Promise<ItemDetail | null> {
+  const item = await prisma.item.findFirst({
+    where: {
+      id: itemId,
+      userId,
+    },
+    select: {
+      id: true,
     },
   });
 
@@ -226,31 +293,45 @@ export async function getItemDetail(userId: string, itemId: string): Promise<Ite
     return null;
   }
 
-  return {
-    id: item.id,
-    title: item.title,
-    description: item.description ?? "No description yet",
-    contentType: item.contentType,
-    content: item.content,
-    fileUrl: item.fileUrl,
-    fileName: item.fileName,
-    fileSize: item.fileSize,
-    url: item.url,
-    language: item.language,
-    isFavorite: item.isFavorite,
-    isPinned: item.isPinned,
-    createdAtLabel: formatItemDateTime(item.createdAt),
-    updatedAtLabel: formatItemDateTime(item.updatedAt),
-    tags: item.tags.map(({ tag }) => tag.name),
-    type: {
-      name: item.type.name,
-      icon: item.type.icon,
-      color: item.type.color,
-    },
-    collection: item.collection
-      ? {
-          name: item.collection.name,
-        }
-      : null,
-  };
+  const updatedItem = await prisma.$transaction(async (tx) => {
+    await tx.itemTag.deleteMany({
+      where: {
+        itemId,
+      },
+    });
+
+    return tx.item.update({
+      where: {
+        id: item.id,
+      },
+      data: {
+        title: data.title,
+        description: data.description ?? null,
+        content: data.content ?? null,
+        url: data.url ?? null,
+        language: data.language ?? null,
+        tags: {
+          create: data.tags.map((name) => ({
+            tag: {
+              connectOrCreate: {
+                where: {
+                  userId_name: {
+                    userId,
+                    name,
+                  },
+                },
+                create: {
+                  userId,
+                  name,
+                },
+              },
+            },
+          })),
+        },
+      },
+      include: itemDetailInclude,
+    });
+  });
+
+  return mapItemDetail(updatedItem);
 }
