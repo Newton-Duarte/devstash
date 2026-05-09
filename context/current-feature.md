@@ -1,23 +1,16 @@
-# Current Feature: Item Drawer
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add a right-side shadcn Sheet drawer as the item detail view when an item card is clicked.
-- Support opening the drawer from both the dashboard and items list pages without navigation.
-- Fetch full item details on click through `/api/items/[id]` with an auth-checked API route and query function in `lib/db/items.ts`.
-- Show a skeleton/loading state while full item details are loading.
-- Include an action bar with Favorite, Pin, Copy, Edit, and right-aligned Delete actions.
-- Display drawer details for now, leaving item-specific extras like the code editor for later.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Card summary data remains server-rendered as before; the client wrapper manages drawer state and click-to-fetch detail loading.
-- Favorite should use a star icon and render yellow when active; Edit uses a pencil icon; Delete uses a trash icon.
-- Visual reference: `context/screenshots/dashboard-ui-drawer.png`.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -43,3 +36,4 @@ In Progress
 - **Profile Page** - Added a protected profile route with account details, usage stats, inline password changes for credentials users, and permanent account deletion with confirmation (Completed)
 - **Rate Limiting For Auth** - Added Upstash-backed rate limiting for credentials sign-in, registration, password reset flows, and verification email resends with user-facing feedback and fail-open behavior when Redis is unavailable (Completed)
 - **Vitest Setup For Server Utilities** - Added a minimal Node-based Vitest setup, initial unit tests for server-side utility modules, and updated workflow/docs to require utility and lightweight server-action testing without adding component tests (Completed)
+- **Item Drawer** - Added a reusable right-side item detail drawer with authenticated click-to-fetch item details from dashboard and item list cards, loading/error states, accessible card activation, and display-only action controls (Completed)
