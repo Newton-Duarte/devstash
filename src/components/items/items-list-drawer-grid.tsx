@@ -23,6 +23,7 @@ export function ItemsListDrawerGrid({ items }: ItemsListDrawerGridProps) {
         error={drawer.error}
         item={drawer.item}
         loading={drawer.loading}
+        onItemUpdated={drawer.replaceItem}
         onOpenChange={drawer.onOpenChange}
         onRetry={drawer.retry}
         open={drawer.open}
