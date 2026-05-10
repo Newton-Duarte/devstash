@@ -10,6 +10,7 @@ import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardSidebarDrawer } from "@/components/dashboard/dashboard-sidebar-drawer";
 import { DashboardStatCard } from "@/components/dashboard/dashboard-stat-card";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
+import { ItemCreateDialog } from "@/components/items/item-create-dialog";
 import { ItemDetailDrawer } from "@/components/items/item-detail-drawer";
 import { useItemDrawer } from "@/components/items/use-item-drawer";
 import { Button } from "@/components/ui/button";
@@ -163,10 +164,12 @@ export function DashboardShell({
                   New Collection
                 </Button>
 
-                <Button className="rounded-2xl bg-white px-5 text-slate-900 hover:bg-slate-200">
-                  <Plus className="size-4" />
-                  New Item
-                </Button>
+                <ItemCreateDialog>
+                  <Button className="rounded-2xl bg-white px-5 text-slate-900 hover:bg-slate-200">
+                    <Plus className="size-4" />
+                    New Item
+                  </Button>
+                </ItemCreateDialog>
               </div>
             </div>
           </header>

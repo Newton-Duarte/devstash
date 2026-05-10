@@ -1,6 +1,7 @@
 import "server-only";
 
 import { type Prisma } from "@/generated/prisma/client";
+import { type CreateItemData } from "@/lib/items/create-item-schema";
 import { prisma } from "@/lib/prisma";
 
 const PINNED_ITEMS_LIMIT = 6;
@@ -65,6 +66,9 @@ export interface UpdateItemData {
   language?: string | null;
   tags: string[];
 }
+
+const CONTENT_ITEM_TYPES = new Set(["snippet", "prompt", "command", "note"]);
+const LANGUAGE_ITEM_TYPES = new Set(["snippet", "command"]);
 
 type ItemWithRelations = Prisma.ItemGetPayload<{
   include: {
@@ -270,6 +274,66 @@ export async function getItemDetail(userId: string, itemId: string): Promise<Ite
   if (!item) {
     return null;
   }
+
+  return mapItemDetail(item);
+}
+
+export async function createItem(
+  userId: string,
+  data: CreateItemData
+): Promise<ItemDetail | null> {
+  const itemType = await prisma.itemType.findFirst({
+    where: {
+      name: data.type,
+      OR: [
+        {
+          isSystem: true,
+        },
+        {
+          userId,
+        },
+      ],
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!itemType) {
+    return null;
+  }
+
+  const item = await prisma.item.create({
+    data: {
+      title: data.title,
+      description: data.description ?? null,
+      contentType: data.type === "link" ? "link" : "text",
+      content: CONTENT_ITEM_TYPES.has(data.type) ? data.content ?? null : null,
+      url: data.type === "link" ? data.url ?? null : null,
+      language: LANGUAGE_ITEM_TYPES.has(data.type) ? data.language ?? null : null,
+      userId,
+      typeId: itemType.id,
+      tags: {
+        create: data.tags.map((name) => ({
+          tag: {
+            connectOrCreate: {
+              where: {
+                userId_name: {
+                  userId,
+                  name,
+                },
+              },
+              create: {
+                userId,
+                name,
+              },
+            },
+          },
+        })),
+      },
+    },
+    include: itemDetailInclude,
+  });
 
   return mapItemDetail(item);
 }
