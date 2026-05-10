@@ -1,24 +1,16 @@
-# Current Feature: Code Editor
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Create a dark-themed Monaco-based `CodeEditor` component.
-- Replace textarea inputs with `CodeEditor` for snippets and commands only.
-- Keep textarea inputs for notes, prompts, and other non-code item types.
-- Add macOS-style window dots to the editor header.
-- Add a quick copy button to the editor header.
-- Show the editor language in the header next to the copy action.
-- Support both readonly display and editable modes.
-- Make editor height fluid with a 400px max height and a themed scrollbar.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Source spec: `context/features/code-editor-spec.md`
-- Overview: Add Monaco Editor for snippets and commands with copy support and macOS window styling.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -48,3 +40,4 @@ In Progress
 - **Item Drawer Edit Mode** - Added inline editing to the item detail drawer with Save/Cancel controls, authenticated Zod-validated updates, type-specific fields, tag replacement, route refresh, toasts, and validation tests (Completed)
 - **Item Delete Functionality** - Added authenticated drawer-based item deletion with a ShadCN-style confirmation dialog, route refresh, and success/error toasts (Completed)
 - **Item Create** - Added a dashboard New Item dialog with type-specific fields, authenticated Zod-validated creation, tag persistence, success toasts, route refresh, and schema tests (Completed)
+- **Code Editor** - Added a reusable Monaco-based code editor for snippet and command creation, display, editing, and copying while preserving textarea behavior for non-code item types (Completed)
