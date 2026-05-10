@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { deleteItem, updateItem } from "@/actions/items";
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
+import { CodeEditor } from "@/components/items/code-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -112,6 +113,16 @@ function parseTags(value: string) {
     .split(",")
     .map((tag) => tag.trim())
     .filter(Boolean);
+}
+
+function getCodeLanguage(typeName: string, language: string | null) {
+  const trimmedLanguage = language?.trim();
+
+  if (trimmedLanguage) {
+    return trimmedLanguage;
+  }
+
+  return typeName === "command" ? "bash" : "typescript";
 }
 
 function ItemDrawerSkeleton() {
@@ -243,6 +254,7 @@ function ItemDetailContent({
   const showContentField = ["snippet", "prompt", "command", "note"].includes(typeName);
   const showLanguageField = ["snippet", "command"].includes(typeName);
   const showUrlField = typeName === "link";
+  const showCodeEditor = ["snippet", "command"].includes(typeName);
 
   return (
     <div className="space-y-8 p-6 sm:p-8">
@@ -417,11 +429,19 @@ function ItemDetailContent({
 
             {showContentField ? (
               <EditField label="Content">
-                <textarea
-                  className="min-h-52 w-full resize-y rounded-[1.25rem] border border-white/10 bg-[#050507] px-4 py-3 font-mono text-sm leading-6 text-slate-200 shadow-xs outline-none transition-colors placeholder:text-slate-600 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
-                  onChange={(event) => updateField("content", event.target.value)}
-                  value={formValues.content}
-                />
+                {showCodeEditor ? (
+                  <CodeEditor
+                    language={getCodeLanguage(typeName, formValues.language)}
+                    onChange={(value) => updateField("content", value)}
+                    value={formValues.content}
+                  />
+                ) : (
+                  <textarea
+                    className="min-h-52 w-full resize-y rounded-[1.25rem] border border-white/10 bg-[#050507] px-4 py-3 font-mono text-sm leading-6 text-slate-200 shadow-xs outline-none transition-colors placeholder:text-slate-600 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+                    onChange={(event) => updateField("content", event.target.value)}
+                    value={formValues.content}
+                  />
+                )}
               </EditField>
             ) : null}
           </div>
@@ -450,14 +470,25 @@ function ItemDetailContent({
       ) : null}
 
       {!editing && item.content ? (
-        <section className="rounded-[1.75rem] border border-white/10 bg-[#050507] p-5">
-          <p className="mb-4 text-xs font-medium tracking-[0.2em] text-slate-500 uppercase">
-            Content
-          </p>
-          <pre className="max-h-[360px] overflow-auto whitespace-pre-wrap break-words text-sm leading-6 text-slate-200">
-            {item.content}
-          </pre>
-        </section>
+        showCodeEditor ? (
+          <section className="space-y-3">
+            <p className="text-xs font-medium tracking-[0.2em] text-slate-500 uppercase">Content</p>
+            <CodeEditor
+              language={getCodeLanguage(typeName, item.language)}
+              readOnly
+              value={item.content}
+            />
+          </section>
+        ) : (
+          <section className="rounded-[1.75rem] border border-white/10 bg-[#050507] p-5">
+            <p className="mb-4 text-xs font-medium tracking-[0.2em] text-slate-500 uppercase">
+              Content
+            </p>
+            <pre className="max-h-[360px] overflow-auto whitespace-pre-wrap break-words text-sm leading-6 text-slate-200">
+              {item.content}
+            </pre>
+          </section>
+        )
       ) : null}
     </div>
   );
