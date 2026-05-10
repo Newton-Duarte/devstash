@@ -1,19 +1,16 @@
-# Current Feature: Item Delete Functionality
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add delete functionality for items.
-- Show a ShadCN UI confirmation before deleting an item.
-- Show a success toast after an item is deleted.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Deletion should apply to existing item surfaces where item actions are available.
-- Preserve authenticated access expectations for item mutations.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -41,3 +38,4 @@ In Progress
 - **Vitest Setup For Server Utilities** - Added a minimal Node-based Vitest setup, initial unit tests for server-side utility modules, and updated workflow/docs to require utility and lightweight server-action testing without adding component tests (Completed)
 - **Item Drawer** - Added a reusable right-side item detail drawer with authenticated click-to-fetch item details from dashboard and item list cards, loading/error states, accessible card activation, and display-only action controls (Completed)
 - **Item Drawer Edit Mode** - Added inline editing to the item detail drawer with Save/Cancel controls, authenticated Zod-validated updates, type-specific fields, tag replacement, route refresh, toasts, and validation tests (Completed)
+- **Item Delete Functionality** - Added authenticated drawer-based item deletion with a ShadCN-style confirmation dialog, route refresh, and success/error toasts (Completed)
