@@ -335,3 +335,14 @@ export async function updateItem(
 
   return mapItemDetail(updatedItem);
 }
+
+export async function deleteItem(userId: string, itemId: string): Promise<boolean> {
+  const deletedItems = await prisma.item.deleteMany({
+    where: {
+      id: itemId,
+      userId,
+    },
+  });
+
+  return deletedItems.count > 0;
+}

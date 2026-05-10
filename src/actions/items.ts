@@ -1,12 +1,21 @@
 "use server";
 
 import { auth } from "@/auth";
-import { updateItem as updateItemRecord, type ItemDetail } from "@/lib/db/items";
+import {
+  deleteItem as deleteItemRecord,
+  updateItem as updateItemRecord,
+  type ItemDetail,
+} from "@/lib/db/items";
 import { updateItemSchema, type UpdateItemInput } from "@/lib/items/update-item-schema";
 
 export interface UpdateItemActionState {
   success: boolean;
   data: ItemDetail | null;
+  error: string | null;
+}
+
+export interface DeleteItemActionState {
+  success: boolean;
   error: string | null;
 }
 
@@ -55,6 +64,38 @@ export async function updateItem(
       success: false,
       data: null,
       error: "Unable to update item right now.",
+    };
+  }
+}
+
+export async function deleteItem(itemId: string): Promise<DeleteItemActionState> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return {
+      success: false,
+      error: "You must be signed in to delete items.",
+    };
+  }
+
+  try {
+    const deleted = await deleteItemRecord(session.user.id, itemId);
+
+    if (!deleted) {
+      return {
+        success: false,
+        error: "Item not found.",
+      };
+    }
+
+    return {
+      success: true,
+      error: null,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "Unable to delete item right now.",
     };
   }
 }
