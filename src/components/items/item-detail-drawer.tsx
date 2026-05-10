@@ -2,11 +2,22 @@
 
 import { Check, Copy, ExternalLink, Pencil, Pin, Star, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type ReactNode, useState, useTransition } from "react";
+import { type MouseEvent, type ReactNode, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { updateItem } from "@/actions/items";
+import { deleteItem, updateItem } from "@/actions/items";
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetCloseButton, SheetContent } from "@/components/ui/sheet";
@@ -17,6 +28,7 @@ interface ItemDetailDrawerProps {
   error: string | null;
   item: ItemDetail | null;
   loading: boolean;
+  onItemDeleted: () => void;
   onItemUpdated: (item: ItemDetail) => void;
   onOpenChange: (open: boolean) => void;
   onRetry: () => void;
@@ -151,15 +163,19 @@ function formatFileSize(bytes: number | null) {
 
 function ItemDetailContent({
   item,
+  onItemDeleted,
   onItemUpdated,
 }: {
   item: ItemDetail;
+  onItemDeleted: () => void;
   onItemUpdated: (item: ItemDetail) => void;
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [formValues, setFormValues] = useState(() => getInitialEditValues(item));
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [saving, startSaving] = useTransition();
+  const [deleting, startDeleting] = useTransition();
 
   const updateField = (field: keyof ItemEditValues, value: string) => {
     setFormValues((currentValues) => ({
@@ -197,6 +213,28 @@ function ItemDetailContent({
       setFormValues(getInitialEditValues(result.data));
       setEditing(false);
       toast.success("Item updated.");
+      router.refresh();
+    });
+  };
+
+  const confirmDelete = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    if (deleting) {
+      return;
+    }
+
+    startDeleting(async () => {
+      const result = await deleteItem(item.id);
+
+      if (!result.success) {
+        toast.error(result.error ?? "Unable to delete item.");
+        return;
+      }
+
+      setDeleteDialogOpen(false);
+      onItemDeleted();
+      toast.success("Item deleted.");
       router.refresh();
     });
   };
@@ -244,9 +282,37 @@ function ItemDetailContent({
           <ActionButton label="Edit item" onClick={() => setEditing(true)}>
             <Pencil className="size-4" />
           </ActionButton>
-          <ActionButton className="ml-auto hover:text-red-300" label="Delete item">
-            <Trash2 className="size-4" />
-          </ActionButton>
+          <AlertDialog onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
+            <AlertDialogTrigger asChild>
+              <ActionButton className="ml-auto hover:text-red-300" label="Delete item">
+                <Trash2 className="size-4" />
+              </ActionButton>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this item?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently remove &quot;{item.title}&quot; from your stash. This action cannot
+                  be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel
+                  className="rounded-2xl border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/[0.08] hover:text-white"
+                  disabled={deleting}
+                >
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="rounded-2xl bg-red-500 text-white hover:bg-red-400"
+                  disabled={deleting}
+                  onClick={confirmDelete}
+                >
+                  {deleting ? "Deleting..." : "Delete item"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
 
@@ -401,6 +467,7 @@ export function ItemDetailDrawer({
   error,
   item,
   loading,
+  onItemDeleted,
   onItemUpdated,
   onOpenChange,
   onRetry,
@@ -435,7 +502,12 @@ export function ItemDetailDrawer({
           ) : null}
 
           {!loading && !error && item ? (
-            <ItemDetailContent item={item} key={item.id} onItemUpdated={onItemUpdated} />
+            <ItemDetailContent
+              item={item}
+              key={item.id}
+              onItemDeleted={onItemDeleted}
+              onItemUpdated={onItemUpdated}
+            />
           ) : null}
         </div>
       </SheetContent>

@@ -68,6 +68,7 @@ export function DashboardShell({
         error={itemDrawer.error}
         item={itemDrawer.item}
         loading={itemDrawer.loading}
+        onItemDeleted={() => itemDrawer.onOpenChange(false)}
         onItemUpdated={itemDrawer.replaceItem}
         onOpenChange={itemDrawer.onOpenChange}
         onRetry={itemDrawer.retry}

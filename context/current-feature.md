@@ -1,16 +1,19 @@
-# Current Feature
+# Current Feature: Item Delete Functionality
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add delete functionality for items.
+- Show a ShadCN UI confirmation before deleting an item.
+- Show a success toast after an item is deleted.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Deletion should apply to existing item surfaces where item actions are available.
+- Preserve authenticated access expectations for item mutations.
 
 ## History
 
