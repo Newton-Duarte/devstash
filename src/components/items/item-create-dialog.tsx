@@ -13,6 +13,7 @@ import {
 import { toast } from "sonner";
 
 import { createItem } from "@/actions/items";
+import { CodeEditor } from "@/components/items/code-editor";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -108,6 +109,16 @@ function parseTags(value: string) {
     .filter(Boolean);
 }
 
+function getCodeLanguage(type: CreateItemType, language: string) {
+  const trimmedLanguage = language.trim();
+
+  if (trimmedLanguage) {
+    return trimmedLanguage;
+  }
+
+  return type === "command" ? "bash" : "typescript";
+}
+
 function FieldLabel({ children }: { children: ReactNode }) {
   return (
     <span className="text-xs font-medium tracking-[0.18em] text-slate-500 uppercase">
@@ -126,6 +137,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
   const showContentField = ["snippet", "prompt", "command", "note"].includes(selectedType);
   const showLanguageField = ["snippet", "command"].includes(selectedType);
   const showUrlField = selectedType === "link";
+  const showCodeEditor = ["snippet", "command"].includes(selectedType);
 
   const updateField = (field: keyof ItemCreateValues, value: string) => {
     setValues((currentValues) => ({
@@ -260,12 +272,20 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
             {showContentField ? (
               <label className="block space-y-2 sm:col-span-2">
                 <FieldLabel>Content</FieldLabel>
-                <textarea
-                  className="min-h-36 w-full rounded-3xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white shadow-xs outline-none transition-colors placeholder:text-slate-600 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
-                  onChange={(event) => updateField("content", event.target.value)}
-                  placeholder="Paste the snippet, prompt, command, or note body..."
-                  value={values.content}
-                />
+                {showCodeEditor ? (
+                  <CodeEditor
+                    language={getCodeLanguage(selectedType, values.language)}
+                    onChange={(value) => updateField("content", value)}
+                    value={values.content}
+                  />
+                ) : (
+                  <textarea
+                    className="min-h-36 w-full rounded-3xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white shadow-xs outline-none transition-colors placeholder:text-slate-600 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+                    onChange={(event) => updateField("content", event.target.value)}
+                    placeholder="Paste the snippet, prompt, command, or note body..."
+                    value={values.content}
+                  />
+                )}
               </label>
             ) : null}
 
