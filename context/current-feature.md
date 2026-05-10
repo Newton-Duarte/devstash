@@ -1,26 +1,16 @@
-# Current Feature: Item Create
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add a modal dialog opened from the top bar "New Item" button for creating new items.
-- Support selecting item type for snippet, prompt, command, note, and link.
-- Show type-specific fields with required title for all item types and required URL for links.
-- Add a Zod-validated `createItem` server action.
-- Add a `createItem` query function in `lib/db/items.ts`.
-- Show a success toast, close the modal, and refresh after item creation.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Spec source: `context/features/item-create-spec.md`
-- Use the shadcn Dialog component.
-- Shared fields: title, description, and tags.
-- Snippet and command fields: content and language.
-- Prompt and note fields: content.
-- Link fields: URL.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -49,3 +39,4 @@ In Progress
 - **Item Drawer** - Added a reusable right-side item detail drawer with authenticated click-to-fetch item details from dashboard and item list cards, loading/error states, accessible card activation, and display-only action controls (Completed)
 - **Item Drawer Edit Mode** - Added inline editing to the item detail drawer with Save/Cancel controls, authenticated Zod-validated updates, type-specific fields, tag replacement, route refresh, toasts, and validation tests (Completed)
 - **Item Delete Functionality** - Added authenticated drawer-based item deletion with a ShadCN-style confirmation dialog, route refresh, and success/error toasts (Completed)
+- **Item Create** - Added a dashboard New Item dialog with type-specific fields, authenticated Zod-validated creation, tag persistence, success toasts, route refresh, and schema tests (Completed)
