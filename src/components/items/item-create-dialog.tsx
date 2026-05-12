@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 import { createItem } from "@/actions/items";
 import { CodeEditor } from "@/components/items/code-editor";
+import { MarkdownEditor } from "@/components/items/markdown-editor";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -138,6 +139,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
   const showLanguageField = ["snippet", "command"].includes(selectedType);
   const showUrlField = selectedType === "link";
   const showCodeEditor = ["snippet", "command"].includes(selectedType);
+  const showMarkdownEditor = ["note", "prompt"].includes(selectedType);
 
   const updateField = (field: keyof ItemCreateValues, value: string) => {
     setValues((currentValues) => ({
@@ -270,12 +272,18 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
             ) : null}
 
             {showContentField ? (
-              <label className="block space-y-2 sm:col-span-2">
+              <div className="block space-y-2 sm:col-span-2">
                 <FieldLabel>Content</FieldLabel>
                 {showCodeEditor ? (
                   <CodeEditor
                     language={getCodeLanguage(selectedType, values.language)}
                     onChange={(value) => updateField("content", value)}
+                    value={values.content}
+                  />
+                ) : showMarkdownEditor ? (
+                  <MarkdownEditor
+                    onChange={(value) => updateField("content", value)}
+                    placeholder="Write markdown for this item..."
                     value={values.content}
                   />
                 ) : (
@@ -286,7 +294,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
                     value={values.content}
                   />
                 )}
-              </label>
+              </div>
             ) : null}
 
             {showLanguageField ? (
