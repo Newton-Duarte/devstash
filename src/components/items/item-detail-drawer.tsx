@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { deleteItem, updateItem } from "@/actions/items";
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
 import { CodeEditor } from "@/components/items/code-editor";
+import { MarkdownEditor } from "@/components/items/markdown-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -255,6 +256,7 @@ function ItemDetailContent({
   const showLanguageField = ["snippet", "command"].includes(typeName);
   const showUrlField = typeName === "link";
   const showCodeEditor = ["snippet", "command"].includes(typeName);
+  const showMarkdownEditor = ["note", "prompt"].includes(typeName);
 
   return (
     <div className="space-y-8 p-6 sm:p-8">
@@ -428,11 +430,20 @@ function ItemDetailContent({
             ) : null}
 
             {showContentField ? (
-              <EditField label="Content">
+              <div className="block space-y-2">
+                <span className="text-xs font-medium tracking-[0.18em] text-slate-500 uppercase">
+                  Content
+                </span>
                 {showCodeEditor ? (
                   <CodeEditor
                     language={getCodeLanguage(typeName, formValues.language)}
                     onChange={(value) => updateField("content", value)}
+                    value={formValues.content}
+                  />
+                ) : showMarkdownEditor ? (
+                  <MarkdownEditor
+                    onChange={(value) => updateField("content", value)}
+                    placeholder="Write markdown for this item..."
                     value={formValues.content}
                   />
                 ) : (
@@ -442,7 +453,7 @@ function ItemDetailContent({
                     value={formValues.content}
                   />
                 )}
-              </EditField>
+              </div>
             ) : null}
           </div>
         ) : null}
@@ -478,6 +489,11 @@ function ItemDetailContent({
               readOnly
               value={item.content}
             />
+          </section>
+        ) : showMarkdownEditor ? (
+          <section className="space-y-3">
+            <p className="text-xs font-medium tracking-[0.2em] text-slate-500 uppercase">Content</p>
+            <MarkdownEditor readOnly value={item.content} />
           </section>
         ) : (
           <section className="rounded-[1.75rem] border border-white/10 bg-[#050507] p-5">

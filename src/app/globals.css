@@ -38,3 +38,137 @@
     @apply bg-background text-foreground antialiased;
   }
 }
+
+@layer components {
+  .markdown-preview {
+    color: rgb(226 232 240);
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .markdown-preview > * + * {
+    margin-top: 1rem;
+  }
+
+  .markdown-preview h1,
+  .markdown-preview h2,
+  .markdown-preview h3,
+  .markdown-preview h4,
+  .markdown-preview h5,
+  .markdown-preview h6 {
+    color: rgb(248 250 252);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  .markdown-preview h1 {
+    font-size: 1.75rem;
+  }
+
+  .markdown-preview h2 {
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 1.45rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .markdown-preview h3 {
+    font-size: 1.2rem;
+  }
+
+  .markdown-preview h4,
+  .markdown-preview h5,
+  .markdown-preview h6 {
+    font-size: 1rem;
+  }
+
+  .markdown-preview p {
+    color: rgb(203 213 225);
+  }
+
+  .markdown-preview a {
+    color: rgb(96 165 250);
+    text-decoration: underline;
+    text-decoration-color: rgb(96 165 250 / 0.45);
+    text-underline-offset: 3px;
+  }
+
+  .markdown-preview a:hover {
+    color: rgb(147 197 253);
+  }
+
+  .markdown-preview ul,
+  .markdown-preview ol {
+    color: rgb(203 213 225);
+    padding-left: 1.35rem;
+  }
+
+  .markdown-preview ul {
+    list-style-type: disc;
+  }
+
+  .markdown-preview ol {
+    list-style-type: decimal;
+  }
+
+  .markdown-preview li + li {
+    margin-top: 0.35rem;
+  }
+
+  .markdown-preview blockquote {
+    border-left: 3px solid rgb(96 165 250 / 0.8);
+    color: rgb(148 163 184);
+    padding-left: 1rem;
+  }
+
+  .markdown-preview code {
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 0.45rem;
+    background: rgb(15 23 42 / 0.85);
+    color: rgb(226 232 240);
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      monospace;
+    font-size: 0.82em;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .markdown-preview pre {
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 1rem;
+    background: rgb(5 5 7);
+    overflow-x: auto;
+    padding: 1rem;
+  }
+
+  .markdown-preview pre code {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+  }
+
+  .markdown-preview table {
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+  }
+
+  .markdown-preview th,
+  .markdown-preview td {
+    border: 1px solid rgb(255 255 255 / 0.12);
+    padding: 0.65rem 0.75rem;
+    text-align: left;
+  }
+
+  .markdown-preview th {
+    background: rgb(255 255 255 / 0.06);
+    color: rgb(248 250 252);
+    font-weight: 600;
+  }
+
+  .markdown-preview hr {
+    border: 0;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+  }
+}

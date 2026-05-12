@@ -1,16 +1,27 @@
-# Current Feature
+# Current Feature: Markdown Editor
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Create a Markdown editor component with Write and Preview tabs.
+- Use the Markdown editor for notes and prompts only.
+- Preserve the existing CodeEditor behavior for snippets and commands.
+- Support GitHub Flavored Markdown rendering with dark theme styling.
+- Add a header copy button matching the CodeEditor style.
+- Support readonly display mode and editable mode.
+- Style markdown content for headings, code, lists, blockquotes, links, and tables.
+- Integrate the Markdown editor into NewItemDialog and ItemDrawer create, edit, and view flows for notes and prompts.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Spec source: `context/features/markdown-editor-spec.md`
+- Readonly mode should show Preview only.
+- Edit mode should default to Write with Preview available.
+- Styling should use a custom preview class for reliable dark mode behavior.
+- Editor height should remain fluid with a max height matching CodeEditor behavior.
 
 ## History
 
