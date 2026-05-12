@@ -1,27 +1,16 @@
-# Current Feature: Markdown Editor
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Create a Markdown editor component with Write and Preview tabs.
-- Use the Markdown editor for notes and prompts only.
-- Preserve the existing CodeEditor behavior for snippets and commands.
-- Support GitHub Flavored Markdown rendering with dark theme styling.
-- Add a header copy button matching the CodeEditor style.
-- Support readonly display mode and editable mode.
-- Style markdown content for headings, code, lists, blockquotes, links, and tables.
-- Integrate the Markdown editor into NewItemDialog and ItemDrawer create, edit, and view flows for notes and prompts.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Spec source: `context/features/markdown-editor-spec.md`
-- Readonly mode should show Preview only.
-- Edit mode should default to Write with Preview available.
-- Styling should use a custom preview class for reliable dark mode behavior.
-- Editor height should remain fluid with a max height matching CodeEditor behavior.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -52,3 +41,4 @@ In Progress
 - **Item Delete Functionality** - Added authenticated drawer-based item deletion with a ShadCN-style confirmation dialog, route refresh, and success/error toasts (Completed)
 - **Item Create** - Added a dashboard New Item dialog with type-specific fields, authenticated Zod-validated creation, tag persistence, success toasts, route refresh, and schema tests (Completed)
 - **Code Editor** - Added a reusable Monaco-based code editor for snippet and command creation, display, editing, and copying while preserving textarea behavior for non-code item types (Completed)
+- **Markdown Editor** - Added a reusable Markdown editor with Write/Preview tabs, safe GitHub Flavored Markdown rendering, dark preview styling, copy support, and note/prompt integration across create, edit, and view flows (Completed)
