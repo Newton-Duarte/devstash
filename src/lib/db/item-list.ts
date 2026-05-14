@@ -15,6 +15,8 @@ export interface ItemListItem {
   title: string;
   description: string;
   fileName: string | null;
+  fileSize: number | null;
+  createdAtLabel: string;
   isFavorite: boolean;
   isPinned: boolean;
   url: string | null;
@@ -66,6 +68,8 @@ function mapItem(item: ItemWithRelations): ItemListItem {
     title: item.title,
     description: item.description ?? "No description yet",
     fileName: item.fileName,
+    fileSize: item.fileSize,
+    createdAtLabel: formatItemDate(item.createdAt),
     isFavorite: item.isFavorite,
     isPinned: item.isPinned,
     url: item.url,
