@@ -1,12 +1,12 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
-import { ArrowLeft } from "lucide-react";
 
 import { auth } from "@/auth";
+import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { ProfileAccountActions } from "@/components/profile/profile-account-actions";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { getProfilePageData } from "@/lib/db/profile";
+import { getDashboardSidebarData } from "@/lib/db/sidebar";
 
 function formatAccountCreatedDate(createdAt: Date) {
   return createdAt.toLocaleDateString("en-US", {
@@ -25,7 +25,13 @@ export default async function ProfilePage() {
     redirect("/sign-in");
   }
 
-  const profileData = await getProfilePageData(session.user.id);
+  const profilePageData = getProfilePageData(session.user.id);
+  const dashboardSidebarData = getDashboardSidebarData(session.user.id);
+
+  const [profileData, sidebarData] = await Promise.all([
+    profilePageData,
+    dashboardSidebarData,
+  ]);
 
   if (!profileData) {
     redirect("/sign-in");
@@ -35,17 +41,9 @@ export default async function ProfilePage() {
   const accountCreatedLabel = formatAccountCreatedDate(profileData.user.createdAt);
 
   return (
-    <main className="min-h-screen bg-[#050507] px-6 py-10 text-white lg:px-8">
-      <div className="mx-auto max-w-5xl">
-        <Link
-          className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
-          href="/dashboard"
-        >
-          <ArrowLeft className="size-4" />
-          Back to dashboard
-        </Link>
-
-        <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#0d0e12] p-8 shadow-2xl shadow-black/30">
+    <DashboardAppShell dashboardSidebarData={sidebarData}>
+      <div className="max-w-5xl">
+        <section className="rounded-[2rem] border border-white/10 bg-[#0d0e12] p-8 shadow-2xl shadow-black/30">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
               <UserAvatar
@@ -133,6 +131,6 @@ export default async function ProfilePage() {
           <ProfileAccountActions canChangePassword={profileData.user.hasPassword} />
         </section>
       </div>
-    </main>
+    </DashboardAppShell>
   );
 }

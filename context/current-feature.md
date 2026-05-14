@@ -1,16 +1,21 @@
-# Current Feature
+# Current Feature: Items Internal App Shell
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Protected `/items/[type]` and `/profile` pages render inside the same dashboard app shell as `/dashboard`.
+- Item and profile pages include the existing dashboard sidebar and header on desktop and mobile.
+- Existing item list content, type-specific layouts, drawer behavior, and empty states continue to work.
+- Remove the standalone internal item page treatment shown in the screenshot, including the isolated full-page shell and back-to-dashboard dependency.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Current `/items/[type]` and `/profile` pages render as standalone pages with only a back link.
+- Reuse existing dashboard sidebar/header patterns where possible to keep navigation consistent.
+- Avoid unrelated dashboard redesigns or data/model changes.
 
 ## History
 

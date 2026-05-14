@@ -1,11 +1,11 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
-import { ArrowLeft } from "lucide-react";
 
 import { auth } from "@/auth";
+import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { ItemsListDrawerGrid } from "@/components/items/items-list-drawer-grid";
 import { getItemsListPageData } from "@/lib/db/item-list";
+import { getDashboardSidebarData } from "@/lib/db/sidebar";
 
 interface ItemsListPageProps {
   params: Promise<{
@@ -23,24 +23,22 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
   }
 
   const { type } = await params;
-  const pageData = await getItemsListPageData(session.user.id, type);
+  const itemListPageData = getItemsListPageData(session.user.id, type);
+  const dashboardSidebarData = getDashboardSidebarData(session.user.id);
+
+  const [pageData, sidebarData] = await Promise.all([
+    itemListPageData,
+    dashboardSidebarData,
+  ]);
 
   if (!pageData) {
     notFound();
   }
 
   return (
-    <main className="min-h-screen bg-[#050507] px-6 py-10 text-white lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <Link
-          className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-white"
-          href="/dashboard"
-        >
-          <ArrowLeft className="size-4" />
-          Back to dashboard
-        </Link>
-
-        <section className="mt-8 rounded-[2rem] border border-white/10 bg-[#0d0e12] p-8 shadow-2xl shadow-black/20">
+    <DashboardAppShell dashboardSidebarData={sidebarData}>
+      <div className="max-w-6xl">
+        <section className="rounded-[2rem] border border-white/10 bg-[#0d0e12] p-8 shadow-2xl shadow-black/20">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-xs font-medium tracking-[0.24em] text-slate-500 uppercase">
@@ -83,6 +81,6 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
           )}
         </section>
       </div>
-    </main>
+    </DashboardAppShell>
   );
 }
