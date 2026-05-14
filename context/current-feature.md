@@ -1,19 +1,16 @@
-# Current Feature: Add Items To Collections
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add collection selection to new item forms.
-- Add collection selection to edit item forms.
-- Allow assigning an item to one or more available collections.
-- Persist item-to-collection assignments when creating or updating items.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Collection pages do not need to be displayed as part of this feature.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -50,3 +47,4 @@ In Progress
 - **Dashboard Item Card Accent Match** - Updated dashboard pinned and recent item cards to use the same left accent shell treatment as collection cards while preserving item-type accent colors and existing content layouts (Completed)
 - **Items Internal App Shell** - Added a reusable dashboard app shell and updated protected item list and profile pages to share the existing sidebar, mobile drawer, and dashboard header actions while preserving their existing page content and behaviors (Completed)
 - **Collection Create** - Added a top-bar collection creation modal backed by an authenticated API route, user-scoped Prisma creation, schema validation, toast feedback, route refresh, and validation tests (Completed)
+- **Add Items To Collections** - Added multi-collection item assignment for create and edit flows with a join-table migration, collection selectors, persisted assignments, and updated validation tests (Completed)
