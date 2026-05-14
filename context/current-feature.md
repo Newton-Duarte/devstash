@@ -1,21 +1,16 @@
-# Current Feature: Items Internal App Shell
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Protected `/items/[type]` and `/profile` pages render inside the same dashboard app shell as `/dashboard`.
-- Item and profile pages include the existing dashboard sidebar and header on desktop and mobile.
-- Existing item list content, type-specific layouts, drawer behavior, and empty states continue to work.
-- Remove the standalone internal item page treatment shown in the screenshot, including the isolated full-page shell and back-to-dashboard dependency.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Current `/items/[type]` and `/profile` pages render as standalone pages with only a back link.
-- Reuse existing dashboard sidebar/header patterns where possible to keep navigation consistent.
-- Avoid unrelated dashboard redesigns or data/model changes.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -50,3 +45,4 @@ In Progress
 - **File Upload with Cloudflare R2** - Added R2-backed file and image uploads with authenticated upload/download routes, drag-and-drop progress UI, image previews, file downloads, database file metadata, and R2 cleanup on item deletion (Completed)
 - **Image Gallery** - Added image-specific thumbnail cards for `/items/images` with a three-column gallery, 16:9 object-cover thumbnails, hover zoom, and existing drawer access while preserving regular item cards elsewhere (Completed)
 - **File List View** - Updated `/items/files` to use a responsive single-column file list with extension icons, file metadata, direct downloads, hover highlighting, and drawer access from each row (Completed)
+- **Items Internal App Shell** - Added a reusable dashboard app shell and updated protected item list and profile pages to share the existing sidebar, mobile drawer, and dashboard header actions while preserving their existing page content and behaviors (Completed)
