@@ -1,21 +1,16 @@
-# Current Feature: File List View
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Update `/items/files` to display as a single-column file list instead of grid cards.
-- Show file icon by extension, file name, file size, upload date, and a download button for each row.
-- Add row hover highlighting and open `ItemDrawer` when a row is clicked.
-- Make the download button trigger a direct download without opening the drawer.
-- Stack file row information vertically on mobile.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Source spec: `context/features/file-list-view-spec.md`
-- Layout should feel closer to Google Drive or Dropbox than card-based item views.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -49,3 +44,4 @@ In Progress
 - **Markdown Editor** - Added a reusable Markdown editor with Write/Preview tabs, safe GitHub Flavored Markdown rendering, dark preview styling, copy support, and note/prompt integration across create, edit, and view flows (Completed)
 - **File Upload with Cloudflare R2** - Added R2-backed file and image uploads with authenticated upload/download routes, drag-and-drop progress UI, image previews, file downloads, database file metadata, and R2 cleanup on item deletion (Completed)
 - **Image Gallery** - Added image-specific thumbnail cards for `/items/images` with a three-column gallery, 16:9 object-cover thumbnails, hover zoom, and existing drawer access while preserving regular item cards elsewhere (Completed)
+- **File List View** - Updated `/items/files` to use a responsive single-column file list with extension icons, file metadata, direct downloads, hover highlighting, and drawer access from each row (Completed)
