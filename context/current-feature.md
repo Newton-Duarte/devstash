@@ -1,16 +1,24 @@
-# Current Feature
+# Current Feature: Collection Create
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add a top-bar button for creating a new collection.
+- Open a modal from the create button with the fields needed to create a collection, including a description.
+- Persist new collections as user-scoped data using the established collection database patterns.
+- Fetch collections from server components through `lib/db` functions.
+- Use API routes for any client-side collection creation calls.
+- Show success and failure toasts for collection creation.
+- Refresh/update the UI so the newly created collection appears immediately after save.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Follow the same implementation patterns used for item creation.
+- Collections should remain scoped to the authenticated user.
+- Preserve existing dashboard/app shell patterns for top-bar actions and modal behavior.
 
 ## History
 

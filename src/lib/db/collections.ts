@@ -1,6 +1,7 @@
 import "server-only";
 
 import { type Prisma } from "@/generated/prisma/client";
+import { type CreateCollectionData } from "@/lib/collections/create-collection-schema";
 import { prisma } from "@/lib/prisma";
 
 const NEUTRAL_COLLECTION_ACCENT = "#334155";
@@ -30,6 +31,12 @@ export interface DashboardCollectionStats {
 export interface DashboardCollectionsData {
   collections: DashboardCollection[];
   stats: DashboardCollectionStats;
+}
+
+export interface CreatedCollection {
+  id: string;
+  name: string;
+  description: string | null;
 }
 
 type CollectionWithItems = Prisma.CollectionGetPayload<{
@@ -164,4 +171,22 @@ export async function getDashboardCollectionsData(
       favoriteCollections,
     },
   };
+}
+
+export async function createCollection(
+  userId: string,
+  data: CreateCollectionData
+): Promise<CreatedCollection> {
+  return prisma.collection.create({
+    data: {
+      userId,
+      name: data.name,
+      description: data.description,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+    },
+  });
 }

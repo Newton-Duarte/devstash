@@ -3,6 +3,7 @@
 import { Menu, PanelLeft, Plus, Search, SquarePlus } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
+import { CollectionCreateDialog } from "@/components/collections/collection-create-dialog";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardSidebarDrawer } from "@/components/dashboard/dashboard-sidebar-drawer";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
@@ -112,14 +113,16 @@ export function DashboardAppShell({
               </div>
 
               <div className="ml-auto hidden items-center gap-3 md:flex">
-                <Button
-                  className="rounded-2xl border-border/80 bg-transparent text-slate-100 hover:bg-white/[0.04]"
-                  type="button"
-                  variant="outline"
-                >
-                  <SquarePlus className="size-4" />
-                  New Collection
-                </Button>
+                <CollectionCreateDialog>
+                  <Button
+                    className="rounded-2xl border-border/80 bg-transparent text-slate-100 hover:bg-white/[0.04]"
+                    type="button"
+                    variant="outline"
+                  >
+                    <SquarePlus className="size-4" />
+                    New Collection
+                  </Button>
+                </CollectionCreateDialog>
 
                 <ItemCreateDialog>
                   <Button className="rounded-2xl bg-white px-5 text-slate-900 hover:bg-slate-200">
