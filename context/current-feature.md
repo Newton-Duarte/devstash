@@ -1,20 +1,16 @@
-# Current Feature: Image Gallery
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Create an image thumbnail card to replace the current item card for image listings.
-- Show image items in a three-column grid/gallery.
-- Display image thumbnails with a 16:9 aspect ratio using `aspect-video`.
-- Use `object-cover` so thumbnails fill their cards, with acceptable edge cropping.
-- Add a subtle hover zoom effect with 5% scale and a 300ms transition.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Add an image grid/gallery with thumbnail cards instead of the regular item card.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -47,3 +43,4 @@ In Progress
 - **Code Editor** - Added a reusable Monaco-based code editor for snippet and command creation, display, editing, and copying while preserving textarea behavior for non-code item types (Completed)
 - **Markdown Editor** - Added a reusable Markdown editor with Write/Preview tabs, safe GitHub Flavored Markdown rendering, dark preview styling, copy support, and note/prompt integration across create, edit, and view flows (Completed)
 - **File Upload with Cloudflare R2** - Added R2-backed file and image uploads with authenticated upload/download routes, drag-and-drop progress UI, image previews, file downloads, database file metadata, and R2 cleanup on item deletion (Completed)
+- **Image Gallery** - Added image-specific thumbnail cards for `/items/images` with a three-column gallery, 16:9 object-cover thumbnails, hover zoom, and existing drawer access while preserving regular item cards elsewhere (Completed)
