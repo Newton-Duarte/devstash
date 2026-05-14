@@ -45,6 +45,7 @@ export interface ItemDetail {
   fileUrl: string | null;
   fileName: string | null;
   fileSize: number | null;
+  fileMimeType: string | null;
   url: string | null;
   language: string | null;
   isFavorite: boolean;
@@ -67,8 +68,21 @@ export interface UpdateItemData {
   tags: string[];
 }
 
+export interface DeletedItemFile {
+  fileKey: string | null;
+}
+
+export interface ItemFileObject {
+  fileKey: string;
+  fileName: string;
+  fileSize: number | null;
+  fileMimeType: string;
+  typeName: string;
+}
+
 const CONTENT_ITEM_TYPES = new Set(["snippet", "prompt", "command", "note"]);
 const LANGUAGE_ITEM_TYPES = new Set(["snippet", "command"]);
+const FILE_ITEM_TYPES = new Set(["file", "image"]);
 
 type ItemWithRelations = Prisma.ItemGetPayload<{
   include: {
@@ -162,6 +176,7 @@ function mapItemDetail(item: ItemDetailWithRelations): ItemDetail {
     fileUrl: item.fileUrl,
     fileName: item.fileName,
     fileSize: item.fileSize,
+    fileMimeType: item.fileMimeType,
     url: item.url,
     language: item.language,
     isFavorite: item.isFavorite,
@@ -278,6 +293,44 @@ export async function getItemDetail(userId: string, itemId: string): Promise<Ite
   return mapItemDetail(item);
 }
 
+export async function getItemFileObject(
+  userId: string,
+  itemId: string
+): Promise<ItemFileObject | null> {
+  const item = await prisma.item.findFirst({
+    where: {
+      id: itemId,
+      userId,
+      fileKey: {
+        not: null,
+      },
+    },
+    select: {
+      fileKey: true,
+      fileName: true,
+      fileSize: true,
+      fileMimeType: true,
+      type: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  if (!item?.fileKey || !item.fileName || !item.fileMimeType) {
+    return null;
+  }
+
+  return {
+    fileKey: item.fileKey,
+    fileName: item.fileName,
+    fileSize: item.fileSize,
+    fileMimeType: item.fileMimeType,
+    typeName: item.type.name,
+  };
+}
+
 export async function createItem(
   userId: string,
   data: CreateItemData
@@ -307,8 +360,13 @@ export async function createItem(
     data: {
       title: data.title,
       description: data.description ?? null,
-      contentType: data.type === "link" ? "link" : "text",
+      contentType: data.type === "link" ? "link" : FILE_ITEM_TYPES.has(data.type) ? data.type : "text",
       content: CONTENT_ITEM_TYPES.has(data.type) ? data.content ?? null : null,
+      fileKey: FILE_ITEM_TYPES.has(data.type) ? data.file?.fileKey ?? null : null,
+      fileUrl: null,
+      fileName: FILE_ITEM_TYPES.has(data.type) ? data.file?.fileName ?? null : null,
+      fileSize: FILE_ITEM_TYPES.has(data.type) ? data.file?.fileSize ?? null : null,
+      fileMimeType: FILE_ITEM_TYPES.has(data.type) ? data.file?.fileMimeType ?? null : null,
       url: data.type === "link" ? data.url ?? null : null,
       language: LANGUAGE_ITEM_TYPES.has(data.type) ? data.language ?? null : null,
       userId,
@@ -334,6 +392,20 @@ export async function createItem(
     },
     include: itemDetailInclude,
   });
+
+  if (FILE_ITEM_TYPES.has(data.type) && item.fileKey) {
+    const itemWithFileUrl = await prisma.item.update({
+      where: {
+        id: item.id,
+      },
+      data: {
+        fileUrl: `/api/items/${item.id}/download`,
+      },
+      include: itemDetailInclude,
+    });
+
+    return mapItemDetail(itemWithFileUrl);
+  }
 
   return mapItemDetail(item);
 }
@@ -400,13 +472,29 @@ export async function updateItem(
   return mapItemDetail(updatedItem);
 }
 
-export async function deleteItem(userId: string, itemId: string): Promise<boolean> {
-  const deletedItems = await prisma.item.deleteMany({
+export async function deleteItem(userId: string, itemId: string): Promise<DeletedItemFile | null> {
+  const item = await prisma.item.findFirst({
     where: {
       id: itemId,
       userId,
     },
+    select: {
+      id: true,
+      fileKey: true,
+    },
   });
 
-  return deletedItems.count > 0;
+  if (!item) {
+    return null;
+  }
+
+  await prisma.item.delete({
+    where: {
+      id: item.id,
+    },
+  });
+
+  return {
+    fileKey: item.fileKey,
+  };
 }

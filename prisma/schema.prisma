@@ -32,9 +32,11 @@ model Item {
   title        String
   contentType  String
   content      String?
+  fileKey      String?
   fileUrl      String?
   fileName     String?
   fileSize     Int?
+  fileMimeType String?
   url          String?
   description  String?
   isFavorite   Boolean     @default(false)

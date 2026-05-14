@@ -9,6 +9,7 @@ import {
 } from "@/lib/db/items";
 import { createItemSchema, type CreateItemInput } from "@/lib/items/create-item-schema";
 import { updateItemSchema, type UpdateItemInput } from "@/lib/items/update-item-schema";
+import { deleteR2Object } from "@/lib/r2";
 
 export interface CreateItemActionState {
   success: boolean;
@@ -140,6 +141,14 @@ export async function deleteItem(itemId: string): Promise<DeleteItemActionState>
         success: false,
         error: "Item not found.",
       };
+    }
+
+    if (deleted.fileKey) {
+      try {
+        await deleteR2Object(deleted.fileKey);
+      } catch {
+        // The item is already deleted; failed object cleanup should not restore it in the UI.
+      }
     }
 
     return {

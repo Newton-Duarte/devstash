@@ -1,6 +1,14 @@
 "use client";
 
-import { Code2, Link2, MessageSquareQuote, NotebookPen, Terminal } from "lucide-react";
+import {
+  Code2,
+  FileText,
+  Image as ImageIcon,
+  Link2,
+  MessageSquareQuote,
+  NotebookPen,
+  Terminal,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   type ComponentType,
@@ -14,6 +22,7 @@ import { toast } from "sonner";
 
 import { createItem } from "@/actions/items";
 import { CodeEditor } from "@/components/items/code-editor";
+import { FileUpload } from "@/components/items/file-upload";
 import { MarkdownEditor } from "@/components/items/markdown-editor";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +35,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { type UploadedFileMetadata } from "@/lib/items/file-upload";
 import { type CreateItemType } from "@/lib/items/create-item-schema";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +51,7 @@ interface ItemCreateValues {
   content: string;
   language: string;
   url: string;
+  file: UploadedFileMetadata | null;
 }
 
 const itemTypes = [
@@ -79,6 +90,20 @@ const itemTypes = [
     icon: Link2,
     color: "#10b981",
   },
+  {
+    type: "file",
+    label: "File",
+    description: "Docs and resources",
+    icon: FileText,
+    color: "#38bdf8",
+  },
+  {
+    type: "image",
+    label: "Image",
+    description: "Screenshots and visuals",
+    icon: ImageIcon,
+    color: "#f472b6",
+  },
 ] satisfies Array<{
   type: CreateItemType;
   label: string;
@@ -95,6 +120,7 @@ const initialValues: ItemCreateValues = {
   content: "",
   language: "",
   url: "",
+  file: null,
 };
 
 function toNullableString(value: string) {
@@ -138,6 +164,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
   const showContentField = ["snippet", "prompt", "command", "note"].includes(selectedType);
   const showLanguageField = ["snippet", "command"].includes(selectedType);
   const showUrlField = selectedType === "link";
+  const showUploadField = selectedType === "file" || selectedType === "image";
   const showCodeEditor = ["snippet", "command"].includes(selectedType);
   const showMarkdownEditor = ["note", "prompt"].includes(selectedType);
 
@@ -145,6 +172,24 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
     setValues((currentValues) => ({
       ...currentValues,
       [field]: value,
+    }));
+  };
+
+  const updateType = (type: CreateItemType) => {
+    setValues((currentValues) => ({
+      ...currentValues,
+      content: "",
+      file: null,
+      language: "",
+      type,
+      url: "",
+    }));
+  };
+
+  const updateFile = (file: UploadedFileMetadata | null) => {
+    setValues((currentValues) => ({
+      ...currentValues,
+      file,
     }));
   };
 
@@ -172,6 +217,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
         language: toNullableString(values.language),
         url: toNullableString(values.url),
         tags: parseTags(values.tags),
+        file: values.file,
       });
 
       if (!result.success) {
@@ -201,7 +247,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
         </DialogHeader>
 
         <form className="space-y-6" onSubmit={submitItem}>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
             {itemTypes.map((itemType) => {
               const Icon = itemType.icon;
               const selected = selectedType === itemType.type;
@@ -216,7 +262,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
                       : "border-white/10 bg-white/[0.03]"
                   )}
                   key={itemType.type}
-                  onClick={() => updateField("type", itemType.type)}
+                  onClick={() => updateType(itemType.type)}
                   type="button"
                 >
                   <span className="flex items-center gap-3">
@@ -297,6 +343,17 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
               </div>
             ) : null}
 
+            {showUploadField ? (
+              <div className="block space-y-2 sm:col-span-2">
+                <FieldLabel>{selectedType === "image" ? "Image" : "File"}</FieldLabel>
+                <FileUpload
+                  onChange={updateFile}
+                  type={selectedType === "image" ? "image" : "file"}
+                  value={values.file}
+                />
+              </div>
+            ) : null}
+
             {showLanguageField ? (
               <label className="block space-y-2">
                 <FieldLabel>Language</FieldLabel>
@@ -332,7 +389,12 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
             </Button>
             <Button
               className="rounded-2xl bg-white px-5 text-slate-900 hover:bg-slate-200"
-              disabled={creating || !values.title.trim() || (showUrlField && !values.url.trim())}
+                disabled={
+                  creating ||
+                  !values.title.trim() ||
+                  (showUrlField && !values.url.trim()) ||
+                  (showUploadField && !values.file)
+                }
               type="submit"
             >
               {creating ? "Creating..." : "Create item"}

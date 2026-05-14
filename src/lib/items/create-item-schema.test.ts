@@ -73,7 +73,7 @@ describe("createItemSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("rejects unsupported item types", () => {
+  it("requires uploaded file metadata for file items", () => {
     const result = createItemSchema.safeParse({
       type: "file",
       title: "Archive",
@@ -81,5 +81,22 @@ describe("createItemSchema", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  it("accepts uploaded image metadata", () => {
+    const result = createItemSchema.safeParse({
+      type: "image",
+      title: "Architecture diagram",
+      file: {
+        fileKey: "user/image/example.png",
+        fileName: "example.png",
+        fileSize: 1024,
+        fileMimeType: "image/png",
+        fileUrl: null,
+      },
+      tags: [],
+    });
+
+    expect(result.success).toBe(true);
   });
 });

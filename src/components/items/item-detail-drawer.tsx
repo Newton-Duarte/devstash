@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, Copy, ExternalLink, Pencil, Pin, Star, Trash2, X } from "lucide-react";
+import { Check, Copy, Download, ExternalLink, Pencil, Pin, Star, Trash2, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type MouseEvent, type ReactNode, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -74,6 +75,19 @@ function ActionButton({
     >
       {children}
     </Button>
+  );
+}
+
+function ActionLink({ children, href, label }: { children: ReactNode; href: string; label: string }) {
+  return (
+    <a
+      aria-label={label}
+      className="inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition-colors hover:bg-white/[0.08] hover:text-white"
+      download
+      href={href}
+    >
+      {children}
+    </a>
   );
 }
 
@@ -255,8 +269,10 @@ function ItemDetailContent({
   const showContentField = ["snippet", "prompt", "command", "note"].includes(typeName);
   const showLanguageField = ["snippet", "command"].includes(typeName);
   const showUrlField = typeName === "link";
+  const showFileDetails = ["file", "image"].includes(typeName) && item.fileName;
   const showCodeEditor = ["snippet", "command"].includes(typeName);
   const showMarkdownEditor = ["note", "prompt"].includes(typeName);
+  const fileDownloadUrl = item.fileUrl ?? `/api/items/${item.id}/download`;
 
   return (
     <div className="space-y-8 p-6 sm:p-8">
@@ -293,6 +309,11 @@ function ItemDetailContent({
           <ActionButton label="Copy item">
             <Copy className="size-4" />
           </ActionButton>
+          {showFileDetails ? (
+            <ActionLink href={fileDownloadUrl} label="Download item file">
+              <Download className="size-4" />
+            </ActionLink>
+          ) : null}
           <ActionButton label="Edit item" onClick={() => setEditing(true)}>
             <Pencil className="size-4" />
           </ActionButton>
@@ -458,6 +479,19 @@ function ItemDetailContent({
           </div>
         ) : null}
       </section>
+
+      {!editing && typeName === "image" && item.fileName ? (
+        <section className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.03]">
+          <Image
+            alt={item.title}
+            className="max-h-[420px] w-full object-contain"
+            height={420}
+            src={fileDownloadUrl}
+            unoptimized
+            width={640}
+          />
+        </section>
+      ) : null}
 
       <section className="grid gap-3 sm:grid-cols-2">
         <DetailField label="Collection" value={item.collection?.name ?? null} />
