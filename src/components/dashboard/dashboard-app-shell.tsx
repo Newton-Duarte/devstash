@@ -124,7 +124,7 @@ export function DashboardAppShell({
                   </Button>
                 </CollectionCreateDialog>
 
-                <ItemCreateDialog>
+                <ItemCreateDialog collectionOptions={dashboardSidebarData.collectionOptions}>
                   <Button className="rounded-2xl bg-white px-5 text-slate-900 hover:bg-slate-200">
                     <Plus className="size-4" />
                     New Item

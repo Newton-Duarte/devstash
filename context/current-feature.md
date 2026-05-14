@@ -1,16 +1,19 @@
-# Current Feature
+# Current Feature: Add Items To Collections
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add collection selection to new item forms.
+- Add collection selection to edit item forms.
+- Allow assigning an item to one or more available collections.
+- Persist item-to-collection assignments when creating or updating items.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Collection pages do not need to be displayed as part of this feature.
 
 ## History
 

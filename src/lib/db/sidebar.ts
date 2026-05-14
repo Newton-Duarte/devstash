@@ -25,6 +25,11 @@ export interface DashboardSidebarCollection {
   href: string;
 }
 
+export interface DashboardCollectionOption {
+  id: string;
+  name: string;
+}
+
 export interface DashboardSidebarData {
   user: {
     name: string | null;
@@ -34,6 +39,7 @@ export interface DashboardSidebarData {
   itemTypes: DashboardSidebarItemType[];
   favoriteCollections: DashboardSidebarCollection[];
   recentCollections: DashboardSidebarCollection[];
+  collectionOptions: DashboardCollectionOption[];
   viewAllCollectionsHref: string;
 }
 
@@ -46,10 +52,14 @@ type SidebarCollectionWithItems = Prisma.CollectionGetPayload<{
     };
     items: {
       select: {
-        type: {
+        item: {
           select: {
-            name: true;
-            color: true;
+            type: {
+              select: {
+                name: true;
+                color: true;
+              };
+            };
           };
         };
       };
@@ -61,15 +71,15 @@ function getCollectionAccentColor(collection: SidebarCollectionWithItems) {
   const typeCounts = new Map<string, { color: string | null; count: number }>();
 
   for (const item of collection.items) {
-    const currentType = typeCounts.get(item.type.name);
+    const currentType = typeCounts.get(item.item.type.name);
 
     if (currentType) {
       currentType.count += 1;
       continue;
     }
 
-    typeCounts.set(item.type.name, {
-      color: item.type.color,
+    typeCounts.set(item.item.type.name, {
+      color: item.item.type.color,
       count: 1,
     });
   }
@@ -122,14 +132,15 @@ export async function getDashboardSidebarData(userId: string): Promise<Dashboard
   if (!user) {
     return {
       user: null,
-      itemTypes: [],
-      favoriteCollections: [],
-      recentCollections: [],
-      viewAllCollectionsHref: "/collections",
+        itemTypes: [],
+        favoriteCollections: [],
+        recentCollections: [],
+        collectionOptions: [],
+        viewAllCollectionsHref: "/collections",
     };
   }
 
-  const [itemTypes, typeCounts, favoriteCollections, recentCollections] = await Promise.all([
+  const [itemTypes, typeCounts, favoriteCollections, recentCollections, collectionOptions] = await Promise.all([
     prisma.itemType.findMany({
       where: {
         isSystem: true,
@@ -166,10 +177,14 @@ export async function getDashboardSidebarData(userId: string): Promise<Dashboard
         },
         items: {
           select: {
-            type: {
+            item: {
               select: {
-                name: true,
-                color: true,
+                type: {
+                  select: {
+                    name: true,
+                    color: true,
+                  },
+                },
               },
             },
           },
@@ -193,14 +208,30 @@ export async function getDashboardSidebarData(userId: string): Promise<Dashboard
         },
         items: {
           select: {
-            type: {
+            item: {
               select: {
-                name: true,
-                color: true,
+                type: {
+                  select: {
+                    name: true,
+                    color: true,
+                  },
+                },
               },
             },
           },
         },
+      },
+    }),
+    prisma.collection.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        name: "asc",
+      },
+      select: {
+        id: true,
+        name: true,
       },
     }),
   ]);
@@ -236,6 +267,7 @@ export async function getDashboardSidebarData(userId: string): Promise<Dashboard
       }),
     favoriteCollections: favoriteCollections.map(mapSidebarCollection),
     recentCollections: recentCollections.map(mapSidebarCollection),
+    collectionOptions,
     viewAllCollectionsHref: "/collections",
   };
 }

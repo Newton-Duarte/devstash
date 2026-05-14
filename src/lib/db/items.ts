@@ -54,9 +54,10 @@ export interface ItemDetail {
   updatedAtLabel: string;
   tags: string[];
   type: DashboardItemType;
-  collection: {
+  collections: {
+    id: string;
     name: string;
-  } | null;
+  }[];
 }
 
 export interface UpdateItemData {
@@ -66,6 +67,7 @@ export interface UpdateItemData {
   url?: string | null;
   language?: string | null;
   tags: string[];
+  collectionIds: string[];
 }
 
 export interface DeletedItemFile {
@@ -106,9 +108,14 @@ type ItemWithRelations = Prisma.ItemGetPayload<{
 }>;
 
 const itemDetailInclude = {
-  collection: {
+  collections: {
     select: {
-      name: true,
+      collection: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   },
   tags: {
@@ -189,12 +196,34 @@ function mapItemDetail(item: ItemDetailWithRelations): ItemDetail {
       icon: item.type.icon,
       color: item.type.color,
     },
-    collection: item.collection
-      ? {
-          name: item.collection.name,
-        }
-      : null,
+    collections: item.collections
+      .map(({ collection }) => ({
+        id: collection.id,
+        name: collection.name,
+      }))
+      .sort((left, right) => left.name.localeCompare(right.name)),
   };
+}
+
+async function getUserCollectionIds(userId: string, collectionIds: string[]) {
+  if (collectionIds.length === 0) {
+    return [];
+  }
+
+  const uniqueCollectionIds = [...new Set(collectionIds)];
+  const collections = await prisma.collection.findMany({
+    where: {
+      id: {
+        in: uniqueCollectionIds,
+      },
+      userId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return collections.map((collection) => collection.id);
 }
 
 export async function getDashboardItemsData(userId: string): Promise<DashboardItemsData> {
@@ -335,22 +364,25 @@ export async function createItem(
   userId: string,
   data: CreateItemData
 ): Promise<ItemDetail | null> {
-  const itemType = await prisma.itemType.findFirst({
-    where: {
-      name: data.type,
-      OR: [
-        {
-          isSystem: true,
-        },
-        {
-          userId,
-        },
-      ],
-    },
-    select: {
-      id: true,
-    },
-  });
+  const [itemType, collectionIds] = await Promise.all([
+    prisma.itemType.findFirst({
+      where: {
+        name: data.type,
+        OR: [
+          {
+            isSystem: true,
+          },
+          {
+            userId,
+          },
+        ],
+      },
+      select: {
+        id: true,
+      },
+    }),
+    getUserCollectionIds(userId, data.collectionIds),
+  ]);
 
   if (!itemType) {
     return null;
@@ -385,6 +417,15 @@ export async function createItem(
                 userId,
                 name,
               },
+            },
+          },
+        })),
+      },
+      collections: {
+        create: collectionIds.map((collectionId) => ({
+          collection: {
+            connect: {
+              id: collectionId,
             },
           },
         })),
@@ -429,8 +470,16 @@ export async function updateItem(
     return null;
   }
 
+  const collectionIds = await getUserCollectionIds(userId, data.collectionIds);
+
   const updatedItem = await prisma.$transaction(async (tx) => {
     await tx.itemTag.deleteMany({
+      where: {
+        itemId,
+      },
+    });
+
+    await tx.itemCollection.deleteMany({
       where: {
         itemId,
       },
@@ -460,6 +509,15 @@ export async function updateItem(
                   userId,
                   name,
                 },
+              },
+            },
+          })),
+        },
+        collections: {
+          create: collectionIds.map((collectionId) => ({
+            collection: {
+              connect: {
+                id: collectionId,
               },
             },
           })),

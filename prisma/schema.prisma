@@ -46,15 +46,13 @@ model Item {
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   typeId       String
   type         ItemType    @relation(fields: [typeId], references: [id])
-  collectionId String?
-  collection   Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  collections  ItemCollection[]
   tags         ItemTag[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
   @@index([userId])
   @@index([typeId])
-  @@index([collectionId])
   @@index([userId, updatedAt])
   @@index([userId, isPinned])
   @@index([userId, isFavorite])
@@ -81,11 +79,21 @@ model Collection {
   isFavorite  Boolean  @default(false)
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items       Item[]
+  items       ItemCollection[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
+}
+
+model ItemCollection {
+  itemId       String
+  collectionId String
+  item         Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, collectionId])
+  @@index([collectionId])
 }
 
 model Tag {

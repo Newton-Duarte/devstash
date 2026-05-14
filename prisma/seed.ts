@@ -395,7 +395,15 @@ async function main() {
           language: item.language,
           userId: user.id,
           typeId: getRequiredId(itemTypeIds, item.typeName, "item type"),
-          collectionId,
+          collections: {
+            create: {
+              collection: {
+                connect: {
+                  id: collectionId,
+                },
+              },
+            },
+          },
         },
         select: {
           id: true,

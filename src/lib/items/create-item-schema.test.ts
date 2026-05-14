@@ -23,6 +23,7 @@ describe("createItemSchema", () => {
         content: "const value = true;",
         language: "ts",
         tags: ["react", "hooks"],
+        collectionIds: [],
       });
     }
   });
@@ -37,6 +38,20 @@ describe("createItemSchema", () => {
 
     if (result.success) {
       expect(result.data.tags).toEqual([]);
+    }
+  });
+
+  it("trims collection ids", () => {
+    const result = createItemSchema.safeParse({
+      type: "note",
+      title: "Release checklist",
+      collectionIds: [" collection-1 ", " collection-2 "],
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.collectionIds).toEqual(["collection-1", "collection-2"]);
     }
   });
 

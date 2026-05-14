@@ -7,6 +7,7 @@ export const updateItemSchema = z.object({
   url: z.string().trim().url("Enter a valid URL.").nullable().optional(),
   language: z.string().trim().nullable().optional(),
   tags: z.array(z.string().trim().min(1)).default([]),
+  collectionIds: z.array(z.string().trim().min(1)).default([]),
 });
 
 export type UpdateItemInput = z.input<typeof updateItemSchema>;

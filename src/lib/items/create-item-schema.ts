@@ -20,6 +20,7 @@ export const createItemSchema = z
     language: z.string().trim().nullable().optional(),
     file: uploadedFileSchema.nullable().optional(),
     tags: z.array(z.string().trim().min(1)).default([]),
+    collectionIds: z.array(z.string().trim().min(1)).default([]),
   })
   .superRefine((data, context) => {
     if (data.type === "link") {

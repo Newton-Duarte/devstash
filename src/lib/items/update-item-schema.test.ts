@@ -23,6 +23,7 @@ describe("updateItemSchema", () => {
         language: "ts",
         url: null,
         tags: ["react", "hooks"],
+        collectionIds: [],
       });
     }
   });
@@ -37,6 +38,19 @@ describe("updateItemSchema", () => {
 
     if (result.success) {
       expect(result.data.tags).toEqual([]);
+    }
+  });
+
+  it("trims collection ids", () => {
+    const result = updateItemSchema.safeParse({
+      title: "Link",
+      collectionIds: [" collection-1 ", " collection-2 "],
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.collectionIds).toEqual(["collection-1", "collection-2"]);
     }
   });
 

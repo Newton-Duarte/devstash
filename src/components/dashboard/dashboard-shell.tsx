@@ -49,6 +49,7 @@ export function DashboardShell({
   return (
     <DashboardAppShell dashboardSidebarData={dashboardSidebarData}>
       <ItemDetailDrawer
+        collectionOptions={dashboardSidebarData.collectionOptions}
         error={itemDrawer.error}
         item={itemDrawer.item}
         loading={itemDrawer.loading}

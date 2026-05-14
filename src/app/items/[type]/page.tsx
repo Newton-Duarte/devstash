@@ -65,7 +65,11 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
 
         <section className="mt-6">
           {pageData.items.length > 0 ? (
-            <ItemsListDrawerGrid itemTypeName={pageData.itemType.name} items={pageData.items} />
+            <ItemsListDrawerGrid
+              collectionOptions={sidebarData.collectionOptions}
+              itemTypeName={pageData.itemType.name}
+              items={pageData.items}
+            />
           ) : (
             <div className="rounded-[2rem] border border-dashed border-white/10 bg-[#0d0e12] px-8 py-14 text-center shadow-2xl shadow-black/10">
               <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase">

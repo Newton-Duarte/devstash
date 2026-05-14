@@ -5,14 +5,20 @@ import { FileListRow } from "@/components/items/file-list-row";
 import { ImageThumbnailCard } from "@/components/items/image-thumbnail-card";
 import { ItemCard } from "@/components/items/item-card";
 import { useItemDrawer } from "@/components/items/use-item-drawer";
+import { type CollectionOption } from "@/lib/db/collections";
 import { type ItemListItem } from "@/lib/db/item-list";
 
 interface ItemsListDrawerGridProps {
+  collectionOptions: CollectionOption[];
   items: ItemListItem[];
   itemTypeName: string;
 }
 
-export function ItemsListDrawerGrid({ items, itemTypeName }: ItemsListDrawerGridProps) {
+export function ItemsListDrawerGrid({
+  collectionOptions,
+  items,
+  itemTypeName,
+}: ItemsListDrawerGridProps) {
   const drawer = useItemDrawer();
   const showFileList = itemTypeName === "file";
   const showImageGallery = itemTypeName === "image";
@@ -45,6 +51,7 @@ export function ItemsListDrawerGrid({ items, itemTypeName }: ItemsListDrawerGrid
         </div>
       )}
       <ItemDetailDrawer
+        collectionOptions={collectionOptions}
         error={drawer.error}
         item={drawer.item}
         loading={drawer.loading}

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { deleteItem, updateItem } from "@/actions/items";
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
 import { CodeEditor } from "@/components/items/code-editor";
+import { CollectionCheckboxList } from "@/components/items/collection-checkbox-list";
 import { MarkdownEditor } from "@/components/items/markdown-editor";
 import {
   AlertDialog,
@@ -24,12 +25,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetCloseButton, SheetContent } from "@/components/ui/sheet";
+import { type CollectionOption } from "@/lib/db/collections";
 import { type ItemDetail } from "@/lib/db/items";
 import { cn } from "@/lib/utils";
 
 interface ItemDetailDrawerProps {
   error: string | null;
   item: ItemDetail | null;
+  collectionOptions: CollectionOption[];
   loading: boolean;
   onItemDeleted: () => void;
   onItemUpdated: (item: ItemDetail) => void;
@@ -45,6 +48,7 @@ interface ItemEditValues {
   content: string;
   language: string;
   url: string;
+  collectionIds: string[];
 }
 
 function ActionButton({
@@ -114,6 +118,7 @@ function getInitialEditValues(item: ItemDetail): ItemEditValues {
     content: item.content ?? "",
     language: item.language ?? "",
     url: item.url ?? "",
+    collectionIds: item.collections.map((collection) => collection.id),
   };
 }
 
@@ -189,10 +194,12 @@ function formatFileSize(bytes: number | null) {
 
 function ItemDetailContent({
   item,
+  collectionOptions,
   onItemDeleted,
   onItemUpdated,
 }: {
   item: ItemDetail;
+  collectionOptions: CollectionOption[];
   onItemDeleted: () => void;
   onItemUpdated: (item: ItemDetail) => void;
 }) {
@@ -207,6 +214,13 @@ function ItemDetailContent({
     setFormValues((currentValues) => ({
       ...currentValues,
       [field]: value,
+    }));
+  };
+
+  const updateCollectionIds = (collectionIds: string[]) => {
+    setFormValues((currentValues) => ({
+      ...currentValues,
+      collectionIds,
     }));
   };
 
@@ -228,6 +242,7 @@ function ItemDetailContent({
         language: toNullableString(formValues.language),
         url: toNullableString(formValues.url),
         tags: parseTags(formValues.tags),
+        collectionIds: formValues.collectionIds,
       });
 
       if (!result.success || !result.data) {
@@ -407,14 +422,27 @@ function ItemDetailContent({
         </div>
 
         {editing ? (
-          <EditField label="Tags">
-            <Input
-              className="rounded-2xl border-white/10 bg-white/[0.04] text-white placeholder:text-slate-600"
-              onChange={(event) => updateField("tags", event.target.value)}
-              placeholder="react, api, workflow"
-              value={formValues.tags}
-            />
-          </EditField>
+          <div className="space-y-4">
+            <EditField label="Tags">
+              <Input
+                className="rounded-2xl border-white/10 bg-white/[0.04] text-white placeholder:text-slate-600"
+                onChange={(event) => updateField("tags", event.target.value)}
+                placeholder="react, api, workflow"
+                value={formValues.tags}
+              />
+            </EditField>
+            <div className="block space-y-2">
+              <span className="text-xs font-medium tracking-[0.18em] text-slate-500 uppercase">
+                Collections
+              </span>
+              <CollectionCheckboxList
+                collectionIds={formValues.collectionIds}
+                collections={collectionOptions}
+                disabled={saving}
+                onChange={updateCollectionIds}
+              />
+            </div>
+          </div>
         ) : item.tags.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {item.tags.map((tag) => (
@@ -494,7 +522,10 @@ function ItemDetailContent({
       ) : null}
 
       <section className="grid gap-3 sm:grid-cols-2">
-        <DetailField label="Collection" value={item.collection?.name ?? null} />
+        <DetailField
+          label="Collections"
+          value={item.collections.map((collection) => collection.name).join(", ") || null}
+        />
         <DetailField label="Content Type" value={item.contentType} />
         <DetailField label="Updated" value={item.updatedAtLabel} />
         <DetailField label="Created" value={item.createdAtLabel} />
@@ -547,6 +578,7 @@ function ItemDetailContent({
 export function ItemDetailDrawer({
   error,
   item,
+  collectionOptions,
   loading,
   onItemDeleted,
   onItemUpdated,
@@ -585,6 +617,7 @@ export function ItemDetailDrawer({
           {!loading && !error && item ? (
             <ItemDetailContent
               item={item}
+              collectionOptions={collectionOptions}
               key={item.id}
               onItemDeleted={onItemDeleted}
               onItemUpdated={onItemUpdated}

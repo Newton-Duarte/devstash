@@ -22,6 +22,7 @@ import { toast } from "sonner";
 
 import { createItem } from "@/actions/items";
 import { CodeEditor } from "@/components/items/code-editor";
+import { CollectionCheckboxList } from "@/components/items/collection-checkbox-list";
 import { FileUpload } from "@/components/items/file-upload";
 import { MarkdownEditor } from "@/components/items/markdown-editor";
 import { Button } from "@/components/ui/button";
@@ -37,10 +38,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { type UploadedFileMetadata } from "@/lib/items/file-upload";
 import { type CreateItemType } from "@/lib/items/create-item-schema";
+import { type CollectionOption } from "@/lib/db/collections";
 import { cn } from "@/lib/utils";
 
 interface ItemCreateDialogProps {
   children: ReactNode;
+  collectionOptions: CollectionOption[];
 }
 
 interface ItemCreateValues {
@@ -52,6 +55,7 @@ interface ItemCreateValues {
   language: string;
   url: string;
   file: UploadedFileMetadata | null;
+  collectionIds: string[];
 }
 
 const itemTypes = [
@@ -121,6 +125,7 @@ const initialValues: ItemCreateValues = {
   language: "",
   url: "",
   file: null,
+  collectionIds: [],
 };
 
 function toNullableString(value: string) {
@@ -154,7 +159,7 @@ function FieldLabel({ children }: { children: ReactNode }) {
   );
 }
 
-export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
+export function ItemCreateDialog({ children, collectionOptions }: ItemCreateDialogProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<ItemCreateValues>(initialValues);
@@ -193,6 +198,13 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
     }));
   };
 
+  const updateCollectionIds = (collectionIds: string[]) => {
+    setValues((currentValues) => ({
+      ...currentValues,
+      collectionIds,
+    }));
+  };
+
   const updateOpen = (nextOpen: boolean) => {
     setOpen(nextOpen);
 
@@ -217,6 +229,7 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
         language: toNullableString(values.language),
         url: toNullableString(values.url),
         tags: parseTags(values.tags),
+        collectionIds: values.collectionIds,
         file: values.file,
       });
 
@@ -375,6 +388,16 @@ export function ItemCreateDialog({ children }: ItemCreateDialogProps) {
                 value={values.tags}
               />
             </label>
+
+            <div className="block space-y-2 sm:col-span-2">
+              <FieldLabel>Collections</FieldLabel>
+              <CollectionCheckboxList
+                collectionIds={values.collectionIds}
+                collections={collectionOptions}
+                disabled={creating}
+                onChange={updateCollectionIds}
+              />
+            </div>
           </div>
 
           <DialogFooter>

@@ -39,6 +39,11 @@ export interface CreatedCollection {
   description: string | null;
 }
 
+export interface CollectionOption {
+  id: string;
+  name: string;
+}
+
 type CollectionWithItems = Prisma.CollectionGetPayload<{
   include: {
     _count: {
@@ -48,11 +53,15 @@ type CollectionWithItems = Prisma.CollectionGetPayload<{
     };
     items: {
       select: {
-        type: {
+        item: {
           select: {
-            name: true;
-            icon: true;
-            color: true;
+            type: {
+              select: {
+                name: true;
+                icon: true;
+                color: true;
+              };
+            };
           };
         };
       };
@@ -64,15 +73,15 @@ function getCollectionAccentColor(collection: CollectionWithItems) {
   const typeCounts = new Map<string, { color: string | null; count: number }>();
 
   for (const item of collection.items) {
-    const currentType = typeCounts.get(item.type.name);
+    const currentType = typeCounts.get(item.item.type.name);
 
     if (currentType) {
       currentType.count += 1;
       continue;
     }
 
-    typeCounts.set(item.type.name, {
-      color: item.type.color,
+    typeCounts.set(item.item.type.name, {
+      color: item.item.type.color,
       count: 1,
     });
   }
@@ -92,14 +101,14 @@ function getCollectionTypes(collection: CollectionWithItems) {
   const uniqueTypes = new Map<string, DashboardCollectionType>();
 
   for (const item of collection.items) {
-    if (uniqueTypes.has(item.type.name)) {
+    if (uniqueTypes.has(item.item.type.name)) {
       continue;
     }
 
-    uniqueTypes.set(item.type.name, {
-      name: item.type.name,
-      icon: item.type.icon,
-      color: item.type.color,
+    uniqueTypes.set(item.item.type.name, {
+      name: item.item.type.name,
+      icon: item.item.type.icon,
+      color: item.item.type.color,
     });
   }
 
@@ -140,11 +149,15 @@ export async function getDashboardCollectionsData(
         },
         items: {
           select: {
-            type: {
+            item: {
               select: {
-                name: true,
-                icon: true,
-                color: true,
+                type: {
+                  select: {
+                    name: true,
+                    icon: true,
+                    color: true,
+                  },
+                },
               },
             },
           },
@@ -171,6 +184,21 @@ export async function getDashboardCollectionsData(
       favoriteCollections,
     },
   };
+}
+
+export async function getCollectionOptions(userId: string): Promise<CollectionOption[]> {
+  return prisma.collection.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      name: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
 }
 
 export async function createCollection(
