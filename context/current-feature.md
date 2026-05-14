@@ -1,24 +1,16 @@
-# Current Feature: Collection Create
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add a top-bar button for creating a new collection.
-- Open a modal from the create button with the fields needed to create a collection, including a description.
-- Persist new collections as user-scoped data using the established collection database patterns.
-- Fetch collections from server components through `lib/db` functions.
-- Use API routes for any client-side collection creation calls.
-- Show success and failure toasts for collection creation.
-- Refresh/update the UI so the newly created collection appears immediately after save.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Follow the same implementation patterns used for item creation.
-- Collections should remain scoped to the authenticated user.
-- Preserve existing dashboard/app shell patterns for top-bar actions and modal behavior.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -54,3 +46,4 @@ In Progress
 - **Items List Three Column Layout** - Updated the protected `/items/[type]` listing grid to keep two columns at `md` and expand to three columns at `lg` and above while preserving the existing responsive item card layout (Completed)
 - **Dashboard Item Card Accent Match** - Updated dashboard pinned and recent item cards to use the same left accent shell treatment as collection cards while preserving item-type accent colors and existing content layouts (Completed)
 - **Items Internal App Shell** - Added a reusable dashboard app shell and updated protected item list and profile pages to share the existing sidebar, mobile drawer, and dashboard header actions while preserving their existing page content and behaviors (Completed)
+- **Collection Create** - Added a top-bar collection creation modal backed by an authenticated API route, user-scoped Prisma creation, schema validation, toast feedback, route refresh, and validation tests (Completed)
