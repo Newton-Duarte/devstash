@@ -1,29 +1,16 @@
-# Current Feature: File Upload with Cloudflare R2
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add file and image upload support backed by Cloudflare R2 storage.
-- Create an authenticated upload API route for R2-backed file and image items.
-- Keep Prisma/database item functions in `lib/db/items.ts`.
-- Add a drag-and-drop `FileUpload` component with upload progress.
-- Update the create item modal to use `FileUpload` for file and image item types.
-- Delete associated R2 objects when file or image items are deleted.
-- Add a download proxy API route to avoid CORS issues.
-- Add a download button in the item drawer for file items.
-- Display image previews for images and file metadata for files.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Source spec: `context/features/file-upload-cloudflare-r2-spec.md`
-- File constraints:
-  - Images: max 5 MB; extensions `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`.
-  - Files: max 10 MB; extensions `.pdf`, `.txt`, `.md`, `.json`, `.yaml`, `.yml`, `.xml`, `.csv`, `.toml`, `.ini`.
-- Allowed image MIME types: `image/png`, `image/jpeg`, `image/gif`, `image/webp`, `image/svg+xml`.
-- Allowed file MIME types: `application/pdf`, `text/plain`, `text/markdown`, `application/json`, `application/x-yaml`, `text/yaml`, `application/xml`, `text/xml`, `text/csv`, `application/toml`.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -55,3 +42,4 @@ In Progress
 - **Item Create** - Added a dashboard New Item dialog with type-specific fields, authenticated Zod-validated creation, tag persistence, success toasts, route refresh, and schema tests (Completed)
 - **Code Editor** - Added a reusable Monaco-based code editor for snippet and command creation, display, editing, and copying while preserving textarea behavior for non-code item types (Completed)
 - **Markdown Editor** - Added a reusable Markdown editor with Write/Preview tabs, safe GitHub Flavored Markdown rendering, dark preview styling, copy support, and note/prompt integration across create, edit, and view flows (Completed)
+- **File Upload with Cloudflare R2** - Added R2-backed file and image uploads with authenticated upload/download routes, drag-and-drop progress UI, image previews, file downloads, database file metadata, and R2 cleanup on item deletion (Completed)
