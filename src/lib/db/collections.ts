@@ -2,6 +2,7 @@ import "server-only";
 
 import { type Prisma } from "@/generated/prisma/client";
 import { type CreateCollectionData } from "@/lib/collections/create-collection-schema";
+import { type ItemListItem } from "@/lib/db/item-list";
 import { prisma } from "@/lib/prisma";
 
 const NEUTRAL_COLLECTION_ACCENT = "#334155";
@@ -33,6 +34,20 @@ export interface DashboardCollectionsData {
   stats: DashboardCollectionStats;
 }
 
+export type CollectionsPageData = DashboardCollectionsData;
+
+export interface CollectionDetailPageData {
+  collection: DashboardCollection;
+  items: ItemListItem[];
+  itemGroups: CollectionItemGroup[];
+}
+
+export interface CollectionItemGroup {
+  layout: "cards" | "files" | "images";
+  label: string;
+  items: ItemListItem[];
+}
+
 export interface CreatedCollection {
   id: string;
   name: string;
@@ -55,6 +70,40 @@ type CollectionWithItems = Prisma.CollectionGetPayload<{
       select: {
         item: {
           select: {
+            type: {
+              select: {
+                name: true;
+                icon: true;
+                color: true;
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}>;
+
+type CollectionDetailWithItems = Prisma.CollectionGetPayload<{
+  include: {
+    _count: {
+      select: {
+        items: true;
+      };
+    };
+    items: {
+      select: {
+        item: {
+          include: {
+            tags: {
+              select: {
+                tag: {
+                  select: {
+                    name: true;
+                  };
+                };
+              };
+            };
             type: {
               select: {
                 name: true;
@@ -129,6 +178,62 @@ function mapDashboardCollection(collection: CollectionWithItems): DashboardColle
   };
 }
 
+function formatItemDate(updatedAt: Date) {
+  return updatedAt.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function mapCollectionItem({ item }: CollectionDetailWithItems["items"][number]): ItemListItem {
+  return {
+    id: item.id,
+    title: item.title,
+    description: item.description ?? "No description yet",
+    fileName: item.fileName,
+    fileSize: item.fileSize,
+    createdAtLabel: formatItemDate(item.createdAt),
+    isFavorite: item.isFavorite,
+    isPinned: item.isPinned,
+    url: item.url,
+    updatedAtLabel: formatItemDate(item.updatedAt),
+    tags: item.tags.map(({ tag }) => tag.name),
+    type: {
+      name: item.type.name,
+      icon: item.type.icon,
+      color: item.type.color,
+    },
+  };
+}
+
+function getCollectionItemGroups(items: ItemListItem[]): CollectionItemGroup[] {
+  const cardItems: ItemListItem[] = [];
+  const fileItems: ItemListItem[] = [];
+  const imageItems: ItemListItem[] = [];
+
+  for (const item of items) {
+    if (item.type.name === "file") {
+      fileItems.push(item);
+      continue;
+    }
+
+    if (item.type.name === "image") {
+      imageItems.push(item);
+      continue;
+    }
+
+    cardItems.push(item);
+  }
+
+  const groups: CollectionItemGroup[] = [
+    { layout: "cards", label: "Items", items: cardItems },
+    { layout: "files", label: "Files", items: fileItems },
+    { layout: "images", label: "Images", items: imageItems },
+  ];
+
+  return groups.filter((group) => group.items.length > 0);
+}
+
 export async function getDashboardCollectionsData(
   userId: string
 ): Promise<DashboardCollectionsData> {
@@ -183,6 +288,120 @@ export async function getDashboardCollectionsData(
       totalCollections,
       favoriteCollections,
     },
+  };
+}
+
+export async function getCollectionsPageData(userId: string): Promise<CollectionsPageData> {
+  const [collections, totalCollections, favoriteCollections] = await Promise.all([
+    prisma.collection.findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      include: {
+        _count: {
+          select: {
+            items: true,
+          },
+        },
+        items: {
+          select: {
+            item: {
+              select: {
+                type: {
+                  select: {
+                    name: true,
+                    icon: true,
+                    color: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
+    prisma.collection.count({
+      where: {
+        userId,
+      },
+    }),
+    prisma.collection.count({
+      where: {
+        userId,
+        isFavorite: true,
+      },
+    }),
+  ]);
+
+  return {
+    collections: collections.map(mapDashboardCollection),
+    stats: {
+      totalCollections,
+      favoriteCollections,
+    },
+  };
+}
+
+export async function getCollectionDetailPageData(
+  userId: string,
+  collectionId: string
+): Promise<CollectionDetailPageData | null> {
+  const collection = await prisma.collection.findFirst({
+    where: {
+      id: collectionId,
+      userId,
+    },
+    include: {
+      _count: {
+        select: {
+          items: true,
+        },
+      },
+      items: {
+        orderBy: {
+          item: {
+            updatedAt: "desc",
+          },
+        },
+        select: {
+          item: {
+            include: {
+              tags: {
+                select: {
+                  tag: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+              type: {
+                select: {
+                  name: true,
+                  icon: true,
+                  color: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!collection) {
+    return null;
+  }
+
+  const items = collection.items.map(mapCollectionItem);
+
+  return {
+    collection: mapDashboardCollection(collection),
+    items,
+    itemGroups: getCollectionItemGroups(items),
   };
 }
 

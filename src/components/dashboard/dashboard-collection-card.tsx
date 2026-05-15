@@ -9,6 +9,7 @@ import {
   Star,
   Terminal,
 } from "lucide-react";
+import Link from "next/link";
 
 import {
   type DashboardCollection,
@@ -37,9 +38,10 @@ function MiniIcon({ type }: { type: DashboardCollectionType }) {
 
 interface DashboardCollectionCardProps {
   collection: DashboardCollection;
+  href?: string;
 }
 
-export function DashboardCollectionCard({ collection }: DashboardCollectionCardProps) {
+function DashboardCollectionCardContent({ collection }: { collection: DashboardCollection }) {
   return (
     <article
       className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-6 before:absolute before:inset-y-0 before:left-0 before:w-[3px]"
@@ -62,13 +64,9 @@ export function DashboardCollectionCard({ collection }: DashboardCollectionCardP
           </p>
         </div>
 
-        <button
-          aria-label={`More options for ${collection.name}`}
-          className="text-muted-foreground transition hover:text-white"
-          type="button"
-        >
+        <span aria-hidden="true" className="text-muted-foreground transition group-hover:text-white">
           <Ellipsis className="size-5" />
-        </button>
+        </span>
       </div>
 
       <p className="mb-5 max-w-[28ch] text-sm leading-6 text-muted-foreground">
@@ -82,4 +80,21 @@ export function DashboardCollectionCard({ collection }: DashboardCollectionCardP
       </div>
     </article>
   );
+}
+
+export function DashboardCollectionCard({ collection, href }: DashboardCollectionCardProps) {
+  if (href) {
+    return (
+      <Link
+        aria-label={`Open ${collection.name} collection`}
+        className="group block transition hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        href={href}
+        prefetch={false}
+      >
+        <DashboardCollectionCardContent collection={collection} />
+      </Link>
+    );
+  }
+
+  return <DashboardCollectionCardContent collection={collection} />;
 }

@@ -1,16 +1,22 @@
-# Current Feature
+# Current Feature: Collections Pages
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Create a protected `/collections` page that shows the user's collections.
+- Create a protected `/collections/[id]` page that shows the items assigned to that collection.
+- Reuse existing collection and item card presentation patterns where practical.
+- Link the sidebar "View all collections" action to `/collections`.
+- Link collection cards to their specific `/collections/[id]` pages.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Follow the existing authenticated dashboard app shell used by `/items/[type]` and `/profile`.
+- Keep collection data scoped to the signed-in user.
+- Preserve the existing item drawer behavior for item cards on collection detail pages.
 
 ## History
 
