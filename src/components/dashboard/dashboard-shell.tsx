@@ -96,7 +96,11 @@ export function DashboardShell({
 
         <div className="grid gap-5 xl:grid-cols-3">
           {dashboardCollectionsData.collections.map((collection) => (
-            <DashboardCollectionCard collection={collection} key={collection.id} />
+            <DashboardCollectionCard
+              collection={collection}
+              href={`/collections/${collection.id}`}
+              key={collection.id}
+            />
           ))}
         </div>
       </section>
