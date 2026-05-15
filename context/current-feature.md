@@ -1,22 +1,16 @@
-# Current Feature: Collection Actions
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add edit, delete, and favorite collection action buttons to `/collections/[id]`.
-- Add an edit modal for collection metadata.
-- Add a delete confirmation flow for deleting a collection.
-- Ensure collection delete keeps the items themselves intact.
-- Add a three-dot actions dropdown to collection cards on `/collections` with edit, delete, and favorite actions.
-- Preserve card navigation so clicking elsewhere on a collection card opens that collection page.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Favorite actions are UI-only for this feature; do not implement persistence or behavior beyond the icon/button.
-- Delete behavior removes the collection and its memberships, not the underlying items.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -55,3 +49,4 @@ In Progress
 - **Collection Create** - Added a top-bar collection creation modal backed by an authenticated API route, user-scoped Prisma creation, schema validation, toast feedback, route refresh, and validation tests (Completed)
 - **Add Items To Collections** - Added multi-collection item assignment for create and edit flows with a join-table migration, collection selectors, persisted assignments, and updated validation tests (Completed)
 - **Collections Pages** - Added protected collection index and detail pages, linked collection cards and sidebar navigation, and grouped detail items so files and images use specialized layouts while other items share the accent card grid (Completed)
+- **Collection Actions** - Added collection edit/delete/favorite controls to collection cards and detail headers with metadata editing, delete confirmation, preserved item records, and UI-only favorite placeholders (Completed)
