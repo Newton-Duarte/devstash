@@ -2,6 +2,7 @@ import "server-only";
 
 import { type Prisma } from "@/generated/prisma/client";
 import { type CreateCollectionData } from "@/lib/collections/create-collection-schema";
+import { type UpdateCollectionData } from "@/lib/collections/update-collection-schema";
 import { type ItemListItem } from "@/lib/db/item-list";
 import { prisma } from "@/lib/prisma";
 
@@ -53,6 +54,8 @@ export interface CreatedCollection {
   name: string;
   description: string | null;
 }
+
+export type UpdatedCollection = CreatedCollection;
 
 export interface CollectionOption {
   id: string;
@@ -436,4 +439,63 @@ export async function createCollection(
       description: true,
     },
   });
+}
+
+export async function updateCollection(
+  userId: string,
+  collectionId: string,
+  data: UpdateCollectionData
+): Promise<UpdatedCollection | null> {
+  const collection = await prisma.collection.findFirst({
+    where: {
+      id: collectionId,
+      userId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!collection) {
+    return null;
+  }
+
+  return prisma.collection.update({
+    where: {
+      id: collection.id,
+    },
+    data: {
+      name: data.name,
+      description: data.description,
+    },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+    },
+  });
+}
+
+export async function deleteCollection(userId: string, collectionId: string) {
+  const collection = await prisma.collection.findFirst({
+    where: {
+      id: collectionId,
+      userId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!collection) {
+    return false;
+  }
+
+  await prisma.collection.delete({
+    where: {
+      id: collection.id,
+    },
+  });
+
+  return true;
 }

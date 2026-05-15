@@ -1,16 +1,22 @@
-# Current Feature
+# Current Feature: Collection Actions
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add edit, delete, and favorite collection action buttons to `/collections/[id]`.
+- Add an edit modal for collection metadata.
+- Add a delete confirmation flow for deleting a collection.
+- Ensure collection delete keeps the items themselves intact.
+- Add a three-dot actions dropdown to collection cards on `/collections` with edit, delete, and favorite actions.
+- Preserve card navigation so clicking elsewhere on a collection card opens that collection page.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Favorite actions are UI-only for this feature; do not implement persistence or behavior beyond the icon/button.
+- Delete behavior removes the collection and its memberships, not the underlying items.
 
 ## History
 

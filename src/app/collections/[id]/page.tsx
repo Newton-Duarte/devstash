@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 
 import { auth } from "@/auth";
+import { CollectionHeaderActions } from "@/components/collections/collection-header-actions";
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { CollectionItemsGroupedGrid } from "@/components/items/collection-items-grouped-grid";
 import { getCollectionDetailPageData } from "@/lib/db/collections";
@@ -55,13 +56,16 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
               </p>
             </div>
 
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] px-5 py-4 lg:min-w-[180px]">
-              <p className="text-xs font-medium tracking-[0.2em] text-slate-500 uppercase">
-                Total items
-              </p>
-              <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
-                {pageData.collection.itemCount}
-              </p>
+            <div className="flex flex-col items-start gap-4 lg:items-end">
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] px-5 py-4 lg:min-w-[180px]">
+                <p className="text-xs font-medium tracking-[0.2em] text-slate-500 uppercase">
+                  Total items
+                </p>
+                <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
+                  {pageData.collection.itemCount}
+                </p>
+              </div>
+              <CollectionHeaderActions collection={pageData.collection} />
             </div>
           </div>
         </section>
