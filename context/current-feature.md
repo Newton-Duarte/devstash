@@ -1,22 +1,16 @@
-# Current Feature: Collections Pages
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Create a protected `/collections` page that shows the user's collections.
-- Create a protected `/collections/[id]` page that shows the items assigned to that collection.
-- Reuse existing collection and item card presentation patterns where practical.
-- Link the sidebar "View all collections" action to `/collections`.
-- Link collection cards to their specific `/collections/[id]` pages.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Follow the existing authenticated dashboard app shell used by `/items/[type]` and `/profile`.
-- Keep collection data scoped to the signed-in user.
-- Preserve the existing item drawer behavior for item cards on collection detail pages.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -54,3 +48,4 @@ In Progress
 - **Items Internal App Shell** - Added a reusable dashboard app shell and updated protected item list and profile pages to share the existing sidebar, mobile drawer, and dashboard header actions while preserving their existing page content and behaviors (Completed)
 - **Collection Create** - Added a top-bar collection creation modal backed by an authenticated API route, user-scoped Prisma creation, schema validation, toast feedback, route refresh, and validation tests (Completed)
 - **Add Items To Collections** - Added multi-collection item assignment for create and edit flows with a join-table migration, collection selectors, persisted assignments, and updated validation tests (Completed)
+- **Collections Pages** - Added protected collection index and detail pages, linked collection cards and sidebar navigation, and grouped detail items so files and images use specialized layouts while other items share the accent card grid (Completed)
