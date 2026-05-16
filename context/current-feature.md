@@ -1,27 +1,16 @@
-# Current Feature: Global Search / Command Palette
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add a global command palette that opens with Cmd+K on Mac and Ctrl+K on Windows.
-- Support client-side fuzzy search across all user items and collections.
-- Group search results into Items and Collections sections.
-- Support keyboard navigation with arrow keys and Enter selection.
-- Show item type icons and collection item counts in results.
-- Navigate to an item drawer or collection page when a result is selected.
-- Make the top bar search input open the command palette on click.
-- Show a keyboard shortcut hint in the search input placeholder.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Use the ShadCN `cmdk` Command component.
-- Pre-fetch searchable data on app load without server round-trips during search.
-- Searchable item data should include id, title, type, and content preview.
-- Searchable collection data should include id, name, and item count.
-- Reuse existing data fetching functions where practical.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -61,3 +50,4 @@ In Progress
 - **Add Items To Collections** - Added multi-collection item assignment for create and edit flows with a join-table migration, collection selectors, persisted assignments, and updated validation tests (Completed)
 - **Collections Pages** - Added protected collection index and detail pages, linked collection cards and sidebar navigation, and grouped detail items so files and images use specialized layouts while other items share the accent card grid (Completed)
 - **Collection Actions** - Added collection edit/delete/favorite controls to collection cards and detail headers with metadata editing, delete confirmation, preserved item records, and UI-only favorite placeholders (Completed)
+- **Global Search / Command Palette** - Added Cmd/Ctrl+K global search across items and collections with grouped command palette results, shell-level item drawer opening, collection navigation, client-side fuzzy filtering, and search utility tests (Completed)
