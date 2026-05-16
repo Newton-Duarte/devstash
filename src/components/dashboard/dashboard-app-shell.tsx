@@ -7,6 +7,7 @@ import { CollectionCreateDialog } from "@/components/collections/collection-crea
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardSidebarDrawer } from "@/components/dashboard/dashboard-sidebar-drawer";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
+import { EditorPreferencesProvider } from "@/components/editor/editor-preferences-context";
 import { ItemCreateDialog } from "@/components/items/item-create-dialog";
 import { ItemDetailDrawer } from "@/components/items/item-detail-drawer";
 import { useItemDrawer } from "@/components/items/use-item-drawer";
@@ -47,7 +48,8 @@ export function DashboardAppShell({
   }, []);
 
   return (
-    <div className="h-screen overflow-hidden bg-[#050507] text-foreground">
+    <EditorPreferencesProvider initialPreferences={dashboardSidebarData.user?.editorPreferences}>
+      <div className="h-screen overflow-hidden bg-[#050507] text-foreground">
       <GlobalSearchPalette
         data={searchData}
         onItemSelect={itemDrawer.openItem}
@@ -181,6 +183,7 @@ export function DashboardAppShell({
           </main>
         </div>
       </div>
-    </div>
+      </div>
+    </EditorPreferencesProvider>
   );
 }

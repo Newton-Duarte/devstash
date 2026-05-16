@@ -1,5 +1,7 @@
 import "server-only";
 
+import { type Prisma } from "@/generated/prisma/client";
+import { normalizeEditorPreferences, type EditorPreferences } from "@/lib/editor-preferences";
 import { prisma } from "@/lib/prisma";
 
 const PROFILE_ITEM_TYPE_ORDER = ["snippet", "prompt", "note", "command", "link", "file", "image"];
@@ -18,6 +20,7 @@ export interface ProfilePageData {
     email: string;
     image: string | null;
     createdAt: Date;
+    editorPreferences: EditorPreferences;
     hasPassword: boolean;
   };
   stats: {
@@ -42,6 +45,7 @@ export async function getProfilePageData(userId: string): Promise<ProfilePageDat
         email: true,
         image: true,
         createdAt: true,
+        editorPreferences: true,
         passwordHash: true,
       },
     }),
@@ -108,6 +112,7 @@ export async function getProfilePageData(userId: string): Promise<ProfilePageDat
       email: user.email,
       image: user.image,
       createdAt: user.createdAt,
+      editorPreferences: normalizeEditorPreferences(user.editorPreferences as Prisma.JsonValue),
       hasPassword: Boolean(user.passwordHash),
     },
     stats: {
