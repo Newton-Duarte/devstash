@@ -4,6 +4,7 @@ import {
   ChevronUp,
   Folder,
   LogOut,
+  Settings,
   Star,
   UserIcon,
 } from "lucide-react";
@@ -262,23 +263,31 @@ export function DashboardSidebar({
             </summary>
 
             <div className="absolute bottom-full right-0 z-10 mb-3 w-44 rounded-2xl border border-border/80 bg-[#111216] p-2 shadow-2xl shadow-black/30">
-                <Link
-                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.05]"
-                  href="/profile"
-                  prefetch={false}
+              <Link
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.05]"
+                href="/profile"
+                prefetch={false}
+              >
+                <UserIcon className="size-4" />
+                Profile
+              </Link>
+              <Link
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-200 transition hover:bg-white/[0.05]"
+                href="/settings"
+                prefetch={false}
+              >
+                <Settings className="size-4" />
+                Settings
+              </Link>
+              <form action={signOutAction}>
+                <button
+                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/[0.05]"
+                  type="submit"
                 >
-                  <UserIcon className="size-4" />
-                  Profile
-                </Link>
-                <form action={signOutAction}>
-                  <button
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/[0.05]"
-                    type="submit"
-                  >
-                    <LogOut className="size-4" />
-                    Sign out
-                  </button>
-                </form>
+                  <LogOut className="size-4" />
+                  Sign out
+                </button>
+              </form>
             </div>
           </details>
         ) : null}

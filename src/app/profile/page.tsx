@@ -3,7 +3,6 @@ import { connection } from "next/server";
 
 import { auth } from "@/auth";
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
-import { ProfileAccountActions } from "@/components/profile/profile-account-actions";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { getGlobalSearchData } from "@/lib/db/global-search";
 import { getProfilePageData } from "@/lib/db/profile";
@@ -128,10 +127,6 @@ export default async function ProfilePage() {
               </article>
             ))}
           </div>
-        </section>
-
-        <section className="mt-6">
-          <ProfileAccountActions canChangePassword={profileData.user.hasPassword} />
         </section>
       </div>
     </DashboardAppShell>

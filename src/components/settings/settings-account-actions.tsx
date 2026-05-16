@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -21,7 +22,7 @@ const INITIAL_DELETE_ACCOUNT_ACTION_STATE: DeleteAccountActionState = {
   error: null,
 };
 
-interface ProfileAccountActionsProps {
+interface SettingsAccountActionsProps {
   canChangePassword: boolean;
 }
 
@@ -68,7 +69,7 @@ function DeleteAccountConfirmButton() {
   );
 }
 
-export function ProfileAccountActions({ canChangePassword }: ProfileAccountActionsProps) {
+export function SettingsAccountActions({ canChangePassword }: SettingsAccountActionsProps) {
   const [changePasswordState, changePasswordFormAction] = useActionState(
     changePasswordAction,
     INITIAL_CHANGE_PASSWORD_ACTION_STATE
@@ -91,6 +92,13 @@ export function ProfileAccountActions({ canChangePassword }: ProfileAccountActio
             Update your password for this account. You&apos;ll be signed out after saving so you can
             sign back in with the new password.
           </p>
+          <Link
+            className="mt-2 inline-flex text-sm font-medium text-slate-300 underline-offset-4 transition hover:text-white hover:underline"
+            href="/forgot-password"
+            prefetch={false}
+          >
+            Forgot your password? Request a reset email.
+          </Link>
         </div>
 
         <div className="mt-6">
