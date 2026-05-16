@@ -6,6 +6,7 @@ import { CollectionHeaderActions } from "@/components/collections/collection-hea
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { CollectionItemsGroupedGrid } from "@/components/items/collection-items-grouped-grid";
 import { getCollectionDetailPageData } from "@/lib/db/collections";
+import { getGlobalSearchData } from "@/lib/db/global-search";
 import { getDashboardSidebarData } from "@/lib/db/sidebar";
 
 interface CollectionDetailPageProps {
@@ -26,10 +27,12 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
   const { id } = await params;
   const collectionDetailPageData = getCollectionDetailPageData(session.user.id, id);
   const dashboardSidebarData = getDashboardSidebarData(session.user.id);
+  const globalSearchData = getGlobalSearchData(session.user.id);
 
-  const [pageData, sidebarData] = await Promise.all([
+  const [pageData, sidebarData, searchData] = await Promise.all([
     collectionDetailPageData,
     dashboardSidebarData,
+    globalSearchData,
   ]);
 
   if (!pageData) {
@@ -37,7 +40,7 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
   }
 
   return (
-    <DashboardAppShell dashboardSidebarData={sidebarData}>
+    <DashboardAppShell dashboardSidebarData={sidebarData} searchData={searchData}>
       <div className="max-w-6xl">
         <section
           className="rounded-[2rem] border border-white/10 bg-[#0d0e12] p-8 shadow-2xl shadow-black/20"
