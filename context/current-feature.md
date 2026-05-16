@@ -1,16 +1,20 @@
-# Current Feature
+# Current Feature: Settings Page Account Actions
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Create a protected settings page at `/settings`.
+- Add a Settings link to the user icon dropdown at the bottom of the sidebar.
+- Move account actions from the profile page to the settings page.
+- Keep delete account and forgot password actions available from settings.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- The settings route should use the app's existing protected page patterns.
+- The profile page should no longer own the account actions section.
 
 ## History
 
