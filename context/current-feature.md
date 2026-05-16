@@ -1,20 +1,16 @@
-# Current Feature: Settings Page Account Actions
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Create a protected settings page at `/settings`.
-- Add a Settings link to the user icon dropdown at the bottom of the sidebar.
-- Move account actions from the profile page to the settings page.
-- Keep delete account and forgot password actions available from settings.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- The settings route should use the app's existing protected page patterns.
-- The profile page should no longer own the account actions section.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -56,3 +52,4 @@ In Progress
 - **Collection Actions** - Added collection edit/delete/favorite controls to collection cards and detail headers with metadata editing, delete confirmation, preserved item records, and UI-only favorite placeholders (Completed)
 - **Global Search / Command Palette** - Added Cmd/Ctrl+K global search across items and collections with grouped command palette results, shell-level item drawer opening, collection navigation, client-side fuzzy filtering, and search utility tests (Completed)
 - **Pagination** - Added numbered pagination to item type listings, collection listings, and collection detail item lists with page-scoped Prisma queries and shared pagination controls (Completed)
+- **Settings Page Account Actions** - Added a protected settings page, linked it from the sidebar user dropdown, and moved account actions from profile to settings (Completed)
