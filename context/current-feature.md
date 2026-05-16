@@ -1,26 +1,16 @@
-# Current Feature: Editor Preferences Settings
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add editor preferences controls to the settings page.
-- Store editor preferences on the user record.
-- Create and run a database migration for the new persisted preferences.
-- Add a server action to update preferences.
-- Apply preferences to the Monaco editor component.
-- Auto-save preference changes without a save button.
-- Show a success toast when preferences are saved.
-- Provide editor preferences to client components through context.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Spec: `context/features/editor-settings-spec.md`
-- Defaults: word wrap on, minimap off, theme `vs-dark`.
-- Available themes: `vs-dark`, `monokai`, `github-dark`.
-- Do not use `db push`; create and run a migration.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -63,3 +53,4 @@ In Progress
 - **Global Search / Command Palette** - Added Cmd/Ctrl+K global search across items and collections with grouped command palette results, shell-level item drawer opening, collection navigation, client-side fuzzy filtering, and search utility tests (Completed)
 - **Pagination** - Added numbered pagination to item type listings, collection listings, and collection detail item lists with page-scoped Prisma queries and shared pagination controls (Completed)
 - **Settings Page Account Actions** - Added a protected settings page, linked it from the sidebar user dropdown, and moved account actions from profile to settings (Completed)
+- **Editor Preferences Settings** - Added auto-saving editor preferences with persisted user JSON settings, client context, Monaco font/tab/wrap/minimap/theme integration, and a Prisma migration while preserving auth session validity (Completed)
