@@ -1,6 +1,7 @@
 "use client";
 
-import { Menu, PanelLeft, Plus, Search, SquarePlus } from "lucide-react";
+import { Menu, PanelLeft, Plus, Search, SquarePlus, Star } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { CollectionCreateDialog } from "@/components/collections/collection-create-dialog";
@@ -12,7 +13,7 @@ import { ItemCreateDialog } from "@/components/items/item-create-dialog";
 import { ItemDetailDrawer } from "@/components/items/item-detail-drawer";
 import { useItemDrawer } from "@/components/items/use-item-drawer";
 import { GlobalSearchPalette } from "@/components/search/global-search-palette";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type DashboardSidebarData } from "@/lib/db/sidebar";
 import { type GlobalSearchData } from "@/lib/search/global-search";
@@ -156,7 +157,19 @@ export function DashboardAppShell({
                 </span>
               </div>
 
-              <div className="ml-auto hidden items-center gap-3 md:flex">
+              <Link
+                aria-label="Open favorites"
+                className={cn(
+                  buttonVariants({ size: "icon", variant: "outline" }),
+                  "ml-auto shrink-0 rounded-2xl border-border/80 bg-transparent text-slate-100 hover:bg-white/[0.04]"
+                )}
+                href="/favorites"
+                prefetch={false}
+              >
+                <Star className="size-4" />
+              </Link>
+
+              <div className="hidden items-center gap-3 md:flex">
                 <CollectionCreateDialog>
                   <Button
                     className="rounded-2xl border-border/80 bg-transparent text-slate-100 hover:bg-white/[0.04]"
