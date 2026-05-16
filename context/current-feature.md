@@ -1,24 +1,16 @@
-# Current Feature: Pagination
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add pagination to `/items/[type]` listings.
-- Add pagination to `/collections` and `/collections/[id]` listings.
-- Show numbered page links with previous and next controls at the bottom of paginated pages.
-- Disable previous and next controls when no previous or next page is available.
-- Fetch only the records required for the current page.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Source spec: `context/features/pagination-spec.md`
-- Use `ITEMS_PER_PAGE = 21`.
-- Use `COLLECTIONS_PER_PAGE = 21` for the `/collections` listing.
-- Use `ITEMS_PER_PAGE = 21` for item listings, including `/collections/[id]`.
-- Dashboard limits should use `DASHBOARD_COLLECTIONS_LIMIT = 6` and `DASHBOARD_RECENT_ITEMS_LIMIT = 10`.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -59,3 +51,4 @@ In Progress
 - **Collections Pages** - Added protected collection index and detail pages, linked collection cards and sidebar navigation, and grouped detail items so files and images use specialized layouts while other items share the accent card grid (Completed)
 - **Collection Actions** - Added collection edit/delete/favorite controls to collection cards and detail headers with metadata editing, delete confirmation, preserved item records, and UI-only favorite placeholders (Completed)
 - **Global Search / Command Palette** - Added Cmd/Ctrl+K global search across items and collections with grouped command palette results, shell-level item drawer opening, collection navigation, client-side fuzzy filtering, and search utility tests (Completed)
+- **Pagination** - Added numbered pagination to item type listings, collection listings, and collection detail item lists with page-scoped Prisma queries and shared pagination controls (Completed)
