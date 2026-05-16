@@ -4,17 +4,22 @@ import { connection } from "next/server";
 import { auth } from "@/auth";
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { ItemsListDrawerGrid } from "@/components/items/items-list-drawer-grid";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { getGlobalSearchData } from "@/lib/db/global-search";
 import { getItemsListPageData } from "@/lib/db/item-list";
 import { getDashboardSidebarData } from "@/lib/db/sidebar";
+import { getPageNumber } from "@/lib/pagination";
 
 interface ItemsListPageProps {
   params: Promise<{
     type: string;
   }>;
+  searchParams: Promise<{
+    page?: string | string[];
+  }>;
 }
 
-export default async function ItemsListPage({ params }: ItemsListPageProps) {
+export default async function ItemsListPage({ params, searchParams }: ItemsListPageProps) {
   await connection();
 
   const session = await auth();
@@ -23,8 +28,9 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
     redirect("/sign-in");
   }
 
-  const { type } = await params;
-  const itemListPageData = getItemsListPageData(session.user.id, type);
+  const [{ type }, query] = await Promise.all([params, searchParams]);
+  const page = getPageNumber(query.page);
+  const itemListPageData = getItemsListPageData(session.user.id, type, page);
   const dashboardSidebarData = getDashboardSidebarData(session.user.id);
   const globalSearchData = getGlobalSearchData(session.user.id);
 
@@ -60,7 +66,7 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
                 Total items
               </p>
               <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">
-                {pageData.items.length}
+                {pageData.pagination.totalItems}
               </p>
             </div>
           </div>
@@ -86,6 +92,11 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
               </p>
             </div>
           )}
+          <PaginationControls
+            basePath={`/items/${type}`}
+            currentPage={pageData.pagination.currentPage}
+            totalPages={pageData.pagination.totalPages}
+          />
         </section>
       </div>
     </DashboardAppShell>

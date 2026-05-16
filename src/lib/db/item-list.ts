@@ -3,6 +3,12 @@ import "server-only";
 import { type Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getItemTypeNameFromRouteSegment, getItemTypePluralLabel } from "@/lib/item-type-routes";
+import {
+  ITEMS_PER_PAGE,
+  getPaginationMeta,
+  getPaginationSkip,
+  type PaginationMeta,
+} from "@/lib/pagination";
 
 interface ItemListItemType {
   name: string;
@@ -32,6 +38,7 @@ export interface ItemListPageData {
     color: string | null;
   };
   items: ItemListItem[];
+  pagination: PaginationMeta;
 }
 
 type ItemWithRelations = Prisma.ItemGetPayload<{
@@ -83,7 +90,11 @@ function mapItem(item: ItemWithRelations): ItemListItem {
   };
 }
 
-export async function getItemsListPageData(userId: string, routeSegment: string) {
+export async function getItemsListPageData(
+  userId: string,
+  routeSegment: string,
+  requestedPage = 1
+) {
   const typeName = getItemTypeNameFromRouteSegment(routeSegment);
 
   if (!typeName) {
@@ -106,14 +117,21 @@ export async function getItemsListPageData(userId: string, routeSegment: string)
     return null;
   }
 
+  const itemWhere = {
+    userId,
+    typeId: itemType.id,
+  } satisfies Prisma.ItemWhereInput;
+  const totalItems = await prisma.item.count({
+    where: itemWhere,
+  });
+  const pagination = getPaginationMeta(totalItems, requestedPage, ITEMS_PER_PAGE);
   const items = await prisma.item.findMany({
-    where: {
-      userId,
-      typeId: itemType.id,
-    },
+    where: itemWhere,
     orderBy: {
       updatedAt: "desc",
     },
+    skip: getPaginationSkip(pagination.currentPage, ITEMS_PER_PAGE),
+    take: ITEMS_PER_PAGE,
     include: {
       tags: {
         select: {
@@ -141,5 +159,6 @@ export async function getItemsListPageData(userId: string, routeSegment: string)
       color: itemType.color,
     },
     items: items.map(mapItem),
+    pagination,
   } satisfies ItemListPageData;
 }

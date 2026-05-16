@@ -2,10 +2,10 @@ import "server-only";
 
 import { type Prisma } from "@/generated/prisma/client";
 import { type CreateItemData } from "@/lib/items/create-item-schema";
+import { DASHBOARD_RECENT_ITEMS_LIMIT } from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 
 const PINNED_ITEMS_LIMIT = 6;
-const RECENT_ITEMS_LIMIT = 10;
 
 export interface DashboardItemType {
   name: string;
@@ -263,7 +263,7 @@ export async function getDashboardItemsData(userId: string): Promise<DashboardIt
       orderBy: {
         updatedAt: "desc",
       },
-      take: RECENT_ITEMS_LIMIT,
+      take: DASHBOARD_RECENT_ITEMS_LIMIT,
       include: {
         tags: {
           select: {
