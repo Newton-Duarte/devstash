@@ -2,12 +2,19 @@
 
 import { Folder, Star } from "lucide-react";
 import Link from "next/link";
+import { useState, type ReactNode } from "react";
 
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
 import { ItemDetailDrawer } from "@/components/items/item-detail-drawer";
 import { useItemDrawer } from "@/components/items/use-item-drawer";
 import { type CollectionOption } from "@/lib/db/collections";
 import { type FavoritesPageData, type FavoriteItemRow } from "@/lib/db/favorites";
+import {
+  sortFavoriteCollections,
+  sortFavoriteItems,
+  type FavoriteCollectionSort,
+  type FavoriteItemSort,
+} from "@/lib/favorites-sort";
 
 interface FavoritesListProps {
   collectionOptions: CollectionOption[];
@@ -15,6 +22,7 @@ interface FavoritesListProps {
 }
 
 interface SectionHeaderProps {
+  children?: ReactNode;
   count: number;
   title: string;
 }
@@ -24,12 +32,51 @@ const rowClass =
 const sectionClass =
   "overflow-hidden border border-white/10 bg-[#08090c] shadow-2xl shadow-black/15";
 
-function SectionHeader({ count, title }: SectionHeaderProps) {
+const sortSelectClass =
+  "h-8 border border-white/10 bg-[#111216] px-2 text-[0.68rem] tracking-[0.12em] text-slate-300 uppercase outline-none transition hover:bg-white/[0.05] focus-visible:ring-2 focus-visible:ring-ring";
+
+function SectionHeader({ children, count, title }: SectionHeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b border-white/10 px-3 py-2 font-mono text-xs tracking-[0.2em] text-slate-500 uppercase">
-      <span>{title}</span>
-      <span>{count}</span>
+    <div className="flex flex-col gap-2 border-b border-white/10 px-3 py-2 font-mono text-xs tracking-[0.2em] text-slate-500 uppercase sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between gap-3 sm:min-w-32">
+        <span>{title}</span>
+        <span>{count}</span>
+      </div>
+      {children}
     </div>
+  );
+}
+
+function SortControl<T extends string>({
+  id,
+  label,
+  onChange,
+  options,
+  value,
+}: {
+  id: string;
+  label: string;
+  onChange: (value: T) => void;
+  options: { label: string; value: T }[];
+  value: T;
+}) {
+  return (
+    <label className="flex items-center justify-between gap-2 sm:justify-end" htmlFor={id}>
+      <span className="text-[0.68rem] tracking-[0.16em] text-slate-600 uppercase">Sort</span>
+      <select
+        aria-label={label}
+        className={sortSelectClass}
+        id={id}
+        onChange={(event) => onChange(event.target.value as T)}
+        value={value}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
@@ -58,7 +105,11 @@ function FavoriteItemRow({ item, onOpen }: { item: FavoriteItemRow; onOpen: (ite
 
 export function FavoritesList({ collectionOptions, data }: FavoritesListProps) {
   const drawer = useItemDrawer();
+  const [itemSort, setItemSort] = useState<FavoriteItemSort>("date");
+  const [collectionSort, setCollectionSort] = useState<FavoriteCollectionSort>("date");
   const hasFavorites = data.items.length > 0 || data.collections.length > 0;
+  const sortedItems = sortFavoriteItems(data.items, itemSort);
+  const sortedCollections = sortFavoriteCollections(data.collections, collectionSort);
 
   if (!hasFavorites) {
     return (
@@ -78,10 +129,24 @@ export function FavoritesList({ collectionOptions, data }: FavoritesListProps) {
     <>
       <div className="space-y-6">
         <section className={sectionClass}>
-          <SectionHeader count={data.items.length} title="Items" />
+          <SectionHeader count={data.items.length} title="Items">
+            {data.items.length > 0 ? (
+              <SortControl
+                id="favorite-items-sort"
+                label="Sort favorite items"
+                onChange={setItemSort}
+                options={[
+                  { label: "Date", value: "date" },
+                  { label: "Name", value: "name" },
+                  { label: "Type", value: "type" },
+                ]}
+                value={itemSort}
+              />
+            ) : null}
+          </SectionHeader>
           {data.items.length > 0 ? (
             <div>
-              {data.items.map((item) => (
+              {sortedItems.map((item) => (
                 <FavoriteItemRow item={item} key={item.id} onOpen={drawer.openItem} />
               ))}
             </div>
@@ -91,10 +156,23 @@ export function FavoritesList({ collectionOptions, data }: FavoritesListProps) {
         </section>
 
         <section className={sectionClass}>
-          <SectionHeader count={data.collections.length} title="Collections" />
+          <SectionHeader count={data.collections.length} title="Collections">
+            {data.collections.length > 0 ? (
+              <SortControl
+                id="favorite-collections-sort"
+                label="Sort favorite collections"
+                onChange={setCollectionSort}
+                options={[
+                  { label: "Date", value: "date" },
+                  { label: "Name", value: "name" },
+                ]}
+                value={collectionSort}
+              />
+            ) : null}
+          </SectionHeader>
           {data.collections.length > 0 ? (
             <div>
-              {data.collections.map((collection) => (
+              {sortedCollections.map((collection) => (
                 <Link className={rowClass} href={collection.href} key={collection.id} prefetch={false}>
                   <span className="flex size-7 items-center justify-center rounded-lg bg-white/[0.04] text-slate-400">
                     <Folder className="size-4" />

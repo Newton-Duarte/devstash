@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 export interface FavoriteItemRow {
   id: string;
   title: string;
+  updatedAt: string;
   updatedAtLabel: string;
   type: {
     name: string;
@@ -18,6 +19,7 @@ export interface FavoriteCollectionRow {
   name: string;
   href: string;
   itemCount: number;
+  updatedAt: string;
   updatedAtLabel: string;
 }
 
@@ -82,6 +84,7 @@ export async function getFavoritesPageData(userId: string): Promise<FavoritesPag
     items: items.map((item) => ({
       id: item.id,
       title: item.title,
+      updatedAt: item.updatedAt.toISOString(),
       updatedAtLabel: formatFavoriteDate(item.updatedAt),
       type: item.type,
     })),
@@ -90,6 +93,7 @@ export async function getFavoritesPageData(userId: string): Promise<FavoritesPag
       name: collection.name,
       href: `/collections/${collection.id}`,
       itemCount: collection._count.items,
+      updatedAt: collection.updatedAt.toISOString(),
       updatedAtLabel: formatFavoriteDate(collection.updatedAt),
     })),
   };

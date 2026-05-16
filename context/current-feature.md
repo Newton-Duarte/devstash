@@ -1,16 +1,20 @@
-# Current Feature
+# Current Feature: Favorites Client-Side Sorting
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add client-side sorting controls to the favorites page.
+- Allow favorite items and collections to be sorted by name.
+- Allow favorite items and collections to be sorted by date.
+- Allow favorite items to be sorted by item type.
+- Preserve existing favorite page behavior, navigation, and item drawer interactions.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Inline feature description: Add client-side sorting to the favorites page. We should be able to sort by name, date and item type.
 
 ## History
 
