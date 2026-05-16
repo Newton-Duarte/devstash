@@ -1,32 +1,71 @@
 "use client";
 
 import { Menu, PanelLeft, Plus, Search, SquarePlus } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { CollectionCreateDialog } from "@/components/collections/collection-create-dialog";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardSidebarDrawer } from "@/components/dashboard/dashboard-sidebar-drawer";
 import { DashboardSidebarToggle } from "@/components/dashboard/dashboard-sidebar-toggle";
 import { ItemCreateDialog } from "@/components/items/item-create-dialog";
+import { ItemDetailDrawer } from "@/components/items/item-detail-drawer";
+import { useItemDrawer } from "@/components/items/use-item-drawer";
+import { GlobalSearchPalette } from "@/components/search/global-search-palette";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { type DashboardSidebarData } from "@/lib/db/sidebar";
+import { type GlobalSearchData } from "@/lib/search/global-search";
 import { cn } from "@/lib/utils";
 
 interface DashboardAppShellProps {
   children: ReactNode;
   dashboardSidebarData: DashboardSidebarData;
+  searchData: GlobalSearchData;
 }
 
 export function DashboardAppShell({
   children,
   dashboardSidebarData,
+  searchData,
 }: DashboardAppShellProps) {
+  const itemDrawer = useItemDrawer();
+  const [searchOpen, setSearchOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        setSearchOpen((current) => !current);
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div className="h-screen overflow-hidden bg-[#050507] text-foreground">
+      <GlobalSearchPalette
+        data={searchData}
+        onItemSelect={itemDrawer.openItem}
+        onOpenChange={setSearchOpen}
+        open={searchOpen}
+      />
+      <ItemDetailDrawer
+        collectionOptions={dashboardSidebarData.collectionOptions}
+        error={itemDrawer.error}
+        item={itemDrawer.item}
+        loading={itemDrawer.loading}
+        onItemDeleted={() => itemDrawer.onOpenChange(false)}
+        onItemUpdated={itemDrawer.replaceItem}
+        onOpenChange={itemDrawer.onOpenChange}
+        onRetry={itemDrawer.retry}
+        open={itemDrawer.open}
+      />
+
       <DashboardSidebarDrawer
         open={mobileSidebarOpen}
         onClose={() => setMobileSidebarOpen(false)}
@@ -104,8 +143,11 @@ export function DashboardAppShell({
                 <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   aria-label="Search items"
-                  className="h-12 rounded-2xl border-border/80 bg-[#111216] pl-11 pr-16 text-[1.05rem] text-slate-200 placeholder:text-slate-500"
-                  placeholder="Search items..."
+                  className="h-12 cursor-pointer rounded-2xl border-border/80 bg-[#111216] pl-11 pr-16 text-[1.05rem] text-slate-200 placeholder:text-slate-500"
+                  onClick={() => setSearchOpen(true)}
+                  onFocus={() => setSearchOpen(true)}
+                  placeholder="Search items, collections..."
+                  readOnly
                 />
                 <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-lg border border-border/80 bg-[#1a1b20] px-2 py-1 text-xs font-medium text-slate-400">
                   ⌘ K

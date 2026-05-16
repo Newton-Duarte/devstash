@@ -10,17 +10,20 @@ import { useItemDrawer } from "@/components/items/use-item-drawer";
 import { type DashboardCollectionsData } from "@/lib/db/collections";
 import { type DashboardItemsData } from "@/lib/db/items";
 import { type DashboardSidebarData } from "@/lib/db/sidebar";
+import { type GlobalSearchData } from "@/lib/search/global-search";
 
 interface DashboardShellProps {
   dashboardCollectionsData: DashboardCollectionsData;
   dashboardItemsData: DashboardItemsData;
   dashboardSidebarData: DashboardSidebarData;
+  searchData: GlobalSearchData;
 }
 
 export function DashboardShell({
   dashboardCollectionsData,
   dashboardItemsData,
   dashboardSidebarData,
+  searchData,
 }: DashboardShellProps) {
   const itemDrawer = useItemDrawer();
   const stats = [
@@ -47,7 +50,7 @@ export function DashboardShell({
   ];
 
   return (
-    <DashboardAppShell dashboardSidebarData={dashboardSidebarData}>
+    <DashboardAppShell dashboardSidebarData={dashboardSidebarData} searchData={searchData}>
       <ItemDetailDrawer
         collectionOptions={dashboardSidebarData.collectionOptions}
         error={itemDrawer.error}

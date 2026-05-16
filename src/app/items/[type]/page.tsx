@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { auth } from "@/auth";
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { ItemsListDrawerGrid } from "@/components/items/items-list-drawer-grid";
+import { getGlobalSearchData } from "@/lib/db/global-search";
 import { getItemsListPageData } from "@/lib/db/item-list";
 import { getDashboardSidebarData } from "@/lib/db/sidebar";
 
@@ -25,10 +26,12 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
   const { type } = await params;
   const itemListPageData = getItemsListPageData(session.user.id, type);
   const dashboardSidebarData = getDashboardSidebarData(session.user.id);
+  const globalSearchData = getGlobalSearchData(session.user.id);
 
-  const [pageData, sidebarData] = await Promise.all([
+  const [pageData, sidebarData, searchData] = await Promise.all([
     itemListPageData,
     dashboardSidebarData,
+    globalSearchData,
   ]);
 
   if (!pageData) {
@@ -36,7 +39,7 @@ export default async function ItemsListPage({ params }: ItemsListPageProps) {
   }
 
   return (
-    <DashboardAppShell dashboardSidebarData={sidebarData}>
+    <DashboardAppShell dashboardSidebarData={sidebarData} searchData={searchData}>
       <div className="max-w-6xl">
         <section className="rounded-[2rem] border border-white/10 bg-[#0d0e12] p-8 shadow-2xl shadow-black/20">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
