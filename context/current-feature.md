@@ -1,20 +1,16 @@
-# Current Feature: Favorites Client-Side Sorting
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add client-side sorting controls to the favorites page.
-- Allow favorite items and collections to be sorted by name.
-- Allow favorite items and collections to be sorted by date.
-- Allow favorite items to be sorted by item type.
-- Preserve existing favorite page behavior, navigation, and item drawer interactions.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Inline feature description: Add client-side sorting to the favorites page. We should be able to sort by name, date and item type.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -60,3 +56,4 @@ In Progress
 - **Editor Preferences Settings** - Added auto-saving editor preferences with persisted user JSON settings, client context, Monaco font/tab/wrap/minimap/theme integration, and a Prisma migration while preserving auth session validity (Completed)
 - **Favorites Page** - Added a protected favorites page with compact separate item and collection lists, TopBar star navigation, authenticated favorite fetching, collection links, and item drawer opening (Completed)
 - **Favorite Toggle Buttons** - Added authenticated persisted favorite toggles to item drawers, item cards, file/image item layouts, collection cards, and collection detail actions with refreshed favorite counts and lists (Completed)
+- **Favorites Client-Side Sorting** - Added separate client-side sort controls for favorite items and collections with date, name, and item type sorting plus focused utility coverage (Completed)
