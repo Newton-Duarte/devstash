@@ -1,25 +1,16 @@
-# Current Feature: Pinned Items
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Create a `toggleItemPin` server action.
-- Make the existing Pin button in `ItemDrawer` clickable.
-- Add optimistic UI updates for instant feedback.
-- Show toast notifications for pin success and error states.
-- Sort pinned items to the top of item listings.
-- Follow the existing Favorite Button pattern.
-- Support pinned items only, not collections.
-- Keep the Pin icon on `ItemCard` as a static indicator.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Spec loaded from `context/features/pinned-spec.md`.
-- Existing Pin button currently exists in `ItemDrawer` but has no `onClick`.
-- Pinned items should appear at the top of listings and in the dashboard pinned items section.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -66,3 +57,4 @@ In Progress
 - **Favorites Page** - Added a protected favorites page with compact separate item and collection lists, TopBar star navigation, authenticated favorite fetching, collection links, and item drawer opening (Completed)
 - **Favorite Toggle Buttons** - Added authenticated persisted favorite toggles to item drawers, item cards, file/image item layouts, collection cards, and collection detail actions with refreshed favorite counts and lists (Completed)
 - **Favorites Client-Side Sorting** - Added separate client-side sort controls for favorite items and collections with date, name, and item type sorting plus focused utility coverage (Completed)
+- **Pinned Items** - Added authenticated item pin toggles in the drawer with optimistic feedback, success/error toasts, dashboard pinned item updates, and pinned-first ordering for item and collection listings (Completed)
