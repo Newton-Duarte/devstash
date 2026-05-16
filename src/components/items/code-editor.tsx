@@ -2,9 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { Copy } from "lucide-react";
+import { type BeforeMount } from "@monaco-editor/react";
 import { toast } from "sonner";
 
+import { useEditorPreferences } from "@/components/editor/editor-preferences-context";
 import { Button } from "@/components/ui/button";
+import { normalizeEditorLanguage } from "@/lib/editor-preferences";
 import { cn } from "@/lib/utils";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -24,18 +27,52 @@ interface CodeEditorProps {
   value: string;
 }
 
-function normalizeLanguage(language: string) {
-  const trimmedLanguage = language.trim().toLowerCase();
-
-  return trimmedLanguage || "plaintext";
-}
-
-function getEditorHeight(value: string) {
+function getEditorHeight(value: string, lineHeight: number) {
   const lineCount = Math.max(value.split("\n").length, 6);
-  const nextHeight = lineCount * 22 + 24;
+  const nextHeight = lineCount * lineHeight + 24;
 
   return Math.min(Math.max(nextHeight, 176), 400);
 }
+
+const defineEditorThemes: BeforeMount = (monaco) => {
+  monaco.editor.defineTheme("monokai", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "75715e" },
+      { token: "keyword", foreground: "f92672" },
+      { token: "number", foreground: "ae81ff" },
+      { token: "string", foreground: "e6db74" },
+    ],
+    colors: {
+      "editor.background": "#272822",
+      "editor.foreground": "#f8f8f2",
+      "editor.lineHighlightBackground": "#3e3d32",
+      "editorCursor.foreground": "#f8f8f0",
+      "editorLineNumber.foreground": "#90908a",
+      "editorLineNumber.activeForeground": "#f8f8f2",
+    },
+  });
+
+  monaco.editor.defineTheme("github-dark", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "8b949e" },
+      { token: "keyword", foreground: "ff7b72" },
+      { token: "number", foreground: "79c0ff" },
+      { token: "string", foreground: "a5d6ff" },
+    ],
+    colors: {
+      "editor.background": "#0d1117",
+      "editor.foreground": "#c9d1d9",
+      "editor.lineHighlightBackground": "#161b22",
+      "editorCursor.foreground": "#58a6ff",
+      "editorLineNumber.foreground": "#6e7681",
+      "editorLineNumber.activeForeground": "#c9d1d9",
+    },
+  });
+};
 
 export function CodeEditor({
   className,
@@ -44,8 +81,10 @@ export function CodeEditor({
   readOnly = false,
   value,
 }: CodeEditorProps) {
-  const normalizedLanguage = normalizeLanguage(language);
-  const editorHeight = getEditorHeight(value);
+  const { preferences } = useEditorPreferences();
+  const normalizedLanguage = normalizeEditorLanguage(language);
+  const lineHeight = preferences.fontSize + 9;
+  const editorHeight = getEditorHeight(value, lineHeight);
 
   const copyValue = async () => {
     try {
@@ -89,6 +128,7 @@ export function CodeEditor({
 
       <div className="max-h-[400px] min-h-44 overflow-hidden" style={{ height: editorHeight }}>
         <MonacoEditor
+          beforeMount={defineEditorThemes}
           height="100%"
           language={normalizedLanguage}
           onChange={(nextValue) => onChange?.(nextValue ?? "")}
@@ -98,9 +138,9 @@ export function CodeEditor({
             cursorBlinking: "smooth",
             fontFamily:
               "var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-            fontSize: 13,
-            lineHeight: 22,
-            minimap: { enabled: false },
+            fontSize: preferences.fontSize,
+            lineHeight,
+            minimap: { enabled: preferences.minimap },
             padding: { bottom: 16, top: 16 },
             readOnly,
             renderLineHighlight: readOnly ? "none" : "line",
@@ -111,10 +151,10 @@ export function CodeEditor({
               verticalScrollbarSize: 10,
             },
             smoothScrolling: true,
-            tabSize: 2,
-            wordWrap: "on",
+            tabSize: preferences.tabSize,
+            wordWrap: preferences.wordWrap ? "on" : "off",
           }}
-          theme="vs-dark"
+          theme={preferences.theme}
           value={value}
         />
       </div>

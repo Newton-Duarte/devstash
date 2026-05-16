@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { auth } from "@/auth";
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { SettingsAccountActions } from "@/components/settings/settings-account-actions";
+import { SettingsEditorPreferences } from "@/components/settings/settings-editor-preferences";
 import { getGlobalSearchData } from "@/lib/db/global-search";
 import { getProfilePageData } from "@/lib/db/profile";
 import { getDashboardSidebarData } from "@/lib/db/sidebar";
@@ -39,14 +40,17 @@ export default async function SettingsPage() {
             Settings
           </p>
           <h1 className="text-3xl font-semibold tracking-[-0.04em] text-white">
-            Account actions
+            Preferences and account
           </h1>
           <p className="max-w-2xl text-sm text-slate-400">
-            Manage password access and permanent account deletion from one protected settings page.
+            Tune your editor experience and manage protected account actions from one page.
           </p>
         </div>
 
-        <SettingsAccountActions canChangePassword={profileData.user.hasPassword} />
+        <div className="space-y-6">
+          <SettingsEditorPreferences />
+          <SettingsAccountActions canChangePassword={profileData.user.hasPassword} />
+        </div>
       </div>
     </DashboardAppShell>
   );

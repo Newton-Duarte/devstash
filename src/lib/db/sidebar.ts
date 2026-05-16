@@ -1,6 +1,7 @@
 import "server-only";
 
 import { type Prisma } from "@/generated/prisma/client";
+import { normalizeEditorPreferences, type EditorPreferences } from "@/lib/editor-preferences";
 import { prisma } from "@/lib/prisma";
 import { ITEM_TYPE_DISPLAY_ORDER, getItemTypeRouteSegment } from "@/lib/item-type-routes";
 
@@ -35,6 +36,7 @@ export interface DashboardSidebarData {
     name: string | null;
     email: string;
     image: string | null;
+    editorPreferences: EditorPreferences;
   } | null;
   itemTypes: DashboardSidebarItemType[];
   favoriteCollections: DashboardSidebarCollection[];
@@ -126,6 +128,7 @@ export async function getDashboardSidebarData(userId: string): Promise<Dashboard
       name: true,
       email: true,
       image: true,
+      editorPreferences: true,
     },
   });
 
@@ -245,6 +248,7 @@ export async function getDashboardSidebarData(userId: string): Promise<Dashboard
       name: user.name,
       email: user.email,
       image: user.image,
+      editorPreferences: normalizeEditorPreferences(user.editorPreferences as Prisma.JsonValue),
     },
     itemTypes: itemTypes
       .map((itemType) => ({

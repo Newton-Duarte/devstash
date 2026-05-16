@@ -1,16 +1,26 @@
-# Current Feature
+# Current Feature: Editor Preferences Settings
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add editor preferences controls to the settings page.
+- Store editor preferences on the user record.
+- Create and run a database migration for the new persisted preferences.
+- Add a server action to update preferences.
+- Apply preferences to the Monaco editor component.
+- Auto-save preference changes without a save button.
+- Show a success toast when preferences are saved.
+- Provide editor preferences to client components through context.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Spec: `context/features/editor-settings-spec.md`
+- Defaults: word wrap on, minimap off, theme `vs-dark`.
+- Available themes: `vs-dark`, `monokai`, `github-dark`.
+- Do not use `db push`; create and run a migration.
 
 ## History
 
