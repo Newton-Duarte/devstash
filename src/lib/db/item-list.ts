@@ -127,9 +127,14 @@ export async function getItemsListPageData(
   const pagination = getPaginationMeta(totalItems, requestedPage, ITEMS_PER_PAGE);
   const items = await prisma.item.findMany({
     where: itemWhere,
-    orderBy: {
-      updatedAt: "desc",
-    },
+    orderBy: [
+      {
+        isPinned: "desc",
+      },
+      {
+        updatedAt: "desc",
+      },
+    ],
     skip: getPaginationSkip(pagination.currentPage, ITEMS_PER_PAGE),
     take: ITEMS_PER_PAGE,
     include: {

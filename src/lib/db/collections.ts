@@ -425,11 +425,18 @@ export async function getCollectionDetailPageData(
       where: {
         collectionId: collection.id,
       },
-      orderBy: {
-        item: {
-          updatedAt: "desc",
+      orderBy: [
+        {
+          item: {
+            isPinned: "desc",
+          },
         },
-      },
+        {
+          item: {
+            updatedAt: "desc",
+          },
+        },
+      ],
       skip: getPaginationSkip(pagination.currentPage, ITEMS_PER_PAGE),
       take: ITEMS_PER_PAGE,
       select: {

@@ -5,6 +5,7 @@ import {
   createItem as createItemRecord,
   deleteItem as deleteItemRecord,
   setItemFavorite as setItemFavoriteRecord,
+  setItemPin as setItemPinRecord,
   updateItem as updateItemRecord,
   type ItemDetail,
 } from "@/lib/db/items";
@@ -30,6 +31,12 @@ export interface DeleteItemActionState {
 }
 
 export interface FavoriteItemActionState {
+  success: boolean;
+  data: ItemDetail | null;
+  error: string | null;
+}
+
+export interface PinItemActionState {
   success: boolean;
   data: ItemDetail | null;
   error: string | null;
@@ -205,6 +212,45 @@ export async function setItemFavorite(
       success: false,
       data: null,
       error: "Unable to update favorite right now.",
+    };
+  }
+}
+
+export async function toggleItemPin(
+  itemId: string,
+  isPinned: boolean
+): Promise<PinItemActionState> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return {
+      success: false,
+      data: null,
+      error: "You must be signed in to pin items.",
+    };
+  }
+
+  try {
+    const item = await setItemPinRecord(session.user.id, itemId, isPinned);
+
+    if (!item) {
+      return {
+        success: false,
+        data: null,
+        error: "Item not found.",
+      };
+    }
+
+    return {
+      success: true,
+      data: item,
+      error: null,
+    };
+  } catch {
+    return {
+      success: false,
+      data: null,
+      error: "Unable to update pin right now.",
     };
   }
 }
