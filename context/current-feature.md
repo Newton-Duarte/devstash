@@ -1,20 +1,16 @@
-# Current Feature: Favorite Toggle Buttons
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Add a favorite button to the item detail drawer that toggles the current item's favorite state.
-- Add favorite toggle controls to collection pages where items or collections are displayed.
-- Add favorite toggle controls to item and collection cards.
-- Persist favorite state changes and refresh affected UI consistently.
-- Preserve existing drawer, card, collection page, and favorites page behavior.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Feature description: Add a favorite button to the drawer, collection page and cards to toggle.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -59,3 +55,4 @@ In Progress
 - **Settings Page Account Actions** - Added a protected settings page, linked it from the sidebar user dropdown, and moved account actions from profile to settings (Completed)
 - **Editor Preferences Settings** - Added auto-saving editor preferences with persisted user JSON settings, client context, Monaco font/tab/wrap/minimap/theme integration, and a Prisma migration while preserving auth session validity (Completed)
 - **Favorites Page** - Added a protected favorites page with compact separate item and collection lists, TopBar star navigation, authenticated favorite fetching, collection links, and item drawer opening (Completed)
+- **Favorite Toggle Buttons** - Added authenticated persisted favorite toggles to item drawers, item cards, file/image item layouts, collection cards, and collection detail actions with refreshed favorite counts and lists (Completed)
