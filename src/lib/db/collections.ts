@@ -67,6 +67,11 @@ export interface CreatedCollection {
 
 export type UpdatedCollection = CreatedCollection;
 
+export interface FavoriteCollectionUpdate {
+  id: string;
+  isFavorite: boolean;
+}
+
 export interface CollectionOption {
   id: string;
   name: string;
@@ -567,6 +572,39 @@ export async function updateCollection(
       id: true,
       name: true,
       description: true,
+    },
+  });
+}
+
+export async function setCollectionFavorite(
+  userId: string,
+  collectionId: string,
+  isFavorite: boolean
+): Promise<FavoriteCollectionUpdate | null> {
+  const collection = await prisma.collection.findFirst({
+    where: {
+      id: collectionId,
+      userId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!collection) {
+    return null;
+  }
+
+  return prisma.collection.update({
+    where: {
+      id: collection.id,
+    },
+    data: {
+      isFavorite,
+    },
+    select: {
+      id: true,
+      isFavorite: true,
     },
   });
 }

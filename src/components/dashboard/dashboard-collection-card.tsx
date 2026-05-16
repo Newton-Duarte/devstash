@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Code2,
   File,
@@ -5,12 +7,12 @@ import {
   Link2,
   MessageSquareQuote,
   NotebookPen,
-  Star,
   Terminal,
 } from "lucide-react";
 import Link from "next/link";
 
 import { CollectionCardActions } from "@/components/collections/collection-card-actions";
+import { FavoriteToggleButton } from "@/components/shared/favorite-toggle-button";
 import {
   type DashboardCollection,
   type DashboardCollectionType,
@@ -70,9 +72,13 @@ function DashboardCollectionCardContent({
             <h3 className="text-[1.05rem] font-semibold text-white">
               {collection.name}
             </h3>
-            {collection.isFavorite ? (
-              <Star className="size-4 fill-[#facc15] text-[#facc15]" />
-            ) : null}
+            <FavoriteToggleButton
+              className="pointer-events-auto inline-flex size-7 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:bg-white/[0.06] hover:text-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+              id={collection.id}
+              isFavorite={collection.isFavorite}
+              label={`${collection.isFavorite ? "Unfavorite" : "Favorite"} ${collection.name}`}
+              resource="collection"
+            />
           </div>
           <p className="text-sm text-muted-foreground">
             {collection.itemCount} items

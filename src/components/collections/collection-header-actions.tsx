@@ -1,10 +1,10 @@
 "use client";
 
-import { Edit3, Star, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { Edit3, Trash2 } from "lucide-react";
 
 import { CollectionDeleteDialog } from "@/components/collections/collection-delete-dialog";
 import { CollectionEditDialog } from "@/components/collections/collection-edit-dialog";
+import { FavoriteToggleButton } from "@/components/shared/favorite-toggle-button";
 import { type DashboardCollection } from "@/lib/db/collections";
 
 interface CollectionHeaderActionsProps {
@@ -24,14 +24,15 @@ export function CollectionHeaderActions({ collection }: CollectionHeaderActionsP
         </button>
       </CollectionEditDialog>
 
-      <button
+      <FavoriteToggleButton
         className={actionClass}
-        onClick={() => toast.message("Collection favorites are coming soon.")}
-        type="button"
-      >
-        <Star className="size-4" />
-        Favorite
-      </button>
+        iconClassName="size-4"
+        id={collection.id}
+        isFavorite={collection.isFavorite}
+        label={`${collection.isFavorite ? "Unfavorite" : "Favorite"} ${collection.name}`}
+        resource="collection"
+        showText
+      />
 
       <CollectionDeleteDialog
         collectionId={collection.id}

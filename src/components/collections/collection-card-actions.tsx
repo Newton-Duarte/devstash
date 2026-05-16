@@ -1,17 +1,18 @@
 "use client";
 
-import { Edit3, Ellipsis, Star, Trash2 } from "lucide-react";
+import { Edit3, Ellipsis, Trash2 } from "lucide-react";
 import { useState, type FocusEvent } from "react";
-import { toast } from "sonner";
 
 import { CollectionDeleteDialog } from "@/components/collections/collection-delete-dialog";
 import { CollectionEditDialog } from "@/components/collections/collection-edit-dialog";
+import { FavoriteToggleButton } from "@/components/shared/favorite-toggle-button";
 
 interface CollectionCardActionsProps {
   collection: {
     id: string;
     name: string;
     description: string;
+    isFavorite: boolean;
   };
 }
 
@@ -76,17 +77,14 @@ export function CollectionCardActions({ collection }: CollectionCardActionsProps
             <Edit3 className="size-4" />
             Edit
           </button>
-          <button
+          <FavoriteToggleButton
             className={menuItemClass}
-            onClick={() => {
-              setOpen(false);
-              toast.message("Collection favorites are coming soon.");
-            }}
-            type="button"
-          >
-            <Star className="size-4" />
-            Favorite
-          </button>
+            id={collection.id}
+            isFavorite={collection.isFavorite}
+            label={`${collection.isFavorite ? "Unfavorite" : "Favorite"} ${collection.name}`}
+            resource="collection"
+            showText
+          />
           <div className="my-2 h-px bg-white/10" />
           <button
             className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-red-200 transition hover:bg-red-500/10 hover:text-red-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"

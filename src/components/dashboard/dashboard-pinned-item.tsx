@@ -1,7 +1,9 @@
-import { Pin, Star } from "lucide-react";
-import { type KeyboardEvent } from "react";
+"use client";
+
+import { Pin } from "lucide-react";
 
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
+import { FavoriteToggleButton } from "@/components/shared/favorite-toggle-button";
 import { type DashboardItem } from "@/lib/db/items";
 
 interface DashboardPinnedItemProps {
@@ -10,28 +12,20 @@ interface DashboardPinnedItemProps {
 }
 
 export function DashboardPinnedItem({ item, onOpen }: DashboardPinnedItemProps) {
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (!onOpen) {
-      return;
-    }
-
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      onOpen(item.id);
-    }
-  };
-
   return (
     <article
-      aria-label={onOpen ? `Open details for ${item.title}` : undefined}
-      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-6 transition before:absolute before:inset-y-0 before:left-0 before:w-[3px] hover:border-white/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-      onClick={onOpen ? () => onOpen(item.id) : undefined}
-      onKeyDown={onKeyDown}
-      role={onOpen ? "button" : undefined}
+      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-6 transition before:absolute before:inset-y-0 before:left-0 before:w-[3px] hover:border-white/20"
       style={{ boxShadow: `inset 3px 0 0 ${item.type.color ?? "#334155"}` }}
-      tabIndex={onOpen ? 0 : undefined}
     >
-      <div className="flex items-start justify-between gap-6">
+      {onOpen ? (
+        <button
+          aria-label={`Open details for ${item.title}`}
+          className="absolute inset-0 z-0 rounded-[1.6rem] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          onClick={() => onOpen(item.id)}
+          type="button"
+        />
+      ) : null}
+      <div className="pointer-events-none relative z-10 flex items-start justify-between gap-6">
         <div className="min-w-0 flex-1">
           <div className="mb-4 flex items-start gap-4">
             <div
@@ -51,9 +45,13 @@ export function DashboardPinnedItem({ item, onOpen }: DashboardPinnedItemProps) 
                 {item.isPinned ? (
                   <Pin className="size-4 text-muted-foreground" />
                 ) : null}
-                {item.isFavorite ? (
-                  <Star className="size-4 fill-[#facc15] text-[#facc15]" />
-                ) : null}
+                <FavoriteToggleButton
+                  className="pointer-events-auto inline-flex size-7 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:bg-white/[0.06] hover:text-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  id={item.id}
+                  isFavorite={item.isFavorite}
+                  label={`${item.isFavorite ? "Unfavorite" : "Favorite"} ${item.title}`}
+                  resource="item"
+                />
               </div>
 
               <p className="mb-4 text-sm text-muted-foreground">

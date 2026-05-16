@@ -1,16 +1,20 @@
-# Current Feature
+# Current Feature: Favorite Toggle Buttons
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add a favorite button to the item detail drawer that toggles the current item's favorite state.
+- Add favorite toggle controls to collection pages where items or collections are displayed.
+- Add favorite toggle controls to item and collection cards.
+- Persist favorite state changes and refresh affected UI consistently.
+- Preserve existing drawer, card, collection page, and favorites page behavior.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Feature description: Add a favorite button to the drawer, collection page and cards to toggle.
 
 ## History
 
