@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, Download, ExternalLink, Pencil, Pin, Star, Trash2, X } from "lucide-react";
+import { Check, Copy, Download, ExternalLink, Pencil, Pin, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type MouseEvent, type ReactNode, useState, useTransition } from "react";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FavoriteToggleButton } from "@/components/shared/favorite-toggle-button";
 import { Sheet, SheetCloseButton, SheetContent } from "@/components/ui/sheet";
 import { type CollectionOption } from "@/lib/db/collections";
 import { type ItemDetail } from "@/lib/db/items";
@@ -315,9 +316,16 @@ function ItemDetailContent({
         </div>
       ) : (
         <div className="flex items-center gap-2">
-          <ActionButton active={item.isFavorite} label="Favorite item">
-            <Star className={cn("size-4", item.isFavorite && "fill-[#facc15] text-[#facc15]")} />
-          </ActionButton>
+          <FavoriteToggleButton
+            className={cn(
+              "inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-slate-400 transition-colors hover:bg-white/[0.08] hover:text-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+              item.isFavorite && "text-[#facc15] hover:text-[#facc15]"
+            )}
+            id={item.id}
+            isFavorite={item.isFavorite}
+            onItemUpdated={onItemUpdated}
+            resource="item"
+          />
           <ActionButton label="Pin item">
             <Pin className={cn("size-4", item.isPinned && "text-white")} />
           </ActionButton>

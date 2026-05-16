@@ -1,7 +1,9 @@
-import { ExternalLink, Pin, Star } from "lucide-react";
-import { type KeyboardEvent } from "react";
+"use client";
+
+import { ExternalLink, Pin } from "lucide-react";
 
 import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-type-icon";
+import { FavoriteToggleButton } from "@/components/shared/favorite-toggle-button";
 import { type ItemListItem } from "@/lib/db/item-list";
 
 interface ItemCardProps {
@@ -12,28 +14,20 @@ interface ItemCardProps {
 export function ItemCard({ item, onOpen }: ItemCardProps) {
   const openLabel = `Open details for ${item.title}`;
 
-  const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (!onOpen) {
-      return;
-    }
-
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      onOpen(item.id);
-    }
-  };
-
   return (
     <article
-      aria-label={onOpen ? openLabel : undefined}
-      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-5 transition hover:border-white/20 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-      onClick={onOpen ? () => onOpen(item.id) : undefined}
-      onKeyDown={onKeyDown}
-      role={onOpen ? "button" : undefined}
+      className="relative overflow-hidden rounded-[1.6rem] border border-border bg-[#0a0a0c] px-6 py-5 transition hover:border-white/20"
       style={{ boxShadow: `inset 3px 0 0 ${item.type.color ?? "#334155"}` }}
-      tabIndex={onOpen ? 0 : undefined}
     >
-      <div className="flex items-start justify-between gap-4">
+      {onOpen ? (
+        <button
+          aria-label={openLabel}
+          className="absolute inset-0 z-0 rounded-[1.6rem] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          onClick={() => onOpen(item.id)}
+          type="button"
+        />
+      ) : null}
+      <div className="pointer-events-none relative z-10 flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-start gap-4">
             <div
@@ -47,7 +41,13 @@ export function ItemCard({ item, onOpen }: ItemCardProps) {
               <div className="flex flex-wrap items-center gap-3">
                 <h2 className="truncate text-[1.02rem] font-semibold text-white">{item.title}</h2>
                 {item.isPinned ? <Pin className="size-4 text-muted-foreground" /> : null}
-                {item.isFavorite ? <Star className="size-4 fill-[#facc15] text-[#facc15]" /> : null}
+                <FavoriteToggleButton
+                  className="pointer-events-auto inline-flex size-7 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:bg-white/[0.06] hover:text-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  id={item.id}
+                  isFavorite={item.isFavorite}
+                  label={`${item.isFavorite ? "Unfavorite" : "Favorite"} ${item.title}`}
+                  resource="item"
+                />
                 {item.url ? <ExternalLink className="size-4 text-slate-500" /> : null}
               </div>
 

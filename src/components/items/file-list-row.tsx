@@ -1,5 +1,8 @@
-import { Download, File, FileCode2, FileText, Pin, Star } from "lucide-react";
+"use client";
 
+import { Download, File, FileCode2, FileText, Pin } from "lucide-react";
+
+import { FavoriteToggleButton } from "@/components/shared/favorite-toggle-button";
 import { type ItemListItem } from "@/lib/db/item-list";
 
 interface FileListRowProps {
@@ -78,9 +81,13 @@ export function FileListRow({ item, onOpen }: FileListRowProps) {
               {extension}
             </span>
             {item.isPinned ? <Pin className="size-4 shrink-0 text-muted-foreground" /> : null}
-            {item.isFavorite ? (
-              <Star className="size-4 shrink-0 fill-[#facc15] text-[#facc15]" />
-            ) : null}
+            <FavoriteToggleButton
+              className="pointer-events-auto relative z-10 inline-flex size-7 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:bg-white/[0.06] hover:text-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+              id={item.id}
+              isFavorite={item.isFavorite}
+              label={`${item.isFavorite ? "Unfavorite" : "Favorite"} ${item.title}`}
+              resource="item"
+            />
           </div>
           <p className="mt-1 line-clamp-2 text-sm leading-5 text-muted-foreground">
             {item.description}

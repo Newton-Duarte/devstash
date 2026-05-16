@@ -4,7 +4,9 @@ import { auth } from "@/auth";
 import { updateCollectionSchema } from "@/lib/collections/update-collection-schema";
 import {
   deleteCollection as deleteCollectionRecord,
+  setCollectionFavorite as setCollectionFavoriteRecord,
   updateCollection as updateCollectionRecord,
+  type FavoriteCollectionUpdate,
   type UpdatedCollection,
 } from "@/lib/db/collections";
 
@@ -66,5 +68,28 @@ export async function deleteCollection(
     return { success: true, data: null, error: null };
   } catch {
     return { success: false, data: null, error: "Unable to delete collection right now." };
+  }
+}
+
+export async function setCollectionFavorite(
+  collectionId: string,
+  isFavorite: boolean
+): Promise<CollectionMutationState<FavoriteCollectionUpdate | null>> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return { success: false, data: null, error: "You must be signed in to favorite collections." };
+  }
+
+  try {
+    const collection = await setCollectionFavoriteRecord(session.user.id, collectionId, isFavorite);
+
+    if (!collection) {
+      return { success: false, data: null, error: "Collection not found." };
+    }
+
+    return { success: true, data: collection, error: null };
+  } catch {
+    return { success: false, data: null, error: "Unable to update favorite right now." };
   }
 }

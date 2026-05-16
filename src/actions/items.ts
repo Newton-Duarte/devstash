@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import {
   createItem as createItemRecord,
   deleteItem as deleteItemRecord,
+  setItemFavorite as setItemFavoriteRecord,
   updateItem as updateItemRecord,
   type ItemDetail,
 } from "@/lib/db/items";
@@ -25,6 +26,12 @@ export interface UpdateItemActionState {
 
 export interface DeleteItemActionState {
   success: boolean;
+  error: string | null;
+}
+
+export interface FavoriteItemActionState {
+  success: boolean;
+  data: ItemDetail | null;
   error: string | null;
 }
 
@@ -159,6 +166,45 @@ export async function deleteItem(itemId: string): Promise<DeleteItemActionState>
     return {
       success: false,
       error: "Unable to delete item right now.",
+    };
+  }
+}
+
+export async function setItemFavorite(
+  itemId: string,
+  isFavorite: boolean
+): Promise<FavoriteItemActionState> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return {
+      success: false,
+      data: null,
+      error: "You must be signed in to favorite items.",
+    };
+  }
+
+  try {
+    const item = await setItemFavoriteRecord(session.user.id, itemId, isFavorite);
+
+    if (!item) {
+      return {
+        success: false,
+        data: null,
+        error: "Item not found.",
+      };
+    }
+
+    return {
+      success: true,
+      data: item,
+      error: null,
+    };
+  } catch {
+    return {
+      success: false,
+      data: null,
+      error: "Unable to update favorite right now.",
     };
   }
 }
