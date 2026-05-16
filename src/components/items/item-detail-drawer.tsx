@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, Download, ExternalLink, Pencil, Pin, Trash2, X } from "lucide-react";
+import { Check, Copy, Download, ExternalLink, Pencil, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type MouseEvent, type ReactNode, useState, useTransition } from "react";
@@ -11,6 +11,7 @@ import { DashboardItemTypeIcon } from "@/components/dashboard/dashboard-item-typ
 import { CodeEditor } from "@/components/items/code-editor";
 import { CollectionCheckboxList } from "@/components/items/collection-checkbox-list";
 import { MarkdownEditor } from "@/components/items/markdown-editor";
+import { PinToggleButton } from "@/components/items/pin-toggle-button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -326,9 +327,7 @@ function ItemDetailContent({
             onItemUpdated={onItemUpdated}
             resource="item"
           />
-          <ActionButton label="Pin item">
-            <Pin className={cn("size-4", item.isPinned && "text-white")} />
-          </ActionButton>
+          <PinToggleButton item={item} onItemUpdated={onItemUpdated} />
           <ActionButton label="Copy item">
             <Copy className="size-4" />
           </ActionButton>
