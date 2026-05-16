@@ -5,17 +5,25 @@ import { auth } from "@/auth";
 import { CollectionHeaderActions } from "@/components/collections/collection-header-actions";
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { CollectionItemsGroupedGrid } from "@/components/items/collection-items-grouped-grid";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { getCollectionDetailPageData } from "@/lib/db/collections";
 import { getGlobalSearchData } from "@/lib/db/global-search";
 import { getDashboardSidebarData } from "@/lib/db/sidebar";
+import { getPageNumber } from "@/lib/pagination";
 
 interface CollectionDetailPageProps {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{
+    page?: string | string[];
+  }>;
 }
 
-export default async function CollectionDetailPage({ params }: CollectionDetailPageProps) {
+export default async function CollectionDetailPage({
+  params,
+  searchParams,
+}: CollectionDetailPageProps) {
   await connection();
 
   const session = await auth();
@@ -24,8 +32,9 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
     redirect("/sign-in");
   }
 
-  const { id } = await params;
-  const collectionDetailPageData = getCollectionDetailPageData(session.user.id, id);
+  const [{ id }, query] = await Promise.all([params, searchParams]);
+  const page = getPageNumber(query.page);
+  const collectionDetailPageData = getCollectionDetailPageData(session.user.id, id, page);
   const dashboardSidebarData = getDashboardSidebarData(session.user.id);
   const globalSearchData = getGlobalSearchData(session.user.id);
 
@@ -92,6 +101,11 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
               </p>
             </div>
           )}
+          <PaginationControls
+            basePath={`/collections/${id}`}
+            currentPage={pageData.pagination.currentPage}
+            totalPages={pageData.pagination.totalPages}
+          />
         </section>
       </div>
     </DashboardAppShell>

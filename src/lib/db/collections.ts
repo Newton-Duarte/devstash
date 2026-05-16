@@ -4,10 +4,17 @@ import { type Prisma } from "@/generated/prisma/client";
 import { type CreateCollectionData } from "@/lib/collections/create-collection-schema";
 import { type UpdateCollectionData } from "@/lib/collections/update-collection-schema";
 import { type ItemListItem } from "@/lib/db/item-list";
+import {
+  COLLECTIONS_PER_PAGE,
+  DASHBOARD_COLLECTIONS_LIMIT,
+  ITEMS_PER_PAGE,
+  getPaginationMeta,
+  getPaginationSkip,
+  type PaginationMeta,
+} from "@/lib/pagination";
 import { prisma } from "@/lib/prisma";
 
 const NEUTRAL_COLLECTION_ACCENT = "#334155";
-const RECENT_COLLECTION_LIMIT = 6;
 
 export interface DashboardCollectionType {
   name: string;
@@ -35,12 +42,15 @@ export interface DashboardCollectionsData {
   stats: DashboardCollectionStats;
 }
 
-export type CollectionsPageData = DashboardCollectionsData;
+export interface CollectionsPageData extends DashboardCollectionsData {
+  pagination: PaginationMeta;
+}
 
 export interface CollectionDetailPageData {
   collection: DashboardCollection;
   items: ItemListItem[];
   itemGroups: CollectionItemGroup[];
+  pagination: PaginationMeta;
 }
 
 export interface CollectionItemGroup {
@@ -89,11 +99,6 @@ type CollectionWithItems = Prisma.CollectionGetPayload<{
 
 type CollectionDetailWithItems = Prisma.CollectionGetPayload<{
   include: {
-    _count: {
-      select: {
-        items: true;
-      };
-    };
     items: {
       select: {
         item: {
@@ -116,6 +121,16 @@ type CollectionDetailWithItems = Prisma.CollectionGetPayload<{
             };
           };
         };
+      };
+    };
+  };
+}>;
+
+type CollectionSummary = Prisma.CollectionGetPayload<{
+  include: {
+    _count: {
+      select: {
+        items: true;
       };
     };
   };
@@ -178,6 +193,23 @@ function mapDashboardCollection(collection: CollectionWithItems): DashboardColle
     itemCount: collection._count.items,
     accentColor: getCollectionAccentColor(collection),
     types: getCollectionTypes(collection),
+  };
+}
+
+function mapCollectionSummary(
+  collection: CollectionSummary,
+  types: DashboardCollectionType[]
+): DashboardCollection {
+  const primaryType = types[0];
+
+  return {
+    id: collection.id,
+    name: collection.name,
+    description: collection.description ?? "No description yet",
+    isFavorite: collection.isFavorite,
+    itemCount: collection._count.items,
+    accentColor: primaryType?.color ?? NEUTRAL_COLLECTION_ACCENT,
+    types,
   };
 }
 
@@ -248,7 +280,7 @@ export async function getDashboardCollectionsData(
       orderBy: {
         updatedAt: "desc",
       },
-      take: RECENT_COLLECTION_LIMIT,
+      take: DASHBOARD_COLLECTIONS_LIMIT,
       include: {
         _count: {
           select: {
@@ -294,69 +326,33 @@ export async function getDashboardCollectionsData(
   };
 }
 
-export async function getCollectionsPageData(userId: string): Promise<CollectionsPageData> {
-  const [collections, totalCollections, favoriteCollections] = await Promise.all([
-    prisma.collection.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
-      include: {
-        _count: {
-          select: {
-            items: true,
-          },
-        },
-        items: {
-          select: {
-            item: {
-              select: {
-                type: {
-                  select: {
-                    name: true,
-                    icon: true,
-                    color: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    }),
-    prisma.collection.count({
-      where: {
-        userId,
-      },
-    }),
-    prisma.collection.count({
-      where: {
-        userId,
-        isFavorite: true,
-      },
-    }),
-  ]);
-
-  return {
-    collections: collections.map(mapDashboardCollection),
-    stats: {
-      totalCollections,
-      favoriteCollections,
-    },
-  };
-}
-
-export async function getCollectionDetailPageData(
+export async function getCollectionsPageData(
   userId: string,
-  collectionId: string
-): Promise<CollectionDetailPageData | null> {
-  const collection = await prisma.collection.findFirst({
+  requestedPage = 1
+): Promise<CollectionsPageData> {
+  const [totalCollections, favoriteCollections] = await Promise.all([
+    prisma.collection.count({
+      where: {
+        userId,
+      },
+    }),
+    prisma.collection.count({
+      where: {
+        userId,
+        isFavorite: true,
+      },
+    }),
+  ]);
+  const pagination = getPaginationMeta(totalCollections, requestedPage, COLLECTIONS_PER_PAGE);
+  const collections = await prisma.collection.findMany({
     where: {
-      id: collectionId,
       userId,
     },
+    orderBy: {
+      updatedAt: "desc",
+    },
+    skip: getPaginationSkip(pagination.currentPage, COLLECTIONS_PER_PAGE),
+    take: COLLECTIONS_PER_PAGE,
     include: {
       _count: {
         select: {
@@ -364,23 +360,9 @@ export async function getCollectionDetailPageData(
         },
       },
       items: {
-        orderBy: {
-          item: {
-            updatedAt: "desc",
-          },
-        },
         select: {
           item: {
-            include: {
-              tags: {
-                select: {
-                  tag: {
-                    select: {
-                      name: true,
-                    },
-                  },
-                },
-              },
+            select: {
               type: {
                 select: {
                   name: true,
@@ -395,16 +377,129 @@ export async function getCollectionDetailPageData(
     },
   });
 
+  return {
+    collections: collections.map(mapDashboardCollection),
+    stats: {
+      totalCollections,
+      favoriteCollections,
+    },
+    pagination,
+  };
+}
+
+export async function getCollectionDetailPageData(
+  userId: string,
+  collectionId: string,
+  requestedPage = 1
+): Promise<CollectionDetailPageData | null> {
+  const collection = await prisma.collection.findFirst({
+    where: {
+      id: collectionId,
+      userId,
+    },
+    include: {
+      _count: {
+        select: {
+          items: true,
+        },
+      },
+    },
+  });
+
   if (!collection) {
     return null;
   }
 
-  const items = collection.items.map(mapCollectionItem);
+  const pagination = getPaginationMeta(
+    collection._count.items,
+    requestedPage,
+    ITEMS_PER_PAGE
+  );
+  const [items, typeCounts] = await Promise.all([
+    prisma.itemCollection.findMany({
+      where: {
+        collectionId: collection.id,
+      },
+      orderBy: {
+        item: {
+          updatedAt: "desc",
+        },
+      },
+      skip: getPaginationSkip(pagination.currentPage, ITEMS_PER_PAGE),
+      take: ITEMS_PER_PAGE,
+      select: {
+        item: {
+          include: {
+            tags: {
+              select: {
+                tag: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+            type: {
+              select: {
+                id: true,
+                name: true,
+                icon: true,
+                color: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+    prisma.item.groupBy({
+      by: ["typeId"],
+      where: {
+        userId,
+        collections: {
+          some: {
+            collectionId: collection.id,
+          },
+        },
+      },
+      _count: {
+        _all: true,
+      },
+      orderBy: {
+        _count: {
+          typeId: "desc",
+        },
+      },
+    }),
+  ]);
+  const itemTypes = await prisma.itemType.findMany({
+    where: {
+      id: {
+        in: typeCounts.map((typeCount) => typeCount.typeId),
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      icon: true,
+      color: true,
+    },
+  });
+  const itemTypesById = new Map(itemTypes.map((itemType) => [itemType.id, itemType]));
+  const collectionTypes = typeCounts
+    .map((typeCount) => itemTypesById.get(typeCount.typeId))
+    .filter((itemType): itemType is NonNullable<typeof itemType> => Boolean(itemType))
+    .map((itemType) => ({
+      name: itemType.name,
+      icon: itemType.icon,
+      color: itemType.color,
+    }));
+  const collectionItems = items.map(mapCollectionItem);
 
   return {
-    collection: mapDashboardCollection(collection),
-    items,
-    itemGroups: getCollectionItemGroups(items),
+    collection: mapCollectionSummary(collection, collectionTypes),
+    items: collectionItems,
+    itemGroups: getCollectionItemGroups(collectionItems),
+    pagination,
   };
 }
 

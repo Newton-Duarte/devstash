@@ -1,16 +1,24 @@
-# Current Feature
+# Current Feature: Pagination
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Add pagination to `/items/[type]` listings.
+- Add pagination to `/collections` and `/collections/[id]` listings.
+- Show numbered page links with previous and next controls at the bottom of paginated pages.
+- Disable previous and next controls when no previous or next page is available.
+- Fetch only the records required for the current page.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Source spec: `context/features/pagination-spec.md`
+- Use `ITEMS_PER_PAGE = 21`.
+- Use `COLLECTIONS_PER_PAGE = 21` for the `/collections` listing.
+- Use `ITEMS_PER_PAGE = 21` for item listings, including `/collections/[id]`.
+- Dashboard limits should use `DASHBOARD_COLLECTIONS_LIMIT = 6` and `DASHBOARD_RECENT_ITEMS_LIMIT = 10`.
 
 ## History
 

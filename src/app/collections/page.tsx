@@ -4,11 +4,19 @@ import { connection } from "next/server";
 import { auth } from "@/auth";
 import { DashboardAppShell } from "@/components/dashboard/dashboard-app-shell";
 import { DashboardCollectionCard } from "@/components/dashboard/dashboard-collection-card";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { getCollectionsPageData } from "@/lib/db/collections";
 import { getGlobalSearchData } from "@/lib/db/global-search";
 import { getDashboardSidebarData } from "@/lib/db/sidebar";
+import { getPageNumber } from "@/lib/pagination";
 
-export default async function CollectionsPage() {
+interface CollectionsPageProps {
+  searchParams: Promise<{
+    page?: string | string[];
+  }>;
+}
+
+export default async function CollectionsPage({ searchParams }: CollectionsPageProps) {
   await connection();
 
   const session = await auth();
@@ -17,7 +25,9 @@ export default async function CollectionsPage() {
     redirect("/sign-in");
   }
 
-  const collectionsPageData = getCollectionsPageData(session.user.id);
+  const query = await searchParams;
+  const page = getPageNumber(query.page);
+  const collectionsPageData = getCollectionsPageData(session.user.id, page);
   const dashboardSidebarData = getDashboardSidebarData(session.user.id);
   const globalSearchData = getGlobalSearchData(session.user.id);
 
@@ -90,6 +100,11 @@ export default async function CollectionsPage() {
               </p>
             </div>
           )}
+          <PaginationControls
+            basePath="/collections"
+            currentPage={pageData.pagination.currentPage}
+            totalPages={pageData.pagination.totalPages}
+          />
         </section>
       </div>
     </DashboardAppShell>
