@@ -1,28 +1,16 @@
-# Current Feature: Homepage
+# Current Feature
 
 ## Status
 
-In Progress
+Complete
 
 ## Goals
 
-- Replace the current `/` placeholder with a responsive dark marketing homepage.
-- Match the provided desktop and mobile homepage mockups closely.
-- Include header, hero, feature cards, AI productivity section, pricing, CTA, and footer sections.
-- Use server components by default, with client components only where interactivity requires them.
-- Use Tailwind CSS v4 and existing ShadCN-style primitives without adding a Tailwind config file.
-- Keep repeated marketing data and UI patterns clean and dry with local constants or small components.
-- Preserve accessibility with semantic sections, headings, descriptive links, visible focus states, and usable controls.
-- Ensure CTAs and navigation link to `/register`, `/sign-in`, `/`, `#features`, or `#pricing` as specified.
-- Ensure `pnpm lint` and `pnpm build` pass.
+<!-- Add feature goals here -->
 
 ## Notes
 
-- Spec: `context/features/homepage-spec.md`
-- Mockups: `context/screenshots/homepage-full-visible.png`, `context/screenshots/homepage-mobile.png`
-- Route entry: `src/app/page.tsx`
-- Footer links should only point to existing routes or matching page anchors.
-- Avoid database calls, auth requirements, server actions, or API routes for this static public page.
+<!-- Add feature notes here -->
 
 ## History
 
@@ -70,3 +58,4 @@ In Progress
 - **Favorite Toggle Buttons** - Added authenticated persisted favorite toggles to item drawers, item cards, file/image item layouts, collection cards, and collection detail actions with refreshed favorite counts and lists (Completed)
 - **Favorites Client-Side Sorting** - Added separate client-side sort controls for favorite items and collections with date, name, and item type sorting plus focused utility coverage (Completed)
 - **Pinned Items** - Added authenticated item pin toggles in the drawer with optimistic feedback, success/error toasts, dashboard pinned item updates, and pinned-first ordering for item and collection listings (Completed)
+- **Homepage** - Added a responsive public marketing homepage with fixed scroll-aware navigation, animated knowledge visualization, feature and AI sections, interactive pricing, CTA/footer links, scroll reveals, and brand-color gradients (Completed)
