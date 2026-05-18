@@ -1,16 +1,28 @@
-# Current Feature
+# Current Feature: Homepage
 
 ## Status
 
-Complete
+In Progress
 
 ## Goals
 
-<!-- Add feature goals here -->
+- Replace the current `/` placeholder with a responsive dark marketing homepage.
+- Match the provided desktop and mobile homepage mockups closely.
+- Include header, hero, feature cards, AI productivity section, pricing, CTA, and footer sections.
+- Use server components by default, with client components only where interactivity requires them.
+- Use Tailwind CSS v4 and existing ShadCN-style primitives without adding a Tailwind config file.
+- Keep repeated marketing data and UI patterns clean and dry with local constants or small components.
+- Preserve accessibility with semantic sections, headings, descriptive links, visible focus states, and usable controls.
+- Ensure CTAs and navigation link to `/register`, `/sign-in`, `/`, `#features`, or `#pricing` as specified.
+- Ensure `pnpm lint` and `pnpm build` pass.
 
 ## Notes
 
-<!-- Add feature notes here -->
+- Spec: `context/features/homepage-spec.md`
+- Mockups: `context/screenshots/homepage-full-visible.png`, `context/screenshots/homepage-mobile.png`
+- Route entry: `src/app/page.tsx`
+- Footer links should only point to existing routes or matching page anchors.
+- Avoid database calls, auth requirements, server actions, or API routes for this static public page.
 
 ## History
 
