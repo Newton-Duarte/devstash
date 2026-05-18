@@ -1,7 +1,6 @@
 ---
 name: ui-reviewer
 description: Reviews UI for visual issues, responsiveness, and accessibility
-tools: "Read, Glob, Grep, mcp\_\_playwright\_\_*"
 mode: subagent
 model: openai/gpt-5.4
 ---
